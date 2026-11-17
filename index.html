@@ -44,7 +44,8 @@
   <!-- SheetJS (XLSX) for in-browser Excel reading & multi-sheet exporting -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
-  <!-- Custom Stylesheet (Exact Pastel Colors Preserved) -->
+  <!-- Custom Stylesheet (Universal Root + Subfolder Support) -->
+  <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 
@@ -1762,9 +1763,20 @@
   <!-- Toast Notification Container -->
   <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-  <!-- Application Scripts -->
-  <script src="js/sample-datasets.js"></script>
-  <script src="js/data-processor.js"></script>
-  <script src="js/app.js"></script>
+  <!-- Application Scripts (Universal Root + Subfolder Support) -->
+  <script src="sample-datasets.js"></script>
+  <script src="data-processor.js"></script>
+  <script src="app.js"></script>
+  <script>
+    if (typeof SAMPLE_DATASETS === 'undefined') {
+      document.write('<script src="js/sample-datasets.js"><\/script>');
+    }
+    if (typeof DataProcessor === 'undefined') {
+      document.write('<script src="js/data-processor.js"><\/script>');
+    }
+    if (typeof AppState === 'undefined') {
+      document.write('<script src="js/app.js"><\/script>');
+    }
+  </script>
 </body>
 </html>
