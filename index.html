@@ -44,9 +44,8 @@
   <!-- SheetJS (XLSX) for in-browser Excel reading & multi-sheet exporting -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
-  <!-- Custom Stylesheet (Universal Root + Subfolder Support) -->
+  <!-- Custom Stylesheet -->
   <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="css/style.css" />
 </head>
 
 <body class="text-pastel-text">
@@ -112,34 +111,20 @@
           </button>
           
           <div id="exportDropdown" class="export-dropdown space-y-1">
-            <div class="px-3 py-1.5 text-[10px] font-extrabold text-pastel-subtext uppercase tracking-wider border-b border-[#EDE4DC]">Định Dạng Doanh Nghiệp</div>
+            <div class="px-3 py-1.5 text-[10px] font-extrabold text-pastel-subtext uppercase tracking-wider border-b border-[#EDE4DC]">Tải Xuất Kết Quả</div>
             <div class="export-item" onclick="exportCleanedExcel()">
-              <i class="fa-solid fa-file-excel text-emerald-600"></i>
-              <span>Excel Sạch (.xlsx)</span>
-            </div>
-            <div class="export-item" onclick="exportAnalysisExcel()">
-              <i class="fa-solid fa-file-excel text-teal-600"></i>
-              <span>Excel Phân Tích Đa Chiều (3 Sheets)</span>
-            </div>
-            <div class="export-item" onclick="exportCSVFile()">
-              <i class="fa-solid fa-file-csv text-[#D47B6B]"></i>
-              <span>CSV Chuẩn UTF-8</span>
+              <i class="fa-solid fa-file-excel text-emerald-600 text-sm"></i>
+              <div class="flex flex-col">
+                <span class="font-bold text-xs text-[#2E2926]">File Excel Đã Làm Sạch (.xlsx)</span>
+                <span class="text-[10px] text-pastel-subtext">Đã chuẩn hóa 8 bước, đúng định dạng số</span>
+              </div>
             </div>
             <div class="export-item" onclick="exportReportDocx()">
-              <i class="fa-solid fa-file-word text-blue-600"></i>
-              <span>Báo Cáo Word (.docx)</span>
-            </div>
-            <div class="export-item" onclick="exportMarkdown()">
-              <i class="fa-solid fa-file-lines text-slate-600"></i>
-              <span>Báo Cáo Markdown (.md)</span>
-            </div>
-            <div class="export-item" onclick="exportAuditJSON()">
-              <i class="fa-solid fa-file-code text-amber-600"></i>
-              <span>Nhật Ký Kiểm Toán (.json)</span>
-            </div>
-            <div class="export-item border-t border-[#EDE4DC] pt-2" onclick="window.print()">
-              <i class="fa-solid fa-print text-[#588376]"></i>
-              <span>In / Lưu PDF Trực Tiếp</span>
+              <i class="fa-solid fa-file-word text-[#D47B6B] text-sm"></i>
+              <div class="flex flex-col">
+                <span class="font-bold text-xs text-[#2E2926]">Báo Cáo Chiến Lược Word (.docx)</span>
+                <span class="text-[10px] text-pastel-subtext">Đầy đủ 5 căn nguyên, giải pháp & ký duyệt</span>
+              </div>
             </div>
           </div>
         </div>
@@ -1273,76 +1258,131 @@
       <!-- ===================================================================== -->
       <div id="tabNorm" class="tab-content hidden space-y-8">
         
-        <!-- Cleaning Rules Configuration Panel -->
+        <!-- Cleaning Rules Configuration Panel (8-Step Power Query & Excel Standard) -->
         <div class="pastel-card p-6 sm:p-8 space-y-6">
           <div class="flex items-center justify-between flex-wrap gap-2">
-            <h3 class="font-extrabold text-base text-[#2E2926] flex items-center gap-2">
-              <i class="fa-solid fa-sliders text-[#588376]"></i>
-              <span>Quy Tắc Làm Sạch Dữ Liệu Tự Động</span>
-            </h3>
-            <span class="text-xs font-semibold text-[#588376] bg-[#EDF5F2] px-3 py-1 rounded-full">
+            <div>
+              <h3 class="font-extrabold text-base text-[#2E2926] flex items-center gap-2">
+                <i class="fa-solid fa-wand-magic-sparkles text-[#588376]"></i>
+                <span>Quy Trình 8 Bước Làm Sạch Chuẩn Power Query & Excel</span>
+              </h3>
+              <p class="text-xs text-pastel-subtext mt-0.5">Xử lý tự động khoảng trắng, ô trống, lỗi công thức, chuyển đổi số Text-to-Number và chuẩn hóa danh pháp</p>
+            </div>
+            <span class="text-xs font-semibold text-[#588376] bg-[#EDF5F2] px-3 py-1 rounded-full border border-[#A7C9BE]/50">
               Lê Khánh Linh Cleaning Engine v2.5
             </span>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div class="p-4 rounded-2xl bg-[#FAF7F2] border border-[#EDE4DC] space-y-3">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Bước 1: TRIM & CLEAN -->
+            <div class="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#EDE4DC] space-y-1.5">
               <div class="flex items-center justify-between">
-                <label class="font-bold text-xs text-[#2E2926] flex items-center gap-2">
-                  <i class="fa-solid fa-filter-circle-xmark text-[#D47B6B]"></i>
-                  <span>Xử lý Giá trị Khuyết (Missing/Null)</span>
-                </label>
-                <span class="text-[10px] font-bold text-[#588376] bg-[#EDF5F2] px-2 py-0.5 rounded-full">Đề xuất</span>
+                <span class="font-extrabold text-xs text-[#2E2926] flex items-center gap-1.5">
+                  <span class="w-5 h-5 rounded-md bg-[#EDF5F2] text-[#588376] text-[10px] font-black flex items-center justify-center">1</span>
+                  <span>=TRIM(CLEAN())</span>
+                </span>
+                <span class="text-[10px] font-extrabold text-[#588376] bg-[#EDF5F2] px-2 py-0.5 rounded-full">Tự động</span>
               </div>
-              <select id="ruleHandleNull" class="w-full text-xs font-semibold bg-white border border-[#EDE4DC] rounded-xl px-3 py-2.5 text-[#2E2926] outline-none focus:border-[#ECA294]">
-                <option value="impute_smart" selected>Tự động điền thông minh (Trung vị số / Nhãn chuẩn hóa)</option>
-                <option value="drop_row">Loại bỏ toàn bộ hàng bị khuyết</option>
-                <option value="zero">Điền số 0 cho số / 'Chưa có' cho chữ</option>
-              </select>
+              <p class="text-[11px] text-pastel-subtext leading-snug">Xóa khoảng trắng thừa (đầu/cuối/kép) & ký tự không in được từ web</p>
             </div>
 
-            <div class="p-4 rounded-2xl bg-[#FAF7F2] border border-[#EDE4DC] space-y-3">
+            <!-- Bước 2: Xử lý Ô trống (Blanks) -->
+            <div class="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#EDE4DC] space-y-1.5">
               <div class="flex items-center justify-between">
-                <label class="font-bold text-xs text-[#2E2926] flex items-center gap-2">
-                  <i class="fa-solid fa-clone text-[#588376]"></i>
-                  <span>Khử Trùng Lặp (Deduplication)</span>
-                </label>
+                <span class="font-extrabold text-xs text-[#2E2926] flex items-center gap-1.5">
+                  <span class="w-5 h-5 rounded-md bg-[#FDF1EE] text-[#D47B6B] text-[10px] font-black flex items-center justify-center">2</span>
+                  <span>Xử lý Ô trống (Blanks)</span>
+                </span>
+                <select id="ruleHandleNull" class="text-[10px] font-bold bg-white border border-[#EDE4DC] rounded-lg px-1.5 py-0.5 text-[#2E2926] outline-none">
+                  <option value="impute_smart" selected>Điền trung vị/nhãn</option>
+                  <option value="drop_row">Xóa cả dòng</option>
+                  <option value="zero">Điền số 0</option>
+                </select>
+              </div>
+              <p class="text-[11px] text-pastel-subtext leading-snug">Tương đương Ctrl+G > Special > Blanks: xóa dòng trống hoặc điền mặc định</p>
+            </div>
+
+            <!-- Bước 3: Khử Trùng Lặp -->
+            <div class="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#EDE4DC] space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="font-extrabold text-xs text-[#2E2926] flex items-center gap-1.5">
+                  <span class="w-5 h-5 rounded-md bg-[#EDF5F2] text-[#588376] text-[10px] font-black flex items-center justify-center">3</span>
+                  <span>Khử Trùng (Duplicates)</span>
+                </span>
                 <input type="checkbox" id="ruleRemoveDups" checked class="w-4 h-4 accent-[#ECA294] rounded cursor-pointer" />
               </div>
-              <p class="text-xs font-semibold text-[#2E2926]">Loại bỏ hoàn toàn các hàng bị nhân bản giống hệt nhau</p>
+              <p class="text-[11px] text-pastel-subtext leading-snug">Tương đương Data > Remove Duplicates: đối chiếu và khử nhân bản</p>
             </div>
 
-            <div class="p-4 rounded-2xl bg-[#FAF7F2] border border-[#EDE4DC] space-y-3">
+            <!-- Bước 4: Chuẩn hóa Hoa/Thường -->
+            <div class="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#EDE4DC] space-y-1.5">
               <div class="flex items-center justify-between">
-                <label class="font-bold text-xs text-[#2E2926] flex items-center gap-2">
-                  <i class="fa-solid fa-spell-check text-[#D47B6B]"></i>
-                  <span>Chuẩn Hóa Tiếng Việt & Dấu</span>
-                </label>
+                <span class="font-extrabold text-xs text-[#2E2926] flex items-center gap-1.5">
+                  <span class="w-5 h-5 rounded-md bg-[#FDF1EE] text-[#D47B6B] text-[10px] font-black flex items-center justify-center">4</span>
+                  <span>Case (=PROPER/=UPPER)</span>
+                </span>
                 <input type="checkbox" id="ruleStandardizeNames" checked class="w-4 h-4 accent-[#ECA294] rounded cursor-pointer" />
               </div>
-              <p class="text-xs font-semibold text-[#2E2926]">Tự động thêm dấu tiếng Việt & viết hoa chuẩn danh từ riêng (Title Case)</p>
+              <p class="text-[11px] text-pastel-subtext leading-snug">PROPER cho họ tên + khôi phục dấu tiếng Việt; UPPER cho mã SKU/đơn</p>
             </div>
 
-            <div class="p-4 rounded-2xl bg-[#FAF7F2] border border-[#EDE4DC] space-y-3">
+            <!-- Bước 5: Text-to-Number (* 1) -->
+            <div class="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#EDE4DC] space-y-1.5">
               <div class="flex items-center justify-between">
-                <label class="font-bold text-xs text-[#2E2926] flex items-center gap-2">
-                  <i class="fa-solid fa-phone text-[#588376]"></i>
-                  <span>Chuẩn Hóa Số Điện Thoại Đồng Nhất</span>
-                </label>
+                <span class="font-extrabold text-xs text-[#2E2926] flex items-center gap-1.5">
+                  <span class="w-5 h-5 rounded-md bg-[#EDF5F2] text-[#588376] text-[10px] font-black flex items-center justify-center">5</span>
+                  <span>Text-to-Number (* 1)</span>
+                </span>
+                <span class="text-[10px] font-extrabold text-[#588376] bg-[#EDF5F2] px-2 py-0.5 rounded-full">Tự động</span>
+              </div>
+              <p class="text-[11px] text-pastel-subtext leading-snug">Chuyển số bị lệch trái (dạng Text) sang số thực: bỏ đ, $, tính SUM() chuẩn</p>
+            </div>
+
+            <!-- Bước 6: Tách / Gộp Cột & SĐT -->
+            <div class="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#EDE4DC] space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="font-extrabold text-xs text-[#2E2926] flex items-center gap-1.5">
+                  <span class="w-5 h-5 rounded-md bg-[#FDF1EE] text-[#D47B6B] text-[10px] font-black flex items-center justify-center">6</span>
+                  <span>SĐT 10 Số & Tách Cột</span>
+                </span>
                 <input type="checkbox" id="ruleStandardizePhones" checked class="w-4 h-4 accent-[#ECA294] rounded cursor-pointer" />
               </div>
-              <select id="rulePhoneFormat" class="w-full text-xs font-semibold bg-white border border-[#EDE4DC] rounded-xl px-3 py-2 text-[#2E2926] outline-none focus:border-[#ECA294]">
-                <option value="spaced" selected>Dạng 0xxx xxx xxx (Cách đều 4-3-3 • Khuyên dùng)</option>
-                <option value="compact">Dạng 0xxxxxxxxx (Viết liền 10 số chuẩn)</option>
-                <option value="dashed">Dạng 0xxx-xxx-xxx (Dấu gạch ngang)</option>
+              <select id="rulePhoneFormat" class="w-full text-[10px] font-bold bg-white border border-[#EDE4DC] rounded-lg px-2 py-1 text-[#2E2926] outline-none">
+                <option value="spaced" selected>Dạng 0xxx xxx xxx (4-3-3)</option>
+                <option value="compact">Dạng 0xxxxxxxxx (Viết liền)</option>
+                <option value="dashed">Dạng 0xxx-xxx-xxx</option>
               </select>
+            </div>
+
+            <!-- Bước 7: Quét Lỗi Công Thức -->
+            <div class="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#EDE4DC] space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="font-extrabold text-xs text-[#2E2926] flex items-center gap-1.5">
+                  <span class="w-5 h-5 rounded-md bg-[#EDF5F2] text-[#588376] text-[10px] font-black flex items-center justify-center">7</span>
+                  <span>Khử Lỗi (#VALUE!, #N/A)</span>
+                </span>
+                <span class="text-[10px] font-extrabold text-[#588376] bg-[#EDF5F2] px-2 py-0.5 rounded-full">Tự động</span>
+              </div>
+              <p class="text-[11px] text-pastel-subtext leading-snug">Tương đương Ctrl+G > Formulas > Errors: quét và thay thế lỗi công thức</p>
+            </div>
+
+            <!-- Bước 8: Xóa Định Dạng Rác -->
+            <div class="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#EDE4DC] space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="font-extrabold text-xs text-[#2E2926] flex items-center gap-1.5">
+                  <span class="w-5 h-5 rounded-md bg-[#FDF1EE] text-[#D47B6B] text-[10px] font-black flex items-center justify-center">8</span>
+                  <span>Clear Formats</span>
+                </span>
+                <span class="text-[10px] font-extrabold text-[#588376] bg-[#EDF5F2] px-2 py-0.5 rounded-full">Tự động</span>
+              </div>
+              <p class="text-[11px] text-pastel-subtext leading-snug">Xóa dấu nháy đơn ' ép kiểu, thẻ HTML rác, ký tự escape không cần thiết</p>
             </div>
           </div>
 
           <div class="pt-2 flex justify-end">
             <button type="button" onclick="executeDataCleaning()" class="btn-pill btn-coral !px-6 !py-3 !text-xs shadow-md">
               <i class="fa-solid fa-rotate"></i>
-              <span>Áp Dụng Lại Quy Tắc Làm Sạch</span>
+              <span>Áp Dụng Lại Quy Trình Làm Sạch</span>
             </button>
           </div>
         </div>

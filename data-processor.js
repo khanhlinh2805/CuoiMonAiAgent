@@ -512,48 +512,271 @@ const DataProcessor = {
       phoneFormat = 'spaced';
     }
 
-    // Phase 1: Deduplication
-    let cleaned = [];
-    const seen = new Set();
+    // Telemetry counters for the 8 Excel / Power Query standard cleaning steps
+    let trimCleanCount = 0;
+    let formatClearedCount = 0;
+    let formulaErrorCount = 0;
     let removedDups = 0;
+    let imputedCount = 0;
+    let caseStandardizedCount = 0;
+    let textToNumberCount = 0;
+    let phoneStandardizedCount = 0;
+    let outlierFixCount = 0;
+
+    // Helper: Excel Formula Error Detection (#N/A, #VALUE!, #REF!, #DIV/0!, #NUM!, #NAME?, #NULL!)
+    function isExcelFormulaError(val) {
+      if (val === null || val === undefined) return false;
+      const s = String(val).trim().toUpperCase();
+      return /^(#N\/A|#VALUE!|#REF!|#DIV\/0!|#NUM!|#NAME\?|#NULL!|#N\/D|NAN|INFINITY|-INFINITY)$/.test(s);
+    }
+
+    // Helper: Excel Text-to-Number Parser (Simulates: Multiply by 1 / Paste Special Multiply)
+    function parseExcelTextToNumber(val) {
+      if (val === null || val === undefined) return null;
+      if (typeof val === 'number') return isNaN(val) ? null : val;
+      let s = String(val).trim();
+      if (!s) return null;
+      // Strip currency, letters (except scientific e), and spaces
+      let clean = s.replace(/[\$đ₫\s]/gi, '').replace(/VND/gi, '');
+      // Handle European/Vietnamese dot thousand separator: 1.500.000 or 1.500.000,50
+      if (/^-?\d{1,3}(\.\d{3})+(,\d+)?$/.test(clean)) {
+        clean = clean.replace(/\./g, '').replace(',', '.');
+      } else if (/^-?\d{1,3}(,\d{3})+(\.\d+)?$/.test(clean)) {
+        clean = clean.replace(/,/g, '');
+      } else if (clean.includes(',') && !clean.includes('.')) {
+        clean = clean.replace(',', '.');
+      }
+      const num = Number(clean);
+      return isNaN(num) ? null : num;
+    }
+
+    // =========================================================================
+    // STEP 1 & STEP 2 & STEP 3: =TRIM(CLEAN()), CLEAR FORMATS, AND FORMULA ERRORS
+    // =========================================================================
+    let stage1Data = data.map((row, rIdx) => {
+      const newRow = {};
+      columns.forEach(c => {
+        let val = row[c];
+
+        // 3. Xử lý lỗi công thức (#N/A, #VALUE!, #REF!,...)
+        if (isExcelFormulaError(val)) {
+          formulaErrorCount++;
+          if (citCounter <= 50) {
+            addCitation(
+              "Xử lý lỗi công thức (#N/A, #VALUE!)",
+              rIdx + 1,
+              c,
+              `Phát hiện và xóa mã lỗi công thức Excel "${val}"`,
+              val,
+              "[ĐÃ XỬ LÝ LỖI]",
+              "EXCEL_FORMULA_ERROR_FIX"
+            );
+          }
+          val = null; // Mark as blank for imputation step
+        }
+
+        if (typeof val === 'string') {
+          const orig = val;
+
+          // 2. Xóa định dạng cũ rườm rà (Clear Formats & Sanitize)
+          // Xóa dấu nháy đơn ' ở đầu chuỗi (thói quen người dùng Excel ép kiểu text)
+          if (val.startsWith("'")) {
+            val = val.slice(1);
+            formatClearedCount++;
+          }
+          // Xóa các thẻ HTML rác nếu có
+          if (/<[^>]+>/.test(val)) {
+            val = val.replace(/<\/?[^>]+(>|$)/g, '');
+            formatClearedCount++;
+          }
+          // Chuẩn hóa dấu ngoặc kép cong và nháy cong
+          val = val.replace(/[“”]/g, '"').replace(/[‘’]/g, "'");
+
+          // 1. =TRIM(CLEAN(cell)): Xóa ký tự không in được và khoảng trắng thừa
+          // CLEAN: Xóa các ký tự điều khiển ASCII và zero-width space
+          let cleanedStr = val.replace(/[\x00-\x1F\x7F-\x9F\u200B-\u200D\uFEFF]/g, '');
+          // Xóa non-breaking space &nbsp;, newline, tab
+          cleanedStr = cleanedStr.replace(/&nbsp;/gi, ' ').replace(/[\r\n\t]+/g, ' ');
+          // TRIM: Cắt khoảng trắng đầu cuối và khoảng trắng kép ở giữa
+          cleanedStr = cleanedStr.trim().replace(/\s+/g, ' ');
+
+          if (cleanedStr !== orig) {
+            trimCleanCount++;
+            if (citCounter <= 50) {
+              addCitation(
+                "Xóa khoảng trắng & Ký tự ẩn (=TRIM(CLEAN()))",
+                rIdx + 1,
+                c,
+                `Đã loại bỏ khoảng trắng thừa/ký tự không in được từ "${orig}" thành "${cleanedStr}"`,
+                orig,
+                cleanedStr,
+                "EXCEL_TRIM_CLEAN"
+              );
+            }
+          }
+          val = cleanedStr;
+        }
+
+        newRow[c] = val;
+      });
+      return newRow;
+    });
+
+    // =========================================================================
+    // STEP 4: LOẠI BỎ DỮ LIỆU TRÙNG LẶP (Remove Duplicates)
+    // Tương đương Data -> Remove Duplicates trong Excel
+    // =========================================================================
+    let stage2Data = [];
+    const seenRows = new Set();
     const keepDups = (feedbackPrompt || '').toLowerCase().includes('giữ lại dòng trùng') || (feedbackPrompt || '').toLowerCase().includes('không xóa trùng');
 
-    data.forEach((row, idx) => {
+    stage1Data.forEach((row, idx) => {
       const key = columns.map(c => String(row[c] ?? '').trim().toLowerCase()).join('||');
       if (rules.remove_duplicates !== false && !keepDups) {
-        if (seen.has(key)) {
+        if (seenRows.has(key)) {
           removedDups++;
           addCitation(
-            "Loại bỏ trùng lặp",
+            "Loại bỏ trùng lặp (Remove Duplicates)",
             idx + 1,
             "Toàn bộ hàng",
-            "Đã loại bỏ bản ghi nhân bản hoàn toàn khỏi tập dữ liệu",
+            "Đã loại bỏ bản ghi nhân bản hoàn toàn (Tương đương Excel Data > Remove Duplicates)",
             JSON.stringify(row),
             "[ĐÃ XÓA]",
             "DEDUPLICATION_EXACT_MATCH"
           );
           return;
         }
-        seen.add(key);
+        seenRows.add(key);
       }
-      cleaned.push({ ...row });
+      stage2Data.push({ ...row });
     });
 
-    // Phase 2: String normalization, Vietnamese Diacritics Restoration, Channel Formatting & Phone Standardization
+    // =========================================================================
+    // STEP 5: XỬ LÝ Ô TRỐNG (Missing Data / Blanks)
+    // Tương đương Ctrl + G (hoặc F5) -> Special... -> Blanks
+    // =========================================================================
+    const nullMode = (feedbackPrompt || '').toLowerCase().includes('bằng 0') ? 'zero' : (rules.handle_null || 'impute_smart');
+    const stage3Data = [];
+
+    stage2Data.forEach((row, idx) => {
+      let isEntireRowBlank = true;
+      let dropRow = false;
+
+      // Kiểm tra xem toàn bộ dòng có bị trống hoàn toàn không
+      columns.forEach(c => {
+        const val = row[c];
+        if (val !== null && val !== undefined && String(val).trim() !== '' && String(val).toLowerCase() !== 'null') {
+          isEntireRowBlank = false;
+        }
+      });
+
+      if (isEntireRowBlank) {
+        dropRow = true;
+        addCitation(
+          "Xử lý ô trống (Delete entire blank row)",
+          idx + 1,
+          "Toàn bộ hàng",
+          "Đã xóa dòng hoàn toàn trống (Tương đương Excel Ctrl+G > Special > Blanks > Delete Entire Row)",
+          "[DÒNG TRỐNG]",
+          "[ĐÃ XÓA DÒNG TRỐNG]",
+          "EXCEL_DELETE_BLANK_ROW"
+        );
+        return;
+      }
+
+      columns.forEach(c => {
+        const val = row[c];
+        const isNull = val === null || val === undefined || String(val).trim() === '' || /^(null|undefined|nan|none|n\/a|-)$/i.test(String(val).trim());
+
+        if (isNull) {
+          if (nullMode === 'drop_row') {
+            dropRow = true;
+            addCitation(
+              "Xử lý ô trống (Delete Row)",
+              idx + 1,
+              c,
+              `Loại bỏ dòng do thiếu trường bắt buộc: ${c}`,
+              null,
+              "[DÒNG BỊ LOẠI]",
+              "NULL_DROP_ROW"
+            );
+          } else if (nullMode === 'zero') {
+            const fillVal = col_stats[c]?.type === 'numeric' ? 0 : 'Chưa có';
+            row[c] = fillVal;
+            imputedCount++;
+            if (citCounter <= 50) {
+              addCitation(
+                "Điền ô trống (Fill Zero)",
+                idx + 1,
+                c,
+                `Điền giá trị mặc định theo yêu cầu: "${fillVal}"`,
+                null,
+                fillVal,
+                "NULL_ZERO_IMPUTATION"
+              );
+            }
+          } else {
+            if (col_stats[c]?.type === 'numeric') {
+              const fillVal = col_stats[c].median ?? col_stats[c].mean ?? 0;
+              row[c] = fillVal;
+              imputedCount++;
+              if (citCounter <= 50) {
+                addCitation(
+                  "Điền ô trống (Smart Impute)",
+                  idx + 1,
+                  c,
+                  `Tự động điền giá trị trung vị: ${fillVal.toLocaleString('vi-VN')}`,
+                  null,
+                  fillVal,
+                  "NULL_SMART_MEDIAN_IMPUTE"
+                );
+              }
+            } else {
+              row[c] = "Chưa cập nhật";
+              imputedCount++;
+              if (citCounter <= 50) {
+                addCitation(
+                  "Điền ô trống (Fill Label)",
+                  idx + 1,
+                  c,
+                  'Gán nhãn chuẩn hóa "Chưa cập nhật"',
+                  null,
+                  "Chưa cập nhật",
+                  "NULL_LABEL_IMPUTE"
+                );
+              }
+            }
+          }
+        }
+      });
+
+      if (!dropRow) stage3Data.push(row);
+    });
+
+    let cleaned = stage3Data;
+
+    // =========================================================================
+    // STEP 6: CHUẨN HÓA CHỮ HOA / CHỮ THƯỜNG (=PROPER, =UPPER, =LOWER)
+    // =========================================================================
+    // =PROPER(): Họ tên, Kênh bán, Tỉnh thành, Sản phẩm
+    // =UPPER(): Mã đơn, Mã SKU, Mã kho, Voucher, Tiền tệ VND
+    // =LOWER(): Email, Website, Username
     cleaned.forEach((row, idx) => {
       columns.forEach(c => {
         const val = row[c];
         const cat = VietnameseTextEngine.getColumnCategory(c);
+        const colLower = c.toLowerCase();
 
-        // Handle Phone column regardless of string or number
+        // 8. Tách/Gộp & Chuẩn Hóa Số Điện Thoại 10 Số
         if (cat.isPhoneCol && rules.standardize_phones !== false && val !== null && val !== undefined && String(val).trim() !== '') {
           const orig = val;
           const s = PhoneEngine.standardizePhone(val, phoneFormat);
           if (String(s) !== String(orig)) {
             row[c] = s;
-            if (citCounter <= 40) {
+            phoneStandardizedCount++;
+            if (citCounter <= 50) {
               addCitation(
-                "Chuẩn hóa SĐT đồng nhất",
+                "Chuẩn hóa SĐT 10 số đồng nhất",
                 idx + 1,
                 c,
                 `Chuẩn hóa định dạng SĐT 10 số đồng nhất từ "${orig}" thành "${s}"`,
@@ -568,34 +791,43 @@ const DataProcessor = {
 
         if (typeof val === 'string') {
           const orig = val;
-          let s = val.trim().replace(/\s+/g, ' ');
+          let s = val;
 
-          if (cat.isNameCol && rules.standardize_names !== false) {
+          // =UPPER(): Mã đơn, SKU, Mã kho, Voucher, ID
+          const colStripped = VietnameseTextEngine.stripTones(colLower);
+          const isCodeCol = colStripped.includes('ma') || colStripped.includes('sku') || colStripped.includes('code') || colStripped.includes('id') || colStripped.includes('voucher') || colStripped.includes('kho');
+          if (isCodeCol) {
+            s = s.toUpperCase();
+          }
+          // =LOWER(): Email, Website
+          else if (cat.isEmailCol || colLower.includes('email') || colLower.includes('web')) {
+            s = s.toLowerCase();
+          }
+          // =PROPER(): Họ tên, Kênh bán, Sản phẩm, Địa danh
+          else if (cat.isNameCol && rules.standardize_names !== false) {
             s = VietnameseTextEngine.normalizeVietnameseText(s, true);
           } else if (cat.isChannelCol) {
             s = VietnameseTextEngine.normalizeSalesChannel(s);
-          } else if ((cat.isRegionCol || cat.isCategoryCol) && rules.standardize_names !== false) {
+          } else if ((cat.isRegionCol || cat.isCategoryCol || colLower.includes('san_pham') || colLower.includes('mat_hang')) && rules.standardize_names !== false) {
             s = VietnameseTextEngine.normalizeVietnameseText(s, false);
-          } else if (cat.isEmailCol) {
-            s = s.toLowerCase();
           }
 
           if (s !== orig) {
             row[c] = s;
-            if (citCounter <= 40) {
-              let stepName = "Chuẩn hóa dấu & Viết hoa";
-              let ruleCode = "TEXT_STANDARDIZATION";
+            caseStandardizedCount++;
+            if (citCounter <= 50) {
+              let stepName = "Chuẩn hóa Case (=PROPER/=UPPER/=LOWER)";
+              let ruleCode = "EXCEL_CASE_STANDARDIZATION";
               if (cat.isNameCol) {
-                stepName = "Viết hoa Tên Khách Hàng";
-                ruleCode = "CUSTOMER_NAME_TITLECASE";
+                stepName = "Họ Tên Chuẩn Hóa (=PROPER + Dấu Tiếng Việt)";
+                ruleCode = "CUSTOMER_NAME_PROPER_CASE";
               } else if (cat.isChannelCol) {
                 stepName = "Chuẩn hóa Kênh Bán Hàng";
                 ruleCode = "SALES_CHANNEL_BRAND_CASE";
-              } else if (cat.isRegionCol) {
-                stepName = "Chuẩn hóa Địa Danh / Khu Vực";
-                ruleCode = "REGION_STANDARDIZATION";
+              } else if (isCodeCol) {
+                stepName = "Viết hoa Mã Định Danh (=UPPER)";
+                ruleCode = "EXCEL_UPPER_CASE";
               }
-
               addCitation(
                 stepName,
                 idx + 1,
@@ -611,80 +843,48 @@ const DataProcessor = {
       });
     });
 
-    // Phase 3: Missing / Null values
-    const nullMode = (feedbackPrompt || '').toLowerCase().includes('bằng 0') ? 'zero' : (rules.handle_null || 'impute_smart');
-    const rowsAfterNull = [];
-    let imputedCount = 0;
+    // =========================================================================
+    // STEP 7: CHUYỂN ĐỔI ĐỊNH DẠNG SỐ ĐANG Ở DẠNG VĂN BẢN (Text-to-Number / Multiply by 1)
+    // Khi các con số bị lệch trái (đang là Text), chuyển đổi sang kiểu Number thực sự
+    // =========================================================================
+    columns.forEach(c => {
+      const info = col_stats[c];
+      const colNorm = VietnameseTextEngine.stripTones(c.toLowerCase().replace(/[\s_\-\.]+/g, ''));
+      const isLikelyNumeric = (info && info.type === 'numeric') || 
+                              colNorm.includes('doanh') || colNorm.includes('tien') || colNorm.includes('gia') || 
+                              colNorm.includes('luong') || colNorm.includes('sl') || colNorm.includes('amount') || 
+                              colNorm.includes('price') || colNorm.includes('qty') || colNorm.includes('total') || 
+                              colNorm.includes('tonkho') || colNorm.includes('diem');
 
-    cleaned.forEach((row, idx) => {
-      let dropRow = false;
-      columns.forEach(c => {
-        const val = row[c];
-        const isNull = val === null || val === undefined || String(val).trim() === '' || String(val).toLowerCase() === 'null';
-
-        if (isNull) {
-          if (nullMode === 'drop_row') {
-            dropRow = true;
-            addCitation(
-              "Xử lý giá trị trống",
-              idx + 1,
-              c,
-              `Loại bỏ dòng do thiếu trường bắt buộc: ${c}`,
-              null,
-              "[DÒNG BỊ LOẠI]",
-              "NULL_DROP_ROW"
-            );
-          } else if (nullMode === 'zero') {
-            const fillVal = col_stats[c]?.type === 'numeric' ? 0 : 'Chưa có';
-            row[c] = fillVal;
-            imputedCount++;
-            addCitation(
-              "Điền giá trị khuyết",
-              idx + 1,
-              c,
-              `Điền giá trị số 0 theo yêu cầu: "${fillVal}"`,
-              null,
-              fillVal,
-              "NULL_ZERO_IMPUTATION"
-            );
-          } else {
-            if (col_stats[c]?.type === 'numeric') {
-              const fillVal = col_stats[c].median ?? col_stats[c].mean ?? 0;
-              row[c] = fillVal;
-              imputedCount++;
-              addCitation(
-                "Điền giá trị khuyết",
-                idx + 1,
-                c,
-                `Tự động điền giá trị trung vị: ${fillVal.toLocaleString('vi-VN')}`,
-                null,
-                fillVal,
-                "NULL_SMART_MEDIAN_IMPUTE"
-              );
-            } else {
-              row[c] = "Chưa cập nhật";
-              imputedCount++;
-              addCitation(
-                "Điền giá trị khuyết",
-                idx + 1,
-                c,
-                'Gán nhãn chuẩn hóa "Chưa cập nhật"',
-                null,
-                "Chưa cập nhật",
-                "NULL_LABEL_IMPUTE"
-              );
+      if (isLikelyNumeric) {
+        cleaned.forEach((row, idx) => {
+          const rawVal = row[c];
+          if (rawVal !== null && rawVal !== undefined && typeof rawVal === 'string' && rawVal.trim() !== '') {
+            const parsedNum = parseExcelTextToNumber(rawVal);
+            if (parsedNum !== null) {
+              row[c] = parsedNum;
+              textToNumberCount++;
+              if (citCounter <= 50) {
+                addCitation(
+                  "Chuyển đổi Text-to-Number (=Paste Special Multiply 1)",
+                  idx + 1,
+                  c,
+                  `Đã chuyển đổi số dạng văn bản "${rawVal}" sang kiểu Số thực sự: ${parsedNum.toLocaleString('vi-VN')}`,
+                  rawVal,
+                  parsedNum,
+                  "EXCEL_TEXT_TO_NUMBER"
+                );
+              }
             }
           }
-        }
-      });
-      if (!dropRow) rowsAfterNull.push(row);
+        });
+      }
     });
 
-    cleaned = rowsAfterNull;
-
-    // Phase 4: Outliers clipping
+    // =========================================================================
+    // STEP 8: KIỂM SOÁT NGOẠI LAI (IQR Outliers Clipping)
+    // =========================================================================
     const outlierMode = rules.handle_outliers || 'clip';
-    let outlierFixCount = 0;
     const keepOutliers = (feedbackPrompt || '').toLowerCase().includes('giữ nguyên outlier') || (feedbackPrompt || '').toLowerCase().includes('không kẹp');
 
     if (!keepOutliers && outlierMode !== 'keep') {
@@ -943,8 +1143,14 @@ const DataProcessor = {
       strategic_proposal: strategic_proposal,
       survey_plan: survey_plan,
       improvements: {
+        trim_clean_count: trimCleanCount,
+        formats_cleared: formatClearedCount,
+        formula_errors_fixed: formulaErrorCount,
         nulls_fixed: Math.max(0, initial_stats.null_cells - final_stats.null_cells + imputedCount),
         duplicates_removed: removedDups,
+        case_standardized: caseStandardizedCount,
+        text_to_number_converted: textToNumberCount,
+        phone_standardized: phoneStandardizedCount,
         outliers_adjusted: outlierFixCount,
         quality_boost: Math.max(5, Math.round((final_stats.quality_score - initial_stats.quality_score) * 10) / 10)
       }

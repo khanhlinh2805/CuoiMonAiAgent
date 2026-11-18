@@ -1697,11 +1697,41 @@ function exportCleanedExcel() {
     return;
   }
   const data = AppState.cleanedResult.cleaned_data;
-  const ws = XLSX.utils.json_to_sheet(data);
+  
+  // Format each row ensuring numbers are true numeric types (not text-to-number)
+  const formattedData = data.map(row => {
+    const newRow = {};
+    Object.keys(row).forEach(k => {
+      const v = row[k];
+      if (typeof v === 'number') {
+        newRow[k] = v; // SheetJS will generate real numeric cell (t: 'n')
+      } else {
+        newRow[k] = v != null ? String(v) : '';
+      }
+    });
+    return newRow;
+  });
+
+  const ws = XLSX.utils.json_to_sheet(formattedData);
+
+  // Auto-fit column widths so text is never truncated
+  const colKeys = Object.keys(data[0] || {});
+  const colWidths = colKeys.map(key => {
+    let maxLen = key.length;
+    data.forEach(r => {
+      const valStr = r[key] != null ? String(r[key]) : '';
+      if (valStr.length > maxLen) maxLen = valStr.length;
+    });
+    return { wch: Math.min(Math.max(maxLen + 4, 12), 45) };
+  });
+  ws['!cols'] = colWidths;
+
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Du_Lieu_Sach");
-  XLSX.writeFile(wb, `${AppState.rawFileName.replace(/\.[^/.]+$/, "")}_Cleaned_by_LeKhanhLinh.xlsx`);
-  showToast("📁 Đã tải Excel dữ liệu sạch thành công!");
+  
+  const filename = `${AppState.rawFileName.replace(/\.[^/.]+$/, "")}_Cleaned_by_LeKhanhLinh.xlsx`;
+  XLSX.writeFile(wb, filename);
+  showToast("📊 Đã xuất file Excel dữ liệu sạch (.xlsx) thành công!");
 }
 
 function exportAnalysisExcel() {
@@ -1967,49 +1997,60 @@ function exportReportDocx() {
     <body>
       <div class="Section1">
         
-        <!-- ADMINISTRATIVE CORPORATE HEADER -->
-        <table class="header-table">
-          <tr>
-            <td style="width: 50%;">
-              <div class="org-title">${escapeHtml(companyName)}</div>
-              <div><strong>TRUNG TÂM PHÂN TÍCH BI & AI AUTOMATION</strong></div>
-              <div style="font-size: 9.5pt; color: #555;">Số: 26/BC-ĐH/LKL</div>
-            </td>
-            <td style="width: 50%; text-align: center;">
-              <div class="motto-title">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>
-              <div class="motto-sub">Độc lập - Tự do - Hạnh phúc</div>
-              <div style="font-size: 9.5pt; margin-top: 2pt;">----------------o0o----------------</div>
-              <div style="font-style: italic; font-size: 9.5pt; margin-top: 4pt;">${dateStr}</div>
-            </td>
-          </tr>
-        </table>
+        <!-- KHỐI QUỐC HIỆU VÀ TIÊU NGỮ (HOÀN TOÀN Ở GIỮA) -->
+        <div style="text-align: center; margin-bottom: 4pt;">
+          <div style="font-size: 11.5pt; font-weight: bold; text-transform: uppercase; color: #1A1A1A; letter-spacing: 0.5px;">
+            CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM
+          </div>
+          <div style="font-size: 12.0pt; font-weight: bold; color: #1A1A1A; margin-top: 3pt;">
+            Độc lập - Tự do - Hạnh phúc
+          </div>
+          <div style="font-size: 11.0pt; margin-top: 3pt; letter-spacing: 2px; color: #333333;">
+            ------------------------***------------------------
+          </div>
+        </div>
 
-        <!-- DOCUMENT TITLE -->
-        <h1 class="doc-title">BÁO CÁO KIỂM TOÁN CHẤT LƯỢNG DỮ LIỆU, HIỆU SUẤT KINH DOANH VÀ LỰA CHỌN GIẢI PHÁP TỐI ƯU HỆ THỐNG</h1>
-        <div class="doc-subtitle">(Dự án Chuẩn hóa Dữ liệu Vận hành & Phân tích Đa kênh bằng Trí tuệ Nhân tạo)</div>
+        <!-- NGÀY THÁNG ĐỊA ĐIỂM (Ở GIỮA) -->
+        <div style="text-align: center; font-style: italic; font-size: 11.0pt; color: #444444; margin-top: 6pt; margin-bottom: 22pt;">
+          ${dateStr}
+        </div>
+
+        <!-- TIÊU ĐỀ VĂN BẢN (Ở GIỮA, KHÔNG CHUNG DÒNG VỚI TIÊU NGỮ) -->
+        <div style="text-align: center; margin-bottom: 20pt;">
+          <h1 class="doc-title" style="font-size: 16.0pt; font-weight: bold; text-align: center; text-transform: uppercase; color: #8C3322; line-height: 1.4; margin: 0 0 6pt 0;">
+            BÁO CÁO KIỂM TOÁN CHẤT LƯỢNG DỮ LIỆU, HIỆU SUẤT KINH DOANH VÀ LỰA CHỌN GIẢI PHÁP TỐI ƯU HỆ THỐNG
+          </h1>
+          <div class="doc-subtitle" style="font-size: 11.5pt; font-style: italic; text-align: center; color: #555555; margin: 0;">
+            (Dự án Tự Động Hóa Chuẩn Hóa Dữ Liệu Vận Hành & Phân Tích Đa Kênh)
+          </div>
+        </div>
 
         <!-- METADATA BOX -->
         <div class="meta-box">
-          <table style="width:100%; border:none; border-collapse:collapse; font-size:10.5pt;">
+          <table style="width:100%; border:none; border-collapse:collapse; font-size:11.0pt;">
             <tr>
-              <td style="width:25%; font-weight:bold; border:none; padding:2pt 0;">Đơn vị chủ trì:</td>
-              <td style="border:none; padding:2pt 0;">Ban Dự án AI & Phân tích Dữ liệu doanh nghiệp</td>
+              <td style="width:25%; font-weight:bold; border:none; padding:3pt 0;">Đơn vị doanh nghiệp:</td>
+              <td style="border:none; padding:3pt 0; text-transform:uppercase; font-weight:bold; color:#2E2926;">${escapeHtml(companyName)}</td>
             </tr>
             <tr>
-              <td style="font-weight:bold; border:none; padding:2pt 0;">Kỹ sư & Chuyên viên lập:</td>
-              <td style="border:none; padding:2pt 0;"><strong>Lê Khánh Linh</strong> (Data Analyst & AI Engineer)</td>
+              <td style="font-weight:bold; border:none; padding:3pt 0;">Đơn vị chủ trì:</td>
+              <td style="border:none; padding:3pt 0;">Trung Tâm Phân Tích Dữ Liệu & Tự Động Hóa AI (Số: 26/BC-ĐH/LKL)</td>
             </tr>
             <tr>
-              <td style="font-weight:bold; border:none; padding:2pt 0;">Bối cảnh vận hành:</td>
-              <td style="border:none; padding:2pt 0;">${escapeHtml(industry)} | Quy mô: ${escapeHtml(scale)}</td>
+              <td style="font-weight:bold; border:none; padding:3pt 0;">Kỹ sư & Chuyên viên lập:</td>
+              <td style="border:none; padding:3pt 0;"><strong>Lê Khánh Linh</strong> (Data Analyst & AI Engineer)</td>
             </tr>
             <tr>
-              <td style="font-weight:bold; border:none; padding:2pt 0;">Kênh phân phối:</td>
-              <td style="border:none; padding:2pt 0;">${escapeHtml(channels)}</td>
+              <td style="font-weight:bold; border:none; padding:3pt 0;">Bối cảnh vận hành:</td>
+              <td style="border:none; padding:3pt 0;">${escapeHtml(industry)} | Quy mô: ${escapeHtml(scale)}</td>
             </tr>
             <tr>
-              <td style="font-weight:bold; border:none; padding:2pt 0;">Tệp dữ liệu kiểm toán:</td>
-              <td style="border:none; padding:2pt 0;"><code>${escapeHtml(AppState.rawFileName || "Dataset_Retail.xlsx")}</code></td>
+              <td style="font-weight:bold; border:none; padding:3pt 0;">Kênh phân phối:</td>
+              <td style="border:none; padding:3pt 0;">${escapeHtml(channels)}</td>
+            </tr>
+            <tr>
+              <td style="font-weight:bold; border:none; padding:3pt 0;">Tệp dữ liệu kiểm toán:</td>
+              <td style="border:none; padding:3pt 0;"><code>${escapeHtml(AppState.rawFileName || "Dataset_Retail.xlsx")}</code></td>
             </tr>
           </table>
         </div>
@@ -2230,40 +2271,87 @@ function exportReportDocx() {
           </li>
         </ul>
 
-        <!-- PHẦN VII: BẢNG KÝ KẾT CỦA CÁC BÊN LIÊN QUAN -->
-        <h2 class="sec-heading" style="margin-top: 20pt;">PHẦN VII: BẢNG KÝ KẾT & PHÊ DUYỆT CỦA CÁC BÊN LIÊN QUAN</h2>
-        <p style="font-style: italic; font-size: 10.5pt; margin-bottom: 15pt;">
-          Báo cáo này đã được các bên liên quan kiểm tra, thống nhất số liệu và trình lên Ban Điều Hành phê duyệt triển khai theo lộ trình đã cam kết:
+        <!-- PHẦN VII: BẢNG KÝ KẾT & PHÊ DUYỆT CỦA CÁC BÊN LIÊN QUAN -->
+        <h2 class="sec-heading" style="margin-top: 25pt;">PHẦN VII: BẢNG KÝ KẾT & PHÊ DUYỆT CỦA CÁC BÊN LIÊN QUAN</h2>
+        <p style="font-style: italic; font-size: 10.5pt; margin-bottom: 16pt;">
+          Báo cáo này đã được các bên liên quan kiểm tra đối soát toàn diện, thống nhất số liệu và trình lên Ban Điều Hành phê duyệt triển khai theo lộ trình đã cam kết:
         </p>
 
-        <table class="sign-table">
-          <tr>
-            <td style="width: 25%;">
-              <div style="font-weight: bold; text-transform: uppercase;">NGƯỜI LẬP BÁO CÁO</div>
-              <div class="sign-role">(Ký và ghi rõ họ tên)</div>
-              <div class="sign-name">Lê Khánh Linh</div>
-              <div class="sign-role">Kỹ sư AI & Chuyên viên Phân tích</div>
-            </td>
-            <td style="width: 25%;">
-              <div style="font-weight: bold; text-transform: uppercase;">TRƯỞNG PHÒNG DỮ LIỆU & BI</div>
-              <div class="sign-role">(Ký và ghi rõ họ tên)</div>
-              <div class="sign-name">...................................................</div>
-              <div class="sign-role">Xác nhận tính chính xác & thuật toán</div>
-            </td>
-            <td style="width: 25%;">
-              <div style="font-weight: bold; text-transform: uppercase;">GIÁM ĐỐC VẬN HÀNH (COO)</div>
-              <div class="sign-role">(Ký và ghi rõ họ tên)</div>
-              <div class="sign-name">...................................................</div>
-              <div class="sign-role">Xác nhận nghiệp vụ & kênh bán</div>
-            </td>
-            <td style="width: 25%;">
-              <div style="font-weight: bold; text-transform: uppercase;">TỔNG GIÁM ĐỐC PHÊ DUYỆT</div>
-              <div class="sign-role">(Ký tên và đóng dấu)</div>
-              <div class="sign-name">...................................................</div>
-              <div class="sign-role">Phê duyệt giải pháp & ngân sách</div>
-            </td>
-          </tr>
-        </table>
+        <div style="page-break-inside: avoid; margin-top: 15pt;">
+          <!-- KHỐI 1: CHUYÊN MÔN KỸ THUẬT & KIỂM SOÁT DỮ LIỆU -->
+          <table style="width: 100%; border-collapse: collapse; border: none; margin-bottom: 25pt;">
+            <tr>
+              <td style="width: 50%; text-align: center; vertical-align: top; border: none; padding: 4pt 14pt;">
+                <div style="font-weight: bold; font-size: 11.5pt; text-transform: uppercase; color: #1A1A1A;">
+                  NGƯỜI LẬP BÁO CÁO
+                </div>
+                <div style="font-style: italic; font-size: 10.0pt; color: #555555; margin-top: 2pt;">
+                  (Ký và ghi rõ họ tên)
+                </div>
+                <div style="height: 55pt;"></div>
+                <div style="font-weight: bold; font-size: 12.0pt; color: #2E2926;">
+                  Lê Khánh Linh
+                </div>
+                <div style="font-style: italic; font-size: 10.0pt; color: #555555; margin-top: 2pt;">
+                  Kỹ sư AI & Chuyên viên Phân tích Dữ liệu
+                </div>
+              </td>
+
+              <td style="width: 50%; text-align: center; vertical-align: top; border: none; padding: 4pt 14pt;">
+                <div style="font-weight: bold; font-size: 11.5pt; text-transform: uppercase; color: #1A1A1A;">
+                  TRƯỞNG PHÒNG DỮ LIỆU & BI
+                </div>
+                <div style="font-style: italic; font-size: 10.0pt; color: #555555; margin-top: 2pt;">
+                  (Ký và ghi rõ họ tên)
+                </div>
+                <div style="height: 55pt;"></div>
+                <div style="font-weight: bold; font-size: 11.5pt; color: #2E2926;">
+                  (Ký duyệt)
+                </div>
+                <div style="font-style: italic; font-size: 10.0pt; color: #555555; margin-top: 2pt;">
+                  Xác nhận tính chính xác & thuật toán kiểm toán
+                </div>
+              </td>
+            </tr>
+          </table>
+
+          <!-- KHỐI 2: BAN ĐIỀU HÀNH & PHÊ DUYỆT DOANH NGHIỆP -->
+          <table style="width: 100%; border-collapse: collapse; border: none; margin-top: 10pt; margin-bottom: 20pt;">
+            <tr>
+              <td style="width: 50%; text-align: center; vertical-align: top; border: none; padding: 4pt 14pt;">
+                <div style="font-weight: bold; font-size: 11.5pt; text-transform: uppercase; color: #1A1A1A;">
+                  GIÁM ĐỐC VẬN HÀNH (COO)
+                </div>
+                <div style="font-style: italic; font-size: 10.0pt; color: #555555; margin-top: 2pt;">
+                  (Ký và ghi rõ họ tên)
+                </div>
+                <div style="height: 55pt;"></div>
+                <div style="font-weight: bold; font-size: 11.5pt; color: #2E2926;">
+                  (Ký duyệt)
+                </div>
+                <div style="font-style: italic; font-size: 10.0pt; color: #555555; margin-top: 2pt;">
+                  Xác nhận quy chuẩn nghiệp vụ & kênh phân phối
+                </div>
+              </td>
+
+              <td style="width: 50%; text-align: center; vertical-align: top; border: none; padding: 4pt 14pt;">
+                <div style="font-weight: bold; font-size: 11.5pt; text-transform: uppercase; color: #1A1A1A;">
+                  TỔNG GIÁM ĐỐC / CHỦ TỊCH HĐQT
+                </div>
+                <div style="font-style: italic; font-size: 10.0pt; color: #555555; margin-top: 2pt;">
+                  (Ký tên và đóng dấu)
+                </div>
+                <div style="height: 55pt;"></div>
+                <div style="font-weight: bold; font-size: 11.5pt; color: #2E2926;">
+                  (Phê duyệt)
+                </div>
+                <div style="font-style: italic; font-size: 10.0pt; color: #555555; margin-top: 2pt;">
+                  Phê duyệt giải pháp tối ưu & cấp ngân sách
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
 
       </div>
     </body>
