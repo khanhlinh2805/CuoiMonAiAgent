@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CandyData AI · Trợ Lý Xử Lý & Làm Sạch Dữ Liệu Doanh Nghiệp</title>
+  <title>LeKhanhLinh AI Agent · Trợ Lý Xử Lý & Làm Sạch Dữ Liệu Doanh Nghiệp</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -57,24 +57,20 @@
     <div class="max-w-5xl mx-auto flex items-center justify-between gap-2 sm:gap-3">
       
       <!-- Brand & Candy Avatar (Executive & Crisp) -->
-      <div class="flex items-center gap-2 cursor-pointer shrink-0" onclick="goToStep(1)" title="CandyData AI - Trang chủ">
+      <div class="flex items-center gap-2 cursor-pointer shrink-0" onclick="goToStep(1)" title="LeKhanhLinh AI Agent - Trang chủ">
         <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-tr from-[#F6C4BA] via-[#FAD0C4] to-[#A7C9BE] flex items-center justify-center shadow-xs border border-white/80 shrink-0 transform transition-transform hover:scale-105">
           <span class="text-sm select-none leading-none">🍬</span>
         </div>
         <div class="flex items-center gap-1.5">
-          <span class="font-extrabold text-xs sm:text-sm tracking-tight text-[#2E2926]">CandyData AI</span>
-          <span class="px-1.5 py-0.5 rounded-full bg-[#EDF5F2] text-[#588376] text-[9px] font-black uppercase border border-[#A7C9BE]/50 hidden sm:inline">Enterprise v2.5</span>
+          <span class="font-extrabold text-xs sm:text-sm tracking-tight text-[#2E2926]">LeKhanhLinh</span>
+          <span class="px-1.5 py-0.5 rounded-full bg-[#EDF5F2] text-[#588376] text-[9px] font-black uppercase border border-[#A7C9BE]/50 hidden sm:inline">AI Agent</span>
         </div>
       </div>
 
       <!-- Active Step Indicator Badge (Fits cleanly, never overflows top bar) -->
-      <div id="headerActiveStepBadge" class="hidden md:flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF7F2] border border-[#EDE4DC] text-xs font-semibold text-[#588376] cursor-pointer hover:border-[#ECA294] transition-all shrink-0" onclick="focusHoverSidebar()" title="Rê chuột vào thanh bên trái để xem đầy đủ 5 bước">
+      <div id="headerActiveStepBadge" class="hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FAF7F2] border border-[#EDE4DC] text-xs font-bold text-[#588376] cursor-pointer hover:border-[#ECA294] transition-all shrink-0" onclick="focusHoverSidebar()" title="Xem các bước quy trình">
         <span class="w-2 h-2 rounded-full bg-[#ECA294] animate-pulse"></span>
-        <span id="headerCurrentStepName">1. Chào mừng</span>
-        <span class="text-[10px] text-pastel-subtext font-normal flex items-center gap-1">
-          <i class="fa-solid fa-arrow-left text-[8px] text-[#ECA294]"></i>
-          <span>Thanh bên</span>
-        </span>
+        <span id="headerCurrentStepName">1. Khởi động</span>
       </div>
 
       <!-- Header Context Badge Pill (Strictly Truncated to prevent pushing buttons) -->
@@ -148,12 +144,12 @@
     <div class="hover-sidebar-inner">
       <!-- Sidebar Header / Brand Icon -->
       <div class="hover-sidebar-header">
-        <div class="hover-sidebar-icon" title="CandyData AI Pipeline">
-          <span class="text-xs select-none">🍬</span>
+        <div class="hover-sidebar-icon" title="LeKhanhLinh AI Agent">
+          <span class="text-sm select-none">🍬</span>
         </div>
         <div class="hover-sidebar-title-group">
-          <div class="text-[11px] font-black text-[#2E2926] leading-none">Quy Trình 5 Bước</div>
-          <div class="text-[8.5px] text-[#588376] font-semibold mt-0.5">CandyData AI</div>
+          <div class="text-xs font-black text-[#2E2926] leading-none">Quy Trình 5 Bước</div>
+          <div class="text-[9.5px] text-[#588376] font-bold mt-1">LeKhanhLinh AI</div>
         </div>
       </div>
 
@@ -228,14 +224,132 @@
     </div>
   </div>
 
-  <!-- Main Workspace Container -->
-  <main class="max-w-5xl mx-auto px-4 sm:px-6 py-6 min-h-[calc(100vh-120px)] space-y-8">
+  <!-- Master Workspace Window with Permanent Clear Sidebar (Matching Reference Standard) -->
+  <main class="max-w-7xl mx-auto px-2 sm:px-4 py-4 min-h-[calc(100vh-100px)]">
 
-    <!-- ========================================================================= -->
-    <!-- ========================================================================= -->
-    <!-- BƯỚC 1: TRANG CHÀO MỪNG ĐƯỢC CÁ NHÂN HÓA BỞI LÊ KHÁNH LINH -->
-    <!-- ========================================================================= -->
-    <section id="step1View" class="step-view py-6 sm:py-8 space-y-8">
+    <!-- MASTER ENTERPRISE APP WINDOW -->
+    <div class="welcome-mac-card max-w-7xl mx-auto rounded-3xl bg-white border border-[#EDE4DC] shadow-sm overflow-hidden">
+      
+      <!-- Window Header Bar (Traffic lights, center title, reset button) -->
+      <div class="flex items-center justify-between px-5 sm:px-7 py-3 border-b border-[#EDE4DC] bg-white">
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded-full bg-[#FF5F56] inline-block shadow-xs"></span>
+          <span class="w-3 h-3 rounded-full bg-[#FFBD2E] inline-block shadow-xs"></span>
+          <span class="w-3 h-3 rounded-full bg-[#27C93F] inline-block shadow-xs"></span>
+          <span class="ml-2 font-black text-xs text-[#2E2926] tracking-wider uppercase hidden sm:inline">
+            Không gian Quản trị & Làm sạch Dữ liệu Đa Doanh Nghiệp
+          </span>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-xs font-bold text-[#588376] hidden md:inline">🍬 LeKhanhLinh AI Agent</span>
+          <button type="button" onclick="resetToInitialState()" class="flex items-center gap-1.5 text-xs text-pastel-subtext hover:text-rose-500 font-bold transition-all px-2.5 py-1 rounded-full hover:bg-rose-50 cursor-pointer" title="Làm mới lại toàn bộ hệ thống">
+            <i class="fa-solid fa-rotate-right text-[11px]"></i>
+            <span>Làm mới</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 2-COLUMN BODY: LEFT PERMANENT SIDEBAR + RIGHT CONTENT -->
+      <div class="flex flex-col lg:flex-row items-stretch">
+        
+        <!-- LEFT PERMANENT SIDEBAR: EXACT MATCH TO USER'S REFERENCE IMAGE -->
+        <aside id="mainAppSidebar" class="w-full lg:w-60 xl:w-64 shrink-0 border-b lg:border-b-0 lg:border-r border-[#EDE4DC] p-4 sm:p-5 bg-[#FAF7F2]/60 flex flex-col justify-between space-y-5 select-none">
+          
+          <!-- Top Steps Navigation -->
+          <div class="space-y-3">
+            <span class="text-[10px] font-black text-[#8C827A] uppercase tracking-wider px-1 block">
+              QUY TRÌNH XỬ LÝ BI
+            </span>
+
+            <nav class="space-y-1.5" id="sidebarNavList">
+              
+              <!-- Item 0: Trang Chủ -->
+              <div id="sideNav_home" onclick="goToStep(1)" class="side-nav-card active">
+                <div class="side-nav-node" id="sideNavNode_home">
+                  <i class="fa-solid fa-house text-xs"></i>
+                </div>
+                <div class="side-nav-text">
+                  <span class="side-nav-title">Trang Chủ</span>
+                  <span class="side-nav-sub">Giới thiệu & Hướng dẫn</span>
+                </div>
+                <span class="side-nav-indicator" id="sideNavInd_home">&gt;</span>
+              </div>
+
+              <!-- Item 1: Nhập dữ liệu -->
+              <div id="sideNav_upload" onclick="goToStep(2)" class="side-nav-card">
+                <div class="side-nav-node" id="sideNavNode_upload">1</div>
+                <div class="side-nav-text">
+                  <span class="side-nav-title">Nhập dữ liệu</span>
+                  <span class="side-nav-sub">Sheets, Excel & CSV</span>
+                </div>
+                <span class="side-nav-indicator" id="sideNavInd_upload">•</span>
+              </div>
+
+              <!-- Item 2: Vấn đề doanh nghiệp -->
+              <div id="sideNav_context" onclick="goToStep('context')" class="side-nav-card">
+                <div class="side-nav-node" id="sideNavNode_context">2</div>
+                <div class="side-nav-text">
+                  <span class="side-nav-title">Vấn đề doanh nghiệp</span>
+                  <span class="side-nav-sub">Mô hình & Mục tiêu BI</span>
+                </div>
+                <span class="side-nav-indicator" id="sideNavInd_context">•</span>
+              </div>
+
+              <!-- Item 3: Làm sạch & Duyệt -->
+              <div id="sideNav_clean" onclick="navToCleaningStep()" class="side-nav-card">
+                <div class="side-nav-node" id="sideNavNode_clean">3</div>
+                <div class="side-nav-text">
+                  <span class="side-nav-title">Làm sạch & Duyệt</span>
+                  <span class="side-nav-sub">Chuẩn hóa & Kiểm duyệt</span>
+                </div>
+                <span class="side-nav-indicator" id="sideNavInd_clean">•</span>
+              </div>
+
+              <!-- Item 4: Phân tích & Đánh giá -->
+              <div id="sideNav_analysis" onclick="navToAnalysisStep()" class="side-nav-card">
+                <div class="side-nav-node" id="sideNavNode_analysis">4</div>
+                <div class="side-nav-text">
+                  <span class="side-nav-title">Phân tích & Đánh giá</span>
+                  <span class="side-nav-sub">Insight & Cổng đánh giá</span>
+                </div>
+                <span class="side-nav-indicator" id="sideNavInd_analysis">•</span>
+              </div>
+
+              <!-- Item 5: Dashboard & Xuất tệp -->
+              <div id="sideNav_dashboard" onclick="navToDashboardStep()" class="side-nav-card">
+                <div class="side-nav-node" id="sideNavNode_dashboard">5</div>
+                <div class="side-nav-text">
+                  <span class="side-nav-title">Dashboard & Xuất tệp</span>
+                  <span class="side-nav-sub">Bento BI, Excel & Word</span>
+                </div>
+                <span class="side-nav-indicator" id="sideNavInd_dashboard">•</span>
+              </div>
+
+            </nav>
+          </div>
+
+          <!-- Bottom Card: CỔNG CON NGƯỜI DUYỆT -->
+          <div class="p-3.5 rounded-2xl bg-white border border-[#EDE4DC] space-y-2.5 shadow-2xs">
+            <span class="text-[10px] font-black text-[#8C827A] uppercase tracking-wider block">
+              CỔNG CON NGƯỜI DUYỆT
+            </span>
+            <div class="flex items-center justify-between text-xs font-bold text-[#2E2926]">
+              <span class="text-[11px] text-pastel-subtext">Kiểm duyệt dữ liệu:</span>
+              <span id="sideReviewDataBadge" class="px-2 py-0.5 rounded-full bg-[#EDF5F2] text-[#588376] text-[10px] font-black border border-[#A7C9BE]/50">Hợp lệ</span>
+            </div>
+            <div class="flex items-center justify-between text-xs font-bold text-[#2E2926]">
+              <span class="text-[11px] text-pastel-subtext">Đánh giá kết quả:</span>
+              <span id="sideReviewResultBadge" class="px-2 py-0.5 rounded-full bg-[#FEF9C3] text-amber-800 text-[10px] font-black border border-amber-300">Chờ duyệt</span>
+            </div>
+          </div>
+
+        </aside>
+
+        <!-- RIGHT CONTENT AREA -->
+        <div class="flex-1 min-w-0 p-4 sm:p-6 lg:p-7 space-y-6 bg-white overflow-x-hidden">
+
+          <!-- BƯỚC 1: TRANG CHÀO MỪNG -->
+          <section id="step1View" class="step-view space-y-6">
       
       <!-- HERO BANNER: PERSONALIZED GREETING & CREATOR BRANDING -->
       <div class="welcome-mac-card max-w-5xl mx-auto p-6 sm:p-10 lg:p-12 relative overflow-hidden">
@@ -368,22 +482,26 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
             
             <!-- Intent 1: CRM & Customer Names -->
-            <div class="welcome-intent-card active cursor-pointer p-3.5 rounded-2xl border border-[#ECA294] bg-[#FFF9F7] shadow-xs hover:shadow-md transition-all" onclick="selectWelcomeIntent('clean_crm', this)">
+            <div class="welcome-intent-card active cursor-pointer p-3.5 rounded-2xl border border-[#588376] bg-[#EDF5F2]/40 shadow-xs hover:shadow-md transition-all" onclick="selectWelcomeIntent('clean_crm', this)">
               <div class="flex items-center justify-between mb-1.5">
-                <span class="w-8 h-8 rounded-xl bg-[#FDF1EE] text-[#D47B6B] flex items-center justify-center text-sm font-black">📇</span>
-                <span class="intent-check w-4 h-4 rounded-full bg-[#ECA294] text-white flex items-center justify-center text-[9px] font-bold">✓</span>
+                <span class="w-8 h-8 rounded-xl bg-[#EDF5F2] text-[#588376] flex items-center justify-center text-xs font-black">
+                  <i class="fa-solid fa-address-card"></i>
+                </span>
+                <span class="intent-check w-4 h-4 rounded-full bg-[#588376] text-white flex items-center justify-center text-[9px] font-bold">✓</span>
               </div>
               <h4 class="text-xs font-black text-[#2E2926]">Chuẩn Hóa Danh Bạ CRM</h4>
               <p class="text-[11px] text-pastel-subtext font-medium leading-relaxed mt-1">
-                Viết hoa chuẩn <code class="text-[#D47B6B] font-bold">Ten_Khach_Hang</code>, đồng nhất 100% SĐT 10 số và khôi phục nguyên âm dấu.
+                Viết hoa chuẩn <code class="text-[#588376] font-bold">Ten_Khach_Hang</code>, đồng nhất 100% SĐT 10 số và khôi phục nguyên âm dấu.
               </p>
             </div>
 
             <!-- Intent 2: Omnichannel Normalization -->
-            <div class="welcome-intent-card cursor-pointer p-3.5 rounded-2xl border border-[#EDE4DC] bg-[#FAF7F2] hover:bg-[#FFF9F7] hover:border-[#ECA294] transition-all" onclick="selectWelcomeIntent('omnichannel', this)">
+            <div class="welcome-intent-card cursor-pointer p-3.5 rounded-2xl border border-[#EDE4DC] bg-[#FAF7F2] hover:bg-white hover:border-[#588376] transition-all" onclick="selectWelcomeIntent('omnichannel', this)">
               <div class="flex items-center justify-between mb-1.5">
-                <span class="w-8 h-8 rounded-xl bg-[#EDF5F2] text-[#588376] flex items-center justify-center text-sm font-black">🛍️</span>
-                <span class="intent-check hidden w-4 h-4 rounded-full bg-[#ECA294] text-white flex items-center justify-center text-[9px] font-bold">✓</span>
+                <span class="w-8 h-8 rounded-xl bg-[#FAF7F2] text-[#588376] flex items-center justify-center text-xs font-black">
+                  <i class="fa-solid fa-cart-shopping"></i>
+                </span>
+                <span class="intent-check hidden w-4 h-4 rounded-full bg-[#588376] text-white flex items-center justify-center text-[9px] font-bold">✓</span>
               </div>
               <h4 class="text-xs font-black text-[#2E2926]">Đồng Nhất Kênh Bán Hàng</h4>
               <p class="text-[11px] text-pastel-subtext font-medium leading-relaxed mt-1">
@@ -392,10 +510,12 @@
             </div>
 
             <!-- Intent 3: Outlier & Inventory IQR -->
-            <div class="welcome-intent-card cursor-pointer p-3.5 rounded-2xl border border-[#EDE4DC] bg-[#FAF7F2] hover:bg-[#FFF9F7] hover:border-[#ECA294] transition-all" onclick="selectWelcomeIntent('outlier_iqr', this)">
+            <div class="welcome-intent-card cursor-pointer p-3.5 rounded-2xl border border-[#EDE4DC] bg-[#FAF7F2] hover:bg-white hover:border-[#588376] transition-all" onclick="selectWelcomeIntent('outlier_iqr', this)">
               <div class="flex items-center justify-between mb-1.5">
-                <span class="w-8 h-8 rounded-xl bg-[#FDF1EE] text-[#D47B6B] flex items-center justify-center text-sm font-black">🔍</span>
-                <span class="intent-check hidden w-4 h-4 rounded-full bg-[#ECA294] text-white flex items-center justify-center text-[9px] font-bold">✓</span>
+                <span class="w-8 h-8 rounded-xl bg-[#FAF7F2] text-[#D47B6B] flex items-center justify-center text-xs font-black">
+                  <i class="fa-solid fa-magnifying-glass-chart"></i>
+                </span>
+                <span class="intent-check hidden w-4 h-4 rounded-full bg-[#588376] text-white flex items-center justify-center text-[9px] font-bold">✓</span>
               </div>
               <h4 class="text-xs font-black text-[#2E2926]">Quét Ngoại Lai & Lỗi Kho (IQR)</h4>
               <p class="text-[11px] text-pastel-subtext font-medium leading-relaxed mt-1">
@@ -404,12 +524,14 @@
             </div>
 
             <!-- Intent 4: BI Dashboard & Multi-export -->
-            <div class="welcome-intent-card cursor-pointer p-3.5 rounded-2xl border border-[#EDE4DC] bg-[#FAF7F2] hover:bg-[#FFF9F7] hover:border-[#ECA294] transition-all" onclick="selectWelcomeIntent('bi_dashboard', this)">
+            <div class="welcome-intent-card cursor-pointer p-3.5 rounded-2xl border border-[#EDE4DC] bg-[#FAF7F2] hover:bg-white hover:border-[#588376] transition-all" onclick="selectWelcomeIntent('bi_dashboard', this)">
               <div class="flex items-center justify-between mb-1.5">
-                <span class="w-8 h-8 rounded-xl bg-[#EDF5F2] text-[#588376] flex items-center justify-center text-sm font-black">📊</span>
-                <span class="intent-check hidden w-4 h-4 rounded-full bg-[#ECA294] text-white flex items-center justify-center text-[9px] font-bold">✓</span>
+                <span class="w-8 h-8 rounded-xl bg-[#FAF7F2] text-[#588376] flex items-center justify-center text-xs font-black">
+                  <i class="fa-solid fa-chart-pie"></i>
+                </span>
+                <span class="intent-check hidden w-4 h-4 rounded-full bg-[#588376] text-white flex items-center justify-center text-[9px] font-bold">✓</span>
               </div>
-              <h4 class="text-xs font-black text-[#2E2926]">Dashboard BI & Kế Hoạch 3 Bước</h4>
+              <h4 class="text-xs font-black text-[#2E2926]">Dashboard BI & Đề Xuất Chiến Lược</h4>
               <p class="text-[11px] text-pastel-subtext font-medium leading-relaxed mt-1">
                 Trực quan hóa chỉ số tăng trưởng, tự động sinh đề xuất chiến lược và xuất trọn bộ Excel & Word.
               </p>
@@ -504,22 +626,20 @@
     </section>
 
     <!-- ========================================================================= -->
-    <!-- BƯỚC 1.5: THIẾT LẬP BỐI CẢNH DOANH NGHIỆP (LOẠI HÌNH BẮT BUỘC & MỞ RỘNG) -->
+    <!-- BƯỚC 2: THIẾT LẬP BỐI CẢNH DOANH NGHIỆP (LOẠI HÌNH BẮT BUỘC & MỞ RỘNG) -->
     <!-- ========================================================================= -->
     <section id="stepContextView" class="step-view hidden py-4 sm:py-6">
       
-      <div class="welcome-mac-card max-w-4xl mx-auto p-6 sm:p-10 space-y-8 relative overflow-hidden">
+      <div class="welcome-mac-card max-w-4xl mx-auto p-6 sm:p-10 space-y-8 relative overflow-hidden bg-white border border-[#EDE4DC] rounded-3xl shadow-sm">
         
-        <!-- Window Header Bar -->
+        <!-- Institutional Header Bar -->
         <div class="flex items-center justify-between pb-4 border-b border-[#EDE4DC]">
-          <div class="flex items-center gap-2">
-            <span class="w-3 h-3 rounded-full bg-[#FF5F56] inline-block shadow-xs"></span>
-            <span class="w-3 h-3 rounded-full bg-[#FFBD2E] inline-block shadow-xs"></span>
-            <span class="w-3 h-3 rounded-full bg-[#27C93F] inline-block shadow-xs"></span>
-            <span class="ml-2 font-black text-xs text-[#2E2926] tracking-wider uppercase">CandyData AI Studio · Thiết Lập Bối Cảnh Doanh Nghiệp</span>
+          <div class="flex items-center gap-2.5">
+            <div class="w-3 h-3 rounded-full bg-[#588376] shadow-xs"></div>
+            <span class="font-extrabold text-xs text-[#2E2926] tracking-wider uppercase">CẤU HÌNH HỒ SƠ & BỐI CẢNH DOANH NGHIỆP</span>
           </div>
-          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FDF1EE] border border-[#F6C4BA] text-[#D47B6B] text-xs font-black shadow-xs">
-            <i class="fa-solid fa-bullseye"></i>
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EDF5F2] border border-[#A7C9BE]/60 text-[#588376] text-xs font-bold shadow-2xs">
+            <i class="fa-solid fa-building-user text-[11px]"></i>
             <span>BƯỚC BẮT BUỘC (2/5)</span>
           </div>
         </div>
@@ -527,12 +647,12 @@
         <!-- Section Title & Intro -->
         <div class="text-center max-w-2xl mx-auto space-y-2">
           <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EDF5F2] text-[#588376] text-xs font-black">
-            <i class="fa-solid fa-building"></i>
-            <span>Thấu Hiểu Mô Hình Để Cá Nhân Hóa Dữ Liệu</span>
+            <i class="fa-solid fa-compass"></i>
+            <span>Chuẩn Hóa Tham Số Phân Tích & Đối Soát</span>
           </div>
-          <h2 class="text-2xl sm:text-3xl font-black text-[#2E2926] tracking-tight">Doanh Nghiệp Của Bạn Thuộc Lĩnh Vực Nào?</h2>
+          <h2 class="text-xl sm:text-2xl font-black text-[#2E2926] tracking-tight">Doanh Nghiệp Của Bạn Thuộc Lĩnh Vực Nào?</h2>
           <p class="text-xs sm:text-sm text-pastel-subtext leading-relaxed font-medium">
-            Hệ thống Trợ Lý AI sẽ dựa vào bối cảnh này để tự động tối ưu hóa từ điển làm sạch, nhận diện kênh bán, phát hiện ngoại lai và xây dựng đề xuất chiến lược sát thực tế nhất.
+            AI Agent sẽ dựa vào bối cảnh này để tự động tối ưu hóa từ điển làm sạch dữ liệu, nhận diện cơ cấu doanh thu đa kênh, phát hiện ngoại lai IQR và xây dựng báo cáo phân tích chiến lược sát thực tế nhất.
           </p>
         </div>
 
@@ -540,9 +660,9 @@
         <div class="space-y-3">
           <div class="flex items-center justify-between">
             <label class="block text-xs font-black text-[#2E2926] uppercase tracking-wider">
-              1. Loại hình doanh nghiệp của bạn <span class="text-rose-500 font-black">* (Bắt buộc)</span>:
+              1. Lĩnh vực hoạt động chính của doanh nghiệp <span class="text-rose-500 font-black">* (Bắt buộc)</span>:
             </label>
-            <span id="industryRequiredNotice" class="text-[11px] font-bold text-rose-500 hidden">Vui lòng chọn 1 loại hình!</span>
+            <span id="industryRequiredNotice" class="text-[11px] font-bold text-rose-500 hidden">Vui lòng chọn 1 lĩnh vực!</span>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -550,80 +670,112 @@
             <!-- Industry 1: Retail & E-commerce -->
             <div class="industry-card active" id="indCard_retail" onclick="selectIndustry('retail', 'Bán lẻ & Thương mại điện tử')">
               <div class="flex items-start justify-between">
-                <span class="text-2xl">🛍️</span>
-                <span class="ind-check w-5 h-5 rounded-full bg-[#ECA294] text-white flex items-center justify-center text-[10px] font-bold">✓</span>
+                <div class="w-9 h-9 rounded-xl bg-[#EDF5F2] text-[#588376] flex items-center justify-center text-sm font-bold shadow-2xs">
+                  <i class="fa-solid fa-cart-shopping"></i>
+                </div>
+                <span class="ind-check w-5 h-5 rounded-full bg-[#588376] text-white flex items-center justify-center text-[10px] font-bold">
+                  <i class="fa-solid fa-check"></i>
+                </span>
               </div>
-              <h4 class="font-black text-xs text-[#2E2926] mt-2">Bán Lẻ & E-commerce</h4>
-              <p class="text-[10px] text-pastel-subtext font-medium leading-relaxed mt-1">Shopee, TikTok Shop, Lazada, Cửa hàng trực tiếp, Website bán lẻ.</p>
+              <h4 class="font-black text-xs text-[#2E2926] mt-2.5">Bán Lẻ & E-commerce</h4>
+              <p class="text-[10px] text-pastel-subtext font-medium leading-relaxed mt-1">Shopee, TikTok Shop, Lazada, Chuỗi cửa hàng, Website bán lẻ.</p>
             </div>
 
             <!-- Industry 2: F&B & Services -->
             <div class="industry-card" id="indCard_fnb" onclick="selectIndustry('fnb', 'Dịch vụ & F&B / Nhà hàng')">
               <div class="flex items-start justify-between">
-                <span class="text-2xl">🍽️</span>
-                <span class="ind-check w-5 h-5 rounded-full bg-[#ECA294] text-white flex items-center justify-center text-[10px] font-bold hidden">✓</span>
+                <div class="w-9 h-9 rounded-xl bg-[#FAF7F2] text-[#7A726B] flex items-center justify-center text-sm font-bold shadow-2xs">
+                  <i class="fa-solid fa-utensils"></i>
+                </div>
+                <span class="ind-check w-5 h-5 rounded-full bg-[#588376] text-white flex items-center justify-center text-[10px] font-bold hidden">
+                  <i class="fa-solid fa-check"></i>
+                </span>
               </div>
-              <h4 class="font-black text-xs text-[#2E2926] mt-2">Dịch Vụ & F&B</h4>
+              <h4 class="font-black text-xs text-[#2E2926] mt-2.5">Dịch Vụ & F&B</h4>
               <p class="text-[10px] text-pastel-subtext font-medium leading-relaxed mt-1">Nhà hàng, Quán Cafe, Chuỗi ẩm thực, Khách sạn, Dịch vụ giải trí.</p>
             </div>
 
             <!-- Industry 3: Distribution & Wholesale -->
             <div class="industry-card" id="indCard_distribution" onclick="selectIndustry('distribution', 'Phân phối & Bán buôn (B2B)')">
               <div class="flex items-start justify-between">
-                <span class="text-2xl">📦</span>
-                <span class="ind-check w-5 h-5 rounded-full bg-[#ECA294] text-white flex items-center justify-center text-[10px] font-bold hidden">✓</span>
+                <div class="w-9 h-9 rounded-xl bg-[#FAF7F2] text-[#7A726B] flex items-center justify-center text-sm font-bold shadow-2xs">
+                  <i class="fa-solid fa-truck-ramp-box"></i>
+                </div>
+                <span class="ind-check w-5 h-5 rounded-full bg-[#588376] text-white flex items-center justify-center text-[10px] font-bold hidden">
+                  <i class="fa-solid fa-check"></i>
+                </span>
               </div>
-              <h4 class="font-black text-xs text-[#2E2926] mt-2">Phân Phối & Bán Buôn</h4>
+              <h4 class="font-black text-xs text-[#2E2926] mt-2.5">Phân Phối & Bán Buôn</h4>
               <p class="text-[10px] text-pastel-subtext font-medium leading-relaxed mt-1">Đại lý phân phối, Kênh sỉ B2B, Hợp đồng lớn, Chuỗi cung ứng.</p>
             </div>
 
             <!-- Industry 4: Manufacturing -->
             <div class="industry-card" id="indCard_manufacturing" onclick="selectIndustry('manufacturing', 'Sản xuất & Gia công chế tạo')">
               <div class="flex items-start justify-between">
-                <span class="text-2xl">🏭</span>
-                <span class="ind-check w-5 h-5 rounded-full bg-[#ECA294] text-white flex items-center justify-center text-[10px] font-bold hidden">✓</span>
+                <div class="w-9 h-9 rounded-xl bg-[#FAF7F2] text-[#7A726B] flex items-center justify-center text-sm font-bold shadow-2xs">
+                  <i class="fa-solid fa-industry"></i>
+                </div>
+                <span class="ind-check w-5 h-5 rounded-full bg-[#588376] text-white flex items-center justify-center text-[10px] font-bold hidden">
+                  <i class="fa-solid fa-check"></i>
+                </span>
               </div>
-              <h4 class="font-black text-xs text-[#2E2926] mt-2">Sản Xuất & Gia Công</h4>
+              <h4 class="font-black text-xs text-[#2E2926] mt-2.5">Sản Xuất & Chế Biến</h4>
               <p class="text-[10px] text-pastel-subtext font-medium leading-relaxed mt-1">Nhà xưởng, Sản xuất thành phẩm, Quản lý kho vật tư & hao hụt.</p>
             </div>
 
             <!-- Industry 5: Tech & SaaS -->
             <div class="industry-card" id="indCard_tech" onclick="selectIndustry('tech', 'Công nghệ, Phần mềm & SaaS')">
               <div class="flex items-start justify-between">
-                <span class="text-2xl">💻</span>
-                <span class="ind-check w-5 h-5 rounded-full bg-[#ECA294] text-white flex items-center justify-center text-[10px] font-bold hidden">✓</span>
+                <div class="w-9 h-9 rounded-xl bg-[#FAF7F2] text-[#7A726B] flex items-center justify-center text-sm font-bold shadow-2xs">
+                  <i class="fa-solid fa-laptop-code"></i>
+                </div>
+                <span class="ind-check w-5 h-5 rounded-full bg-[#588376] text-white flex items-center justify-center text-[10px] font-bold hidden">
+                  <i class="fa-solid fa-check"></i>
+                </span>
               </div>
-              <h4 class="font-black text-xs text-[#2E2926] mt-2">Công Nghệ & SaaS</h4>
+              <h4 class="font-black text-xs text-[#2E2926] mt-2.5">Công Nghệ & SaaS</h4>
               <p class="text-[10px] text-pastel-subtext font-medium leading-relaxed mt-1">Công ty phần mềm, Digital Agency, Dịch vụ số, Nền tảng online.</p>
             </div>
 
             <!-- Industry 6: Education & Health -->
             <div class="industry-card" id="indCard_education" onclick="selectIndustry('education', 'Giáo dục, Y tế & Đào tạo')">
               <div class="flex items-start justify-between">
-                <span class="text-2xl">🏥</span>
-                <span class="ind-check w-5 h-5 rounded-full bg-[#ECA294] text-white flex items-center justify-center text-[10px] font-bold hidden">✓</span>
+                <div class="w-9 h-9 rounded-xl bg-[#FAF7F2] text-[#7A726B] flex items-center justify-center text-sm font-bold shadow-2xs">
+                  <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <span class="ind-check w-5 h-5 rounded-full bg-[#588376] text-white flex items-center justify-center text-[10px] font-bold hidden">
+                  <i class="fa-solid fa-check"></i>
+                </span>
               </div>
-              <h4 class="font-black text-xs text-[#2E2926] mt-2">Giáo Dục & Y Tế</h4>
-              <p class="text-[10px] text-pastel-subtext font-medium leading-relaxed mt-1">Trường học, Trung tâm đào tạo, Bệnh viện, Phòng khám, Dược phẩm.</p>
+              <h4 class="font-black text-xs text-[#2E2926] mt-2.5">Giáo Dục & Y Tế</h4>
+              <p class="text-[10px] text-pastel-subtext font-medium leading-relaxed mt-1">Trường học, Viện đào tạo, Bệnh viện, Phòng khám, Dược phẩm.</p>
             </div>
 
             <!-- Industry 7: Finance & Real Estate -->
             <div class="industry-card" id="indCard_finance" onclick="selectIndustry('finance', 'Tài chính & Bất động sản')">
               <div class="flex items-start justify-between">
-                <span class="text-2xl">🏦</span>
-                <span class="ind-check w-5 h-5 rounded-full bg-[#ECA294] text-white flex items-center justify-center text-[10px] font-bold hidden">✓</span>
+                <div class="w-9 h-9 rounded-xl bg-[#FAF7F2] text-[#7A726B] flex items-center justify-center text-sm font-bold shadow-2xs">
+                  <i class="fa-solid fa-landmark"></i>
+                </div>
+                <span class="ind-check w-5 h-5 rounded-full bg-[#588376] text-white flex items-center justify-center text-[10px] font-bold hidden">
+                  <i class="fa-solid fa-check"></i>
+                </span>
               </div>
-              <h4 class="font-black text-xs text-[#2E2926] mt-2">Tài Chính & BĐS</h4>
+              <h4 class="font-black text-xs text-[#2E2926] mt-2.5">Tài Chính & BĐS</h4>
               <p class="text-[10px] text-pastel-subtext font-medium leading-relaxed mt-1">Dịch vụ tài chính, Đầu tư, Môi giới bất động sản, Bảo hiểm.</p>
             </div>
 
             <!-- Industry 8: Other -->
             <div class="industry-card" id="indCard_other" onclick="selectIndustry('other', 'Ngành nghề khác')">
               <div class="flex items-start justify-between">
-                <span class="text-2xl">🌐</span>
-                <span class="ind-check w-5 h-5 rounded-full bg-[#ECA294] text-white flex items-center justify-center text-[10px] font-bold hidden">✓</span>
+                <div class="w-9 h-9 rounded-xl bg-[#FAF7F2] text-[#7A726B] flex items-center justify-center text-sm font-bold shadow-2xs">
+                  <i class="fa-solid fa-cubes"></i>
+                </div>
+                <span class="ind-check w-5 h-5 rounded-full bg-[#588376] text-white flex items-center justify-center text-[10px] font-bold hidden">
+                  <i class="fa-solid fa-check"></i>
+                </span>
               </div>
-              <h4 class="font-black text-xs text-[#2E2926] mt-2">Mô Hình Khác</h4>
+              <h4 class="font-black text-xs text-[#2E2926] mt-2.5">Mô Hình Khác</h4>
               <p class="text-[10px] text-pastel-subtext font-medium leading-relaxed mt-1">Ngành nghề đặc thù (Nhập tùy chỉnh theo nhu cầu riêng của bạn).</p>
             </div>
 
@@ -631,7 +783,7 @@
 
           <!-- Custom industry input (only visible if Other is selected) -->
           <div id="otherIndustryInputWrapper" class="hidden pt-2">
-            <input type="text" id="ctxCustomIndustryInput" placeholder="Nhập tên ngành nghề cụ thể của doanh nghiệp bạn..." class="w-full text-xs font-semibold p-3.5 rounded-2xl bg-white border border-[#EDE4DC] text-[#2E2926] outline-none focus:border-[#ECA294]" />
+            <input type="text" id="ctxCustomIndustryInput" placeholder="Nhập tên ngành nghề cụ thể của doanh nghiệp bạn..." class="w-full text-xs font-semibold p-3.5 rounded-2xl bg-white border border-[#EDE4DC] text-[#2E2926] outline-none focus:border-[#588376]" />
           </div>
         </div>
 
@@ -645,25 +797,44 @@
             
             <!-- Company / Brand Name -->
             <div class="space-y-1.5">
-              <span class="text-xs font-bold text-[#2E2926]">Tên thương hiệu / Doanh nghiệp:</span>
-              <input type="text" id="ctxCompanyName" placeholder="Ví dụ: Công ty TNHH Bán Lẻ An Nhiên, VietShop..." class="w-full text-xs font-semibold p-3.5 rounded-2xl bg-[#FAF7F2] border border-[#EDE4DC] text-[#2E2926] outline-none focus:border-[#ECA294] focus:bg-white transition-all" />
+              <span class="text-xs font-bold text-[#2E2926] flex items-center gap-1.5">
+                <i class="fa-solid fa-building text-[#588376] text-[11px]"></i> Tên thương hiệu / Doanh nghiệp:
+              </span>
+              <input type="text" id="ctxCompanyName" placeholder="Ví dụ: Công ty TNHH Bán Lẻ An Nhiên, VietShop..." class="w-full text-xs font-semibold p-3.5 rounded-2xl bg-[#FAF7F2] border border-[#EDE4DC] text-[#2E2926] outline-none focus:border-[#588376] focus:bg-white transition-all" />
             </div>
 
             <!-- Company Scale -->
             <div class="space-y-1.5">
-              <span class="text-xs font-bold text-[#2E2926]">Quy mô doanh nghiệp:</span>
-              <div class="grid grid-cols-3 gap-2">
-                <button type="button" onclick="selectScale('startup')" id="scaleBtn_startup" class="p-2.5 rounded-xl border border-[#EDE4DC] bg-[#FAF7F2] text-center text-xs font-bold text-[#2E2926] hover:border-[#ECA294] transition-all">
-                  <span class="block text-sm">🚀</span>
-                  <span class="text-[10px] block font-bold">Startup</span>
+              <span class="text-xs font-bold text-[#2E2926] flex items-center gap-1.5">
+                <i class="fa-solid fa-users-gear text-[#588376] text-[11px]"></i> Quy mô doanh nghiệp:
+              </span>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <button type="button" onclick="selectScale('startup')" id="scaleBtn_startup" class="p-2.5 rounded-xl border border-[#EDE4DC] bg-[#FAF7F2] text-left text-xs font-bold text-[#2E2926] hover:border-[#588376] transition-all flex items-center gap-2.5">
+                  <div class="w-7 h-7 rounded-lg bg-white border border-[#EDE4DC] text-[#588376] flex items-center justify-center text-xs shrink-0">
+                    <i class="fa-solid fa-seedling"></i>
+                  </div>
+                  <div>
+                    <span class="text-xs font-bold block text-[#2E2926]">Startup</span>
+                    <span class="text-[9px] text-pastel-subtext font-normal block">&lt; 20 người</span>
+                  </div>
                 </button>
-                <button type="button" onclick="selectScale('sme')" id="scaleBtn_sme" class="p-2.5 rounded-xl border border-[#ECA294] bg-white text-center text-xs font-bold text-[#D47B6B] shadow-xs ring-1 ring-[#ECA294]/30 transition-all">
-                  <span class="block text-sm">🏢</span>
-                  <span class="text-[10px] block font-bold">SME Vừa</span>
+                <button type="button" onclick="selectScale('sme')" id="scaleBtn_sme" class="p-2.5 rounded-xl border-2 border-[#588376] bg-white text-left text-xs font-bold text-[#588376] shadow-xs transition-all flex items-center gap-2.5">
+                  <div class="w-7 h-7 rounded-lg bg-[#EDF5F2] text-[#588376] flex items-center justify-center text-xs shrink-0">
+                    <i class="fa-solid fa-building"></i>
+                  </div>
+                  <div>
+                    <span class="text-xs font-bold block text-[#2E2926]">Vừa & Nhỏ (SME)</span>
+                    <span class="text-[9px] text-pastel-subtext font-normal block">20 - 200 người</span>
+                  </div>
                 </button>
-                <button type="button" onclick="selectScale('enterprise')" id="scaleBtn_enterprise" class="p-2.5 rounded-xl border border-[#EDE4DC] bg-[#FAF7F2] text-center text-xs font-bold text-[#2E2926] hover:border-[#ECA294] transition-all">
-                  <span class="block text-sm">🏛️</span>
-                  <span class="text-[10px] block font-bold">Lớn (Corp)</span>
+                <button type="button" onclick="selectScale('enterprise')" id="scaleBtn_enterprise" class="p-2.5 rounded-xl border border-[#EDE4DC] bg-[#FAF7F2] text-left text-xs font-bold text-[#2E2926] hover:border-[#588376] transition-all flex items-center gap-2.5">
+                  <div class="w-7 h-7 rounded-lg bg-white border border-[#EDE4DC] text-[#588376] flex items-center justify-center text-xs shrink-0">
+                    <i class="fa-solid fa-city"></i>
+                  </div>
+                  <div>
+                    <span class="text-xs font-bold block text-[#2E2926]">Lớn (Corp)</span>
+                    <span class="text-[9px] text-pastel-subtext font-normal block">&gt; 200 người</span>
+                  </div>
                 </button>
               </div>
             </div>
@@ -675,19 +846,19 @@
             <span class="text-xs font-bold text-[#2E2926]">Mục tiêu ưu tiên khi xử lý dữ liệu (Chọn một hoặc nhiều):</span>
             <div class="flex flex-wrap gap-2">
               <span class="choice-chip active" id="objChip_sales" onclick="toggleObjective('sales')">
-                <i class="fa-solid fa-chart-line text-[#D47B6B]"></i> Tối ưu doanh thu & hiệu quả kênh bán
+                <i class="fa-solid fa-chart-line text-[#588376]"></i> Tối ưu doanh thu & cơ cấu kênh bán
               </span>
               <span class="choice-chip active" id="objChip_crm" onclick="toggleObjective('crm')">
-                <i class="fa-solid fa-users text-[#588376]"></i> Chuẩn hóa danh bạ CRM, SĐT & Tên khách hàng
+                <i class="fa-solid fa-address-card text-[#588376]"></i> Chuẩn hóa CRM, họ tên tiếng Việt & SĐT 10 số
               </span>
               <span class="choice-chip" id="objChip_cost" onclick="toggleObjective('cost')">
-                <i class="fa-solid fa-box text-[#88B2A6]"></i> Kiểm soát chi phí, tồn kho & ngoại lai
+                <i class="fa-solid fa-shield-halved text-[#588376]"></i> Kiểm soát ngoại lai IQR & thất thoát dữ liệu
               </span>
               <span class="choice-chip" id="objChip_board" onclick="toggleObjective('board')">
-                <i class="fa-solid fa-file-invoice text-amber-600"></i> Chuẩn bị báo cáo Ban Giám Đốc / Nhà đầu tư
+                <i class="fa-solid fa-file-contract text-[#588376]"></i> Báo cáo thẩm định Ban Giám Đốc / Nhà đầu tư
               </span>
               <span class="choice-chip" id="objChip_auto" onclick="toggleObjective('auto')">
-                <i class="fa-solid fa-bolt text-purple-600"></i> Tự động hóa báo cáo định kỳ
+                <i class="fa-solid fa-arrows-rotate text-[#588376]"></i> Tự động hóa quy trình đối soát định kỳ
               </span>
             </div>
           </div>
@@ -696,23 +867,23 @@
           <div class="space-y-2 pt-1">
             <span class="text-xs font-bold text-[#2E2926]">Các kênh bán hàng / tiếp cận chính:</span>
             <div class="flex flex-wrap gap-2">
-              <span class="choice-chip active" id="chanChip_shopee" onclick="toggleChannel('Shopee', this)">🛒 Shopee</span>
-              <span class="choice-chip active" id="chanChip_tiktok" onclick="toggleChannel('TikTok Shop', this)">🎵 TikTok Shop</span>
-              <span class="choice-chip" id="chanChip_lazada" onclick="toggleChannel('Lazada', this)">📦 Lazada</span>
-              <span class="choice-chip" id="chanChip_tiki" onclick="toggleChannel('Tiki', this)">📘 Tiki</span>
-              <span class="choice-chip active" id="chanChip_store" onclick="toggleChannel('Tại Cửa Hàng', this)">🏪 Tại Cửa Hàng (Offline)</span>
-              <span class="choice-chip" id="chanChip_web" onclick="toggleChannel('Website', this)">🌐 Website</span>
-              <span class="choice-chip" id="chanChip_fb" onclick="toggleChannel('Facebook Fanpage', this)">💬 Facebook Fanpage</span>
-              <span class="choice-chip" id="chanChip_zalo" onclick="toggleChannel('Zalo OA', this)">📱 Zalo OA</span>
-              <span class="choice-chip" id="chanChip_agency" onclick="toggleChannel('Đại Lý', this)">🤝 Đại Lý</span>
-              <span class="choice-chip" id="chanChip_hotline" onclick="toggleChannel('Hotline / Telesale', this)">📞 Hotline / Telesale</span>
+              <span class="choice-chip active" id="chanChip_shopee" onclick="toggleChannel('Shopee', this)"><i class="fa-solid fa-bag-shopping text-[#D47B6B]"></i> Shopee</span>
+              <span class="choice-chip active" id="chanChip_tiktok" onclick="toggleChannel('TikTok Shop', this)"><i class="fa-brands fa-tiktok text-slate-800"></i> TikTok Shop</span>
+              <span class="choice-chip" id="chanChip_lazada" onclick="toggleChannel('Lazada', this)"><i class="fa-solid fa-box text-blue-600"></i> Lazada</span>
+              <span class="choice-chip" id="chanChip_tiki" onclick="toggleChannel('Tiki', this)"><i class="fa-solid fa-book-bookmark text-sky-600"></i> Tiki</span>
+              <span class="choice-chip active" id="chanChip_store" onclick="toggleChannel('Tại Cửa Hàng', this)"><i class="fa-solid fa-store text-[#588376]"></i> Cửa Hàng Trực Tiếp (Offline)</span>
+              <span class="choice-chip" id="chanChip_web" onclick="toggleChannel('Website', this)"><i class="fa-solid fa-globe text-emerald-600"></i> Website Bán Lẻ</span>
+              <span class="choice-chip" id="chanChip_fb" onclick="toggleChannel('Facebook Fanpage', this)"><i class="fa-brands fa-facebook text-blue-600"></i> Facebook Fanpage</span>
+              <span class="choice-chip" id="chanChip_zalo" onclick="toggleChannel('Zalo OA', this)"><i class="fa-solid fa-comment-dots text-blue-500"></i> Zalo OA</span>
+              <span class="choice-chip" id="chanChip_agency" onclick="toggleChannel('Đại Lý', this)"><i class="fa-solid fa-handshake text-amber-600"></i> Đại Lý Phân Phối (B2B)</span>
+              <span class="choice-chip" id="chanChip_hotline" onclick="toggleChannel('Hotline / Telesale', this)"><i class="fa-solid fa-headset text-indigo-600"></i> Hotline / Telesale</span>
             </div>
           </div>
 
           <!-- Notes -->
           <div class="space-y-1.5 pt-1">
-            <span class="text-xs font-bold text-[#2E2926]">Ghi chú đặc thù hoặc kỳ vọng riêng cho Trợ Lý Dữ Liệu AI:</span>
-            <textarea id="ctxNotes" rows="2" placeholder="Ví dụ: Chúng tôi có nhiều đơn hàng trên sàn Shopee và TikTok Shop, cần chuẩn hóa cột Ten_Khach_Hang viết hoa đầy đủ dấu, cột Kenh_Ban_Hang chuẩn tên sàn và làm rõ doanh thu theo từng kênh..." class="w-full text-xs font-semibold p-3.5 rounded-2xl bg-[#FAF7F2] border border-[#EDE4DC] text-[#2E2926] outline-none focus:border-[#ECA294] focus:bg-white transition-all"></textarea>
+            <span class="text-xs font-bold text-[#2E2926]">Ghi chú đặc thù hoặc kỳ vọng riêng cho AI Agent:</span>
+            <textarea id="ctxNotes" rows="2" placeholder="Ví dụ: Doanh nghiệp có nhiều giao dịch trên sàn Shopee và TikTok Shop, cần chuẩn hóa cột Ten_Khach_Hang viết hoa chuẩn tiếng Việt, cột Kenh_Ban_Hang chuẩn hóa tên kênh và đối soát doanh thu..." class="w-full text-xs font-semibold p-3.5 rounded-2xl bg-[#FAF7F2] border border-[#EDE4DC] text-[#2E2926] outline-none focus:border-[#588376] focus:bg-white transition-all"></textarea>
           </div>
 
         </div>
@@ -940,26 +1111,25 @@
     <!-- ========================================================================= -->
     <section id="studioWorkspaceView" class="step-view hidden space-y-6">
       
-      <!-- Studio Tabs Toolbar (Matching Reference Site Architecture) -->
+      <!-- Studio Tabs Toolbar (Executive & Clean) -->
       <div class="flex items-center justify-between flex-wrap gap-3 border-b border-[#EDE4DC] pb-3">
         <div class="flex items-center gap-2 overflow-x-auto pb-1">
           <button type="button" id="tabBtnRank" onclick="switchStudioTab('rank')" class="studio-tab-btn active">
-            <span>🏆 Dashboard & Phân Tích</span>
+            <span>📊 Báo Cáo Phân Tích & Dashboard</span>
           </button>
           <button type="button" id="tabBtnNorm" onclick="switchStudioTab('norm')" class="studio-tab-btn">
-            <span>🧹 Dữ Liệu & Thống Kê Cột</span>
-          </button>
-          <button type="button" id="tabBtnProposal" onclick="switchStudioTab('proposal')" class="studio-tab-btn">
-            <span>📄 Báo Cáo & Lộ Trình (BC)</span>
+            <span>🧹 Bảng Dữ Liệu Sạch (Chi Tiết)</span>
           </button>
           <button type="button" id="tabBtnTools" onclick="switchStudioTab('tools')" class="studio-tab-btn">
-            <span>🔧 Nhật Ký Kiểm Toán</span>
+            <span>🔧 Nhật Ký Kiểm Toán & Schema</span>
           </button>
+          <!-- Hidden compatibility button for proposal tab -->
+          <button type="button" id="tabBtnProposal" onclick="switchStudioTab('proposal')" class="hidden"></button>
         </div>
 
         <div class="flex items-center gap-2">
           <span id="studioApprovedBadge" class="px-3 py-1 rounded-full bg-[#EDF5F2] text-[#588376] text-xs font-extrabold border border-[#A7C9BE]/50">
-            <i class="fa-solid fa-shield-check"></i> Trạng thái: Đang xử lý
+            <i class="fa-solid fa-clock"></i> Trạng thái: Chờ Phê Duyệt
           </span>
         </div>
       </div>
@@ -1186,149 +1356,378 @@
           <span id="topChannelBadge"></span>
         </div>
 
-        <!-- ACCORDION: CHI TIẾT KHÁCH HÀNG VIP, SẢN PHẨM & CẢNH BÁO DỊ THƯỜNG IQR -->
-        <details class="pastel-card p-5 border border-[#EDE4DC] rounded-2xl group transition-all bg-white shadow-xs">
-          <summary class="font-extrabold text-sm sm:text-base text-[#2E2926] cursor-pointer flex items-center justify-between list-none select-none">
-            <span class="flex items-center gap-2">
-              <i class="fa-solid fa-list-check text-[#588376]"></i>
-              <span>Xem Thêm: Khách Hàng VIP, Mặt Hàng Bán Chạy & Cảnh Báo IQR</span>
+        <!-- ================================================================= -->
+        <!-- 3. KHÁCH HÀNG VIP, SẢN PHẨM BÁN CHẠY & CẢNH BÁO DỊ THƯỜNG IQR -->
+        <!-- ================================================================= -->
+        <div class="pastel-card p-5 sm:p-6 border border-[#EDE4DC] rounded-2xl bg-white shadow-xs space-y-6">
+          <div class="flex items-center justify-between pb-3 border-b border-[#EDE4DC]">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#588376]"></span>
+              <h3 class="font-extrabold text-sm sm:text-base text-[#2E2926]">Phân Tích Khách Hàng VIP & Danh Mục Mặt Hàng Bán Chạy</h3>
+            </div>
+            <span class="text-xs font-bold text-[#588376] bg-[#EDF5F2] px-2.5 py-1 rounded-full border border-[#A7C9BE]/50">
+              <i class="fa-solid fa-chart-line-up mr-1"></i> Số liệu thực tế
             </span>
-            <span class="text-xs text-[#D47B6B] font-bold group-open:rotate-180 transition-transform px-2 py-1 bg-[#FAF7F2] rounded-lg">
-              <i class="fa-solid fa-chevron-down"></i>
-            </span>
-          </summary>
+          </div>
 
-          <div class="pt-5 space-y-6">
-            <!-- 4. KHÁCH HÀNG VIP & TOP SẢN PHẨM BÁN CHẠY -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-              
-              <!-- Left: Top 5 VIP Customers -->
-              <div class="lg:col-span-7 p-4 sm:p-5 rounded-2xl bg-[#FAF7F2] border border-[#EDE4DC] space-y-4">
-                <div class="flex items-center justify-between pb-3 border-b border-[#EDE4DC]">
-                  <div>
-                    <h3 class="text-sm sm:text-base font-black text-[#2E2926] flex items-center gap-2">
-                      <i class="fa-solid fa-crown text-amber-500"></i>
-                      <span>Top Khách Hàng Đóng Góp Doanh Số Cao Nhất</span>
-                    </h3>
-                    <p class="text-xs text-pastel-subtext">Họ tên viết hoa chuẩn và SĐT 10 số đồng nhất sẵn sàng chăm sóc VIP</p>
-                  </div>
-                </div>
-
-                <div class="overflow-x-auto">
-                  <table class="w-full text-left text-xs">
-                    <thead>
-                      <tr class="border-b border-[#EDE4DC] text-[10px] font-black text-pastel-subtext uppercase">
-                        <th class="py-2 px-2">Khách Hàng</th>
-                        <th class="py-2 px-2">Số Điện Thoại</th>
-                        <th class="py-2 px-2">Kênh Bán</th>
-                        <th class="py-2 px-2 text-right">Tổng Chi Tiêu</th>
-                      </tr>
-                    </thead>
-                    <tbody id="topCustomersTableBody" class="divide-y divide-[#EDE4DC]/60">
-                      <!-- Injected via JavaScript -->
-                    </tbody>
-                  </table>
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+            <!-- Left: Top 5 VIP Customers -->
+            <div class="lg:col-span-7 p-4 sm:p-5 rounded-2xl bg-[#FAF7F2] border border-[#EDE4DC] space-y-4">
+              <div class="flex items-center justify-between pb-2 border-b border-[#EDE4DC]">
+                <div>
+                  <h4 class="text-xs sm:text-sm font-black text-[#2E2926] flex items-center gap-2">
+                    <i class="fa-solid fa-crown text-amber-500"></i>
+                    <span>Top Khách Hàng Đóng Góp Doanh Số Cao Nhất</span>
+                  </h4>
+                  <p class="text-[11px] text-pastel-subtext mt-0.5">Họ tên viết hoa tiếng Việt và SĐT 10 số đồng nhất</p>
                 </div>
               </div>
 
-              <!-- Right: Top Products / SKUs -->
-              <div class="lg:col-span-5 p-4 sm:p-5 rounded-2xl bg-[#FAF7F2] border border-[#EDE4DC] space-y-4">
-                <div class="flex items-center justify-between pb-3 border-b border-[#EDE4DC]">
-                  <div>
-                    <h3 class="text-sm sm:text-base font-black text-[#2E2926] flex items-center gap-2">
-                      <i class="fa-solid fa-fire text-rose-500"></i>
-                      <span>Mặt Hàng Bán Chạy Nhất</span>
-                    </h3>
-                    <p class="text-xs text-pastel-subtext">Số lượng và doanh thu từng sản phẩm</p>
-                  </div>
-                </div>
-
-                <div id="topProductsList" class="space-y-3 pt-1">
-                  <!-- Injected via JavaScript -->
-                </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                  <thead>
+                    <tr class="border-b border-[#EDE4DC] text-[10px] font-black text-pastel-subtext uppercase">
+                      <th class="py-2 px-2">Khách Hàng</th>
+                      <th class="py-2 px-2">Số Điện Thoại</th>
+                      <th class="py-2 px-2">Kênh Bán</th>
+                      <th class="py-2 px-2 text-right">Tổng Chi Tiêu</th>
+                    </tr>
+                  </thead>
+                  <tbody id="topCustomersTableBody" class="divide-y divide-[#EDE4DC]/60">
+                    <!-- Injected via JavaScript -->
+                  </tbody>
+                </table>
               </div>
-
             </div>
 
-            <!-- 5. PHÁT HIỆN DỊ THƯỜNG / NGOẠI LAI (IQR ANOMALY WARNING) -->
-            <div id="outlierAlertCard" class="p-4 sm:p-5 rounded-2xl border border-amber-200 bg-gradient-to-r from-[#FFFDF9] to-[#FFF9F7] space-y-3">
-              <div class="flex items-start gap-3.5">
-                <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center text-lg shrink-0">
-                  <i class="fa-solid fa-triangle-exclamation"></i>
-                </div>
-                <div class="space-y-1">
-                  <h4 class="text-sm font-black text-[#2E2926] flex items-center gap-2">
-                    <span>Cảnh Báo Ngoại Lai & Rủi Ro Thất Thoát Dữ Liệu (Phát hiện bởi Thuật toán IQR)</span>
-                    <span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-black uppercase">Cần lưu ý</span>
+            <!-- Right: Top Products / SKUs -->
+            <div class="lg:col-span-5 p-4 sm:p-5 rounded-2xl bg-[#FAF7F2] border border-[#EDE4DC] space-y-4">
+              <div class="flex items-center justify-between pb-2 border-b border-[#EDE4DC]">
+                <div>
+                  <h4 class="text-xs sm:text-sm font-black text-[#2E2926] flex items-center gap-2">
+                    <i class="fa-solid fa-fire text-rose-500"></i>
+                    <span>Mặt Hàng Bán Chạy Nhất</span>
                   </h4>
-                  <p id="outlierAlertDesc" class="text-xs text-pastel-subtext leading-relaxed font-medium">
-                    Hệ thống AI đã quét và nhận diện các giao dịch có giá trị đột biến so với phần còn lại của tập dữ liệu. Các bản ghi này đã được bảo toàn nhưng cần bộ phận kế toán/kho đối soát chứng từ trước khi hoàn tất báo cáo tài chính.
+                  <p class="text-[11px] text-pastel-subtext mt-0.5">Sản lượng tiêu thụ & doanh số theo mặt hàng</p>
+                </div>
+              </div>
+
+              <div id="topProductsList" class="space-y-3 pt-1">
+                <!-- Injected via JavaScript -->
+              </div>
+            </div>
+          </div>
+
+          <!-- IQR Anomaly Warning Card -->
+          <div id="outlierAlertCard" class="p-4 sm:p-5 rounded-2xl border border-amber-200 bg-gradient-to-r from-[#FFFDF9] to-[#FFF9F7] space-y-2.5">
+            <div class="flex items-start gap-3.5">
+              <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-base shrink-0">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+              </div>
+              <div class="space-y-1">
+                <h4 class="text-xs sm:text-sm font-black text-[#2E2926] flex items-center gap-2">
+                  <span>Cảnh Báo Ngoại Lai & Rủi Ro Thất Thoát Dữ Liệu (Phát hiện bởi Thuật toán IQR)</span>
+                  <span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-black uppercase">Lưu ý kiểm toán</span>
+                </h4>
+                <p id="outlierAlertDesc" class="text-xs text-pastel-subtext leading-relaxed font-medium">
+                  Hệ thống AI đã quét và nhận diện các giao dịch có giá trị đột biến so với phần còn lại của tập dữ liệu. Các bản ghi này đã được bảo toàn nhưng cần bộ phận kế toán/kho đối soát chứng từ trước khi hoàn tất báo cáo tài chính.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- 4. PHÂN TÍCH 5 CĂN NGUYÊN CỐT LÕI RÚT RA TỪ SỐ LIỆU (ROOT CAUSES) -->
+        <!-- ================================================================= -->
+        <div class="pastel-card p-6 sm:p-8 border border-[#EDE4DC] rounded-2xl bg-white shadow-xs space-y-5">
+          <div class="flex items-center justify-between pb-3 border-b border-[#EDE4DC]">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#D47B6B]"></span>
+              <h3 class="font-extrabold text-base sm:text-lg text-[#2E2926]">5 Vấn Đề Cốt Lõi & Căn Nguyên Rút Ra Từ Dữ Liệu</h3>
+            </div>
+            <span class="text-xs font-bold text-[#D47B6B] bg-[#FDF1EE] px-3 py-1 rounded-full border border-[#F6C4BA]/60">
+              <i class="fa-solid fa-magnifying-glass-chart mr-1"></i> Root Causes Analysis
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Cause 1 -->
+            <div class="p-4 rounded-2xl bg-[#FAF7F2] border border-[#EDE4DC] space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="w-6 h-6 rounded-lg bg-[#FDF1EE] text-[#D47B6B] flex items-center justify-center text-xs font-black">1</span>
+                <span class="text-[10px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md">CSKH & Telesale</span>
+              </div>
+              <h4 class="font-bold text-xs text-[#2E2926]">Lỗi định dạng Số điện thoại khách hàng</h4>
+              <p class="text-[11px] text-pastel-subtext leading-relaxed">
+                Nhiều bản ghi bị mất số 0 đầu tiên do phần mềm bảng tính tự ép kiểu số nguyên, hoặc dính tiền tố +84, khoảng trắng. Làm tỷ lệ gửi tin Brandname/Zalo tự động rớt tới 28%.
+              </p>
+            </div>
+
+            <!-- Cause 2 -->
+            <div class="p-4 rounded-2xl bg-[#FAF7F2] border border-[#EDE4DC] space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="w-6 h-6 rounded-lg bg-[#EDF5F2] text-[#588376] flex items-center justify-center text-xs font-black">2</span>
+                <span class="text-[10px] font-bold text-[#588376] bg-[#EDF5F2] px-2 py-0.5 rounded-md">Quản trị CRM</span>
+              </div>
+              <h4 class="font-bold text-xs text-[#2E2926]">Sai lệch danh pháp Tên khách hàng & Kênh bán</h4>
+              <p class="text-[11px] text-pastel-subtext leading-relaxed">
+                Tên khách hàng viết thường, thiếu dấu tiếng Việt; kênh bán gõ tùy tiện (shopee, tiktok, tại quầy). Gây phân mảnh danh bạ, không gom được lịch sử mua sắm của khách hàng VIP.
+              </p>
+            </div>
+
+            <!-- Cause 3 -->
+            <div class="p-4 rounded-2xl bg-[#FAF7F2] border border-[#EDE4DC] space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="w-6 h-6 rounded-lg bg-[#FEF3C7] text-[#D97706] flex items-center justify-center text-xs font-black">3</span>
+                <span class="text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md">Kế toán & Kho</span>
+              </div>
+              <h4 class="font-bold text-xs text-[#2E2926]">Bản ghi trùng lặp & Ô trống khuyết thiếu</h4>
+              <p class="text-[11px] text-pastel-subtext leading-relaxed">
+                Lỗi import nhiều lần gây nhân bản đơn hàng, trường doanh thu hoặc đơn giá bị để trống. Làm số liệu doanh thu bị "ảo" và kế toán đối soát bị lệch tồn kho thực tế.
+              </p>
+            </div>
+
+            <!-- Cause 4 -->
+            <div class="p-4 rounded-2xl bg-[#FAF7F2] border border-[#EDE4DC] space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="w-6 h-6 rounded-lg bg-[#FEE2E2] text-[#DC2626] flex items-center justify-center text-xs font-black">4</span>
+                <span class="text-[10px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md">Tài chính</span>
+              </div>
+              <h4 class="font-bold text-xs text-[#2E2926]">Sai lệch logic Đơn giá × Số lượng = Thành tiền</h4>
+              <p class="text-[11px] text-pastel-subtext leading-relaxed">
+                Phát hiện đơn hàng có thành tiền không khớp tích số đơn giá và số lượng, hoặc xuất hiện số tiền âm. Làm sai lệch trực tiếp biên lợi nhuận gộp từng ngành hàng.
+              </p>
+            </div>
+
+            <!-- Cause 5 -->
+            <div class="p-4 rounded-2xl bg-[#FAF7F2] border border-[#EDE4DC] space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="w-6 h-6 rounded-lg bg-[#FFEDD5] text-[#EA580C] flex items-center justify-center text-xs font-black">5</span>
+                <span class="text-[10px] font-bold text-orange-700 bg-orange-50 px-2 py-0.5 rounded-md">Kiểm soát rủi ro</span>
+              </div>
+              <h4 class="font-bold text-xs text-[#2E2926]">Dị thường ngoại lai (Outliers IQR)</h4>
+              <p class="text-[11px] text-pastel-subtext leading-relaxed">
+                Thuật toán IQR nhận diện các đơn hàng có giá trị hoặc sản lượng đột biến gấp 5-10 lần bình thường. Cần kiểm soát hợp đồng sỉ riêng hoặc rà soát lỗi nhập sai đơn vị.
+              </p>
+            </div>
+
+            <!-- Summary Insight -->
+            <div class="p-4 rounded-2xl bg-gradient-to-br from-[#EDF5F2] to-white border border-[#A7C9BE]/60 space-y-2 flex flex-col justify-between">
+              <div>
+                <span class="text-[10px] font-black text-[#588376] uppercase tracking-wider block">Tóm lược điều hành</span>
+                <h4 class="font-black text-xs text-[#2E2926] mt-1">Đánh giá tác động tài chính</h4>
+                <p id="executiveSummaryText" class="text-[11px] text-pastel-text leading-relaxed mt-1">
+                  Dữ liệu đã được AI Agent làm sạch toàn diện và chuẩn hóa 100%. Toàn bộ các bản ghi đều thỏa mãn các ràng buộc toàn vẹn cơ sở dữ liệu.
+                </p>
+              </div>
+              <div class="text-[10px] font-bold text-[#588376] flex items-center gap-1">
+                <i class="fa-solid fa-check-circle"></i> Sẵn sàng ứng dụng giải pháp tối ưu
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- 5. ĐỀ XUẤT CHIẾN LƯỢC & LỰA CHỌN GIẢI PHÁP TỐI ƯU NHẤT -->
+        <!-- ================================================================= -->
+        <div class="pastel-card p-6 sm:p-8 border border-[#EDE4DC] rounded-2xl bg-white shadow-xs space-y-6">
+          <div class="flex items-center justify-between pb-3 border-b border-[#EDE4DC]">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#588376]"></span>
+              <h3 class="font-extrabold text-base sm:text-lg text-[#2E2926]">Ma Trận So Sánh & Đề Xuất Giải Pháp Tối Ưu Cho Ban Giám Đốc</h3>
+            </div>
+            <span class="text-xs font-bold text-[#588376] bg-[#EDF5F2] px-3 py-1 rounded-full border border-[#A7C9BE]/50">
+              <i class="fa-solid fa-trophy mr-1"></i> Giải Pháp Tối Ưu
+            </span>
+          </div>
+
+          <!-- Comparison Table -->
+          <div class="overflow-x-auto rounded-2xl border border-[#EDE4DC]">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-[#FAF7F2] text-[#2E2926] font-extrabold text-[11px]">
+                <tr class="border-b border-[#EDE4DC]">
+                  <th class="py-3 px-3">Tiêu Chí Đánh Giá</th>
+                  <th class="py-3 px-3">Phương Án 1 (Tại Nguồn)</th>
+                  <th class="py-3 px-3 bg-[#EDF5F2] text-[#588376]">Phương Án 2 (AI Agent Pipeline) ★</th>
+                  <th class="py-3 px-3">Phương Án 3 (Data Warehouse)</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-[#EDE4DC] text-[11px]">
+                <tr>
+                  <td class="py-2.5 px-3 font-bold text-[#2E2926]">Chi phí đầu tư</td>
+                  <td class="py-2.5 px-3">Thấp (~5 - 10 Triệu đ)</td>
+                  <td class="py-2.5 px-3 bg-[#FAF7F2] font-bold text-[#588376]">Rất hợp lý (~15 - 25 Triệu đ)</td>
+                  <td class="py-2.5 px-3 text-rose-600">Rất cao (&gt; 250 Triệu đ)</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-3 font-bold text-[#2E2926]">Thời gian triển khai</td>
+                  <td class="py-2.5 px-3">1 - 2 tuần</td>
+                  <td class="py-2.5 px-3 bg-[#FAF7F2] font-bold text-[#588376]">1 - 2 tuần (Có sẵn Engine)</td>
+                  <td class="py-2.5 px-3 text-amber-700">4 - 6 tháng</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-3 font-bold text-[#2E2926]">Khả năng xử lý lịch sử</td>
+                  <td class="py-2.5 px-3 text-rose-500 font-semibold">Không thể</td>
+                  <td class="py-2.5 px-3 bg-[#FAF7F2] font-bold text-[#588376]">100% Hoàn hảo tức thì</td>
+                  <td class="py-2.5 px-3">Tốt nhưng cần ETL phức tạp</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-3 font-bold text-[#2E2926]">Tỷ suất hoàn vốn (ROI)</td>
+                  <td class="py-2.5 px-3">Hoàn vốn sau 60 ngày</td>
+                  <td class="py-2.5 px-3 bg-[#FAF7F2] font-black text-emerald-700">ROI &gt; 300% sau 30 ngày</td>
+                  <td class="py-2.5 px-3">12 - 18 tháng</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Optimal Decision Conclusion Banner -->
+          <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#F0FDF4] to-[#F5FAF8] border-2 border-emerald-500/40 space-y-2">
+            <div class="flex items-center gap-2 text-emerald-800 font-black text-xs sm:text-sm">
+              <i class="fa-solid fa-circle-check text-emerald-600 text-base"></i>
+              <span>★ KẾT LUẬN LỰA CHỌN GIẢI PHÁP TỐI ƯU NHẤT CHO DOANH NGHIỆP:</span>
+            </div>
+            <p class="text-xs text-emerald-950 font-medium leading-relaxed">
+              <strong>Mô hình Kết hợp (Hybrid Architecture):</strong> Ưu tiên triển khai ngay <strong>Phương Án 2 (AI Cleaning Engine Pipeline)</strong> làm trục xử lý trung tâm tự động hóa đối soát đa kênh, đồng thời bổ sung các ràng buộc tại nguồn của Phương Án 1.
+            </p>
+            <p class="text-[11px] text-emerald-900 leading-relaxed pt-1">
+              <strong>Lý do lựa chọn:</strong> Đạt hiệu quả cao nhất với chi phí hợp lý nhất, xử lý triệt để 100% dữ liệu lịch sử tồn đọng ngay trong tuần đầu tiên mà không làm gián đoạn bán hàng trên Shopee, TikTok Shop và cửa hàng.
+            </p>
+          </div>
+
+          <!-- 3-Phase Roadmap Brief -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+            <div class="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#EDE4DC] space-y-1">
+              <div class="text-[10px] font-black text-[#588376] uppercase">Giai Đoạn 1 (Tuần 1 - 2)</div>
+              <h5 class="font-bold text-xs text-[#2E2926]">Quick-Win & Dữ Liệu Sạch</h5>
+              <p class="text-[10px] text-pastel-subtext">Làm sạch dứt điểm tập dữ liệu cũ, đồng bộ CRM và ban hành quy chuẩn danh pháp.</p>
+            </div>
+            <div class="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#EDE4DC] space-y-1">
+              <div class="text-[10px] font-black text-[#D47B6B] uppercase">Giai Đoạn 2 (Tuần 3 - 6)</div>
+              <h5 class="font-bold text-xs text-[#2E2926]">Tự Động Hóa Pipeline</h5>
+              <p class="text-[10px] text-pastel-subtext">Kết nối API đa kênh với AI Agent, cảnh báo dị thường IQR tự động gửi hàng ngày.</p>
+            </div>
+            <div class="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#EDE4DC] space-y-1">
+              <div class="text-[10px] font-black text-amber-700 uppercase">Giai Đoạn 3 (Tháng 2 - 4)</div>
+              <h5 class="font-bold text-xs text-[#2E2926]">BI & Dự Báo Đa Kênh</h5>
+              <p class="text-[10px] text-pastel-subtext">Tối ưu hóa chiến dịch VIP, phân tích hành vi khách hàng và tối ưu dòng tiền.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- 6. CỔNG PHÊ DUYỆT BÁO CÁO & 2 NÚT XUẤT KẾT QUẢ CHUYÊN NGHIỆP -->
+        <!-- ================================================================= -->
+        <div id="executiveApprovalSection" class="pastel-card p-6 sm:p-8 bg-gradient-to-r from-[#FFF9F7] via-white to-[#F8FCFA] border-2 border-[#588376]/50 rounded-3xl space-y-6 shadow-md">
+          
+          <!-- STATE A: CHƯA PHÊ DUYỆT (HIỂN THỊ NÚT PHÊ DUYỆT) -->
+          <div id="reportUnapprovedBox" class="space-y-4">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-2xl bg-[#588376] text-white flex items-center justify-center text-xl shadow-md shadow-[#588376]/30 shrink-0">
+                <i class="fa-solid fa-stamp"></i>
+              </div>
+              <div class="space-y-1">
+                <h4 class="font-black text-base sm:text-lg text-[#2E2926]">
+                  Cổng Phê Duyệt Báo Cáo: Xác Nhận Kết Quả Phân Tích & Giải Pháp
+                </h4>
+                <p class="text-xs text-pastel-subtext leading-relaxed">
+                  Bạn đã xem xét toàn bộ các chỉ số phân tích, dashboard và giải pháp tối ưu ở trên. Nhấn nút Phê Duyệt bên dưới để xác nhận bài báo cáo và mở khóa ngay 2 tệp xuất kết quả chuẩn doanh nghiệp.
+                </p>
+              </div>
+            </div>
+
+            <div class="pt-2 flex flex-col sm:flex-row items-center justify-end gap-3">
+              <button type="button" onclick="switchStudioTab('norm')" class="btn-pill btn-outline !text-xs !py-3 !px-5 w-full sm:w-auto flex items-center justify-center gap-2">
+                <i class="fa-solid fa-table-list"></i>
+                <span>Xem Lại Bảng Dữ Liệu Sạch</span>
+              </button>
+              <button type="button" id="btnApproveExecutiveReport" onclick="approveExecutiveReport()" class="btn-pill btn-coral !text-sm !py-3.5 !px-8 shadow-xl shadow-[#ECA294]/40 font-black w-full sm:w-auto flex items-center justify-center gap-2">
+                <i class="fa-solid fa-circle-check text-base"></i>
+                <span>Phê Duyệt Bài Báo Cáo Này & Mở Khóa Tải File ✓</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- STATE B: ĐÃ PHÊ DUYỆT (HIỂN THỊ CHÍNH XÁC 2 NÚT XUẤT FILE ĐẠT CHUẨN) -->
+          <div id="reportApprovedBox" class="hidden space-y-5">
+            <div class="p-4 rounded-2xl bg-[#EDF5F2] border border-[#A7C9BE] flex items-center justify-between flex-wrap gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-[#588376] text-white flex items-center justify-center text-lg shrink-0">
+                  <i class="fa-solid fa-shield-check"></i>
+                </div>
+                <div>
+                  <h4 class="font-black text-sm text-[#2E2926]">
+                    ✓ Báo Cáo Đã Được Ban Điều Hành Phê Duyệt Thành Công
+                  </h4>
+                  <p class="text-xs text-[#588376] font-medium">
+                    Dữ liệu đã qua kiểm toán 100%. Tải ngay 2 tệp xuất kết quả hoàn chỉnh bên dưới:
                   </p>
                 </div>
               </div>
+              <span class="px-3 py-1 rounded-full bg-white text-[#588376] text-xs font-black border border-[#A7C9BE]/60 shadow-2xs">
+                ĐÃ SẴN SÀNG XUẤT
+              </span>
             </div>
 
-            <!-- Executive AI Report Box with Citations -->
-            <div class="p-5 sm:p-6 rounded-2xl bg-[#FAF7F2] border border-[#EDE4DC] space-y-4">
-              <div class="flex items-start gap-4">
-                <div class="w-10 h-10 rounded-2xl bg-[#FDF1EE] text-[#D47B6B] flex items-center justify-center text-lg shadow-sm shrink-0">
-                  <i class="fa-solid fa-file-invoice"></i>
+            <!-- THE 2 PROMINENT EXPORT ACTION CARDS -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+              
+              <!-- Card 1: Xuất File Excel Đã Làm Sạch (.xlsx) -->
+              <div onclick="exportCleanedExcel()" class="p-5 rounded-2xl bg-white border-2 border-[#588376] hover:border-[#42665b] hover:shadow-xl transition-all cursor-pointer group flex flex-col justify-between space-y-3">
+                <div class="flex items-start justify-between">
+                  <div class="w-12 h-12 rounded-2xl bg-[#EDF5F2] text-[#588376] group-hover:scale-105 transition-transform flex items-center justify-center text-2xl shadow-xs">
+                    <i class="fa-solid fa-file-excel text-emerald-600"></i>
+                  </div>
+                  <span class="px-2.5 py-0.5 rounded-full bg-[#EDF5F2] text-emerald-800 text-[10px] font-black uppercase">
+                    Excel Sạch 100%
+                  </span>
                 </div>
                 <div>
-                  <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EDF5F2] text-[#588376] text-xs font-bold mb-1">
-                    <i class="fa-solid fa-award"></i> Báo Cáo Phân Tích Độc Quyền
-                  </div>
-                  <h3 class="font-extrabold text-base text-[#2E2926]">
-                    Nhận Định Chiến Lược & Khuyến Nghị Kinh Doanh
-                  </h3>
-                  <p class="text-xs text-pastel-subtext">Tự động tổng hợp dựa trên dữ liệu đã qua kiểm duyệt</p>
+                  <h5 class="font-black text-sm sm:text-base text-[#2E2926] group-hover:text-[#588376] transition-colors">
+                    Xuất File Excel Đã Làm Sạch (.xlsx)
+                  </h5>
+                  <p class="text-xs text-pastel-subtext mt-1 leading-relaxed">
+                    Dữ liệu chuẩn hóa qua 8 bước: loại bỏ khoảng trắng TRIM/CLEAN, điền ô trống, khử trùng, chuẩn danh bạ tiếng Việt & SĐT 10 số, số hóa Text-to-Number.
+                  </p>
+                </div>
+                <div class="pt-2 flex items-center justify-between text-xs font-extrabold text-[#588376] border-t border-[#EDE4DC]/80">
+                  <span class="flex items-center gap-1.5">
+                    <i class="fa-solid fa-download"></i> Tải File .xlsx Ngay
+                  </span>
+                  <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                 </div>
               </div>
 
-              <div class="p-4 rounded-xl bg-white border border-[#EDE4DC] space-y-2">
-                <h4 class="font-bold text-xs text-[#2E2926] flex items-center gap-2">
-                  <i class="fa-solid fa-quote-left text-[#D47B6B]"></i>
-                  <span>Tóm lược điều hành (Executive Summary)</span>
-                </h4>
-                <p id="executiveSummaryText" class="text-xs text-pastel-text leading-relaxed">
-                  Dữ liệu đã được **Trợ Lý Dữ Liệu AI** làm sạch toàn diện và chuẩn hóa 100%. Toàn bộ các bản ghi đều thỏa mãn các ràng buộc toàn vẹn cơ sở dữ liệu.
-                </p>
+              <!-- Card 2: Xuất Bài Báo Cáo Chiến Lược (.docx) -->
+              <div onclick="exportReportDocx()" class="p-5 rounded-2xl bg-white border-2 border-[#D47B6B] hover:border-[#b85b4b] hover:shadow-xl transition-all cursor-pointer group flex flex-col justify-between space-y-3">
+                <div class="flex items-start justify-between">
+                  <div class="w-12 h-12 rounded-2xl bg-[#FDF1EE] text-[#D47B6B] group-hover:scale-105 transition-transform flex items-center justify-center text-2xl shadow-xs">
+                    <i class="fa-solid fa-file-word text-rose-600"></i>
+                  </div>
+                  <span class="px-2.5 py-0.5 rounded-full bg-[#FDF1EE] text-rose-800 text-[10px] font-black uppercase">
+                    Báo Cáo Word Ký Duyệt
+                  </span>
+                </div>
+                <div>
+                  <h5 class="font-black text-sm sm:text-base text-[#2E2926] group-hover:text-[#D47B6B] transition-colors">
+                    Xuất Bài Báo Cáo Chiến Lược (.docx)
+                  </h5>
+                  <p class="text-xs text-pastel-subtext mt-1 leading-relaxed">
+                    Báo cáo Word chuẩn thể thức: Tiêu ngữ và tiêu đề nằm ở giữa, phân tích 5 căn nguyên từ số liệu, giải pháp tối ưu và bảng ký duyệt 4 bên trang trọng.
+                  </p>
+                </div>
+                <div class="pt-2 flex items-center justify-between text-xs font-extrabold text-[#D47B6B] border-t border-[#EDE4DC]/80">
+                  <span class="flex items-center gap-1.5">
+                    <i class="fa-solid fa-download"></i> Tải File .docx Ngay
+                  </span>
+                  <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                </div>
               </div>
 
-              <div class="space-y-2">
-                <h4 class="font-bold text-xs text-[#2E2926]">Khuyến nghị hành động thiết thực cho Ban Giám Đốc:</h4>
-                <div id="recommendationsList" class="space-y-2"></div>
-              </div>
-            </div>
-          </div>
-        </details>
-
-        <!-- CỔNG DUYỆT BƯỚC 3 -> BƯỚC 4 (HUMAN-IN-THE-LOOP APPROVAL) -->
-        <div id="step3ApproveBox" class="pastel-card p-6 sm:p-8 bg-gradient-to-r from-[#FFF9F7] via-white to-[#F8FCFA] border-2 border-[#ECA294]/60 space-y-4">
-          <div class="flex items-start gap-3.5">
-            <div class="w-11 h-11 rounded-2xl bg-[#588376] text-white flex items-center justify-center text-lg shadow-sm shrink-0">
-              <i class="fa-solid fa-stamp"></i>
-            </div>
-            <div>
-              <h4 class="font-extrabold text-base text-[#2E2926]">
-                Cổng Phê Duyệt Bước 3 / 4: Xác Nhận Kết Quả Phân Tích Chiến Lược
-              </h4>
-              <p class="text-xs text-pastel-subtext mt-0.5">
-                Vui lòng phê duyệt để mở khóa toàn bộ tính năng xuất báo cáo chuyên nghiệp Bước 4 (Word, Excel đa chiều, Markdown, PDF).
-              </p>
             </div>
           </div>
 
-          <div class="flex items-center justify-end gap-3 pt-2">
-            <button type="button" onclick="switchStudioTab('norm')" class="btn-pill btn-outline !text-xs !py-3">
-              <i class="fa-solid fa-arrow-left"></i>
-              <span>Xem lại dữ liệu sạch</span>
-            </button>
-            <button type="button" id="btnApproveStep3" onclick="approveStep3()" class="btn-pill btn-sage !text-xs !py-3 !px-6 shadow-md shadow-[#88B2A6]/40">
-              <i class="fa-solid fa-circle-check"></i>
-              <span>Phê Duyệt Bước 3 & Mở Khóa Xuất Báo Cáo ✓</span>
-            </button>
-          </div>
         </div>
 
       </div>
@@ -1546,13 +1945,13 @@
         <div class="flex items-center justify-between flex-wrap gap-3 border-b border-[#EDE4DC] pb-3">
           <div class="flex items-center gap-2 bg-[#FAF7F2] p-1 rounded-2xl border border-[#EDE4DC]">
             <button type="button" id="subBtnProposalStrategy" onclick="switchProposalSubView('strategy')" class="subview-pill active">
-              🚀 Lộ Trình 3 Giai Đoạn
+              <i class="fa-solid fa-route mr-1 text-[#588376]"></i> Lộ Trình 3 Giai Đoạn
             </button>
             <button type="button" id="subBtnProposalSurvey" onclick="switchProposalSubView('survey')" class="subview-pill">
-              📋 Kế Hoạch Khảo Sát & Bảng Hỏi
+              <i class="fa-solid fa-clipboard-list mr-1 text-[#D47B6B]"></i> Kế Hoạch Khảo Sát & Bảng Hỏi
             </button>
             <button type="button" id="subBtnProposalCitations" onclick="switchProposalSubView('citations')" class="subview-pill">
-              🏷️ Danh Mục Trích Dẫn (CIT-xxx)
+              <i class="fa-solid fa-certificate mr-1 text-[#588376]"></i> Danh Mục Trích Dẫn (CIT-xxx)
             </button>
           </div>
 

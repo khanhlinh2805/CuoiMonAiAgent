@@ -100,14 +100,15 @@ function startWithSampleDataQuick() {
   const headerText = $("headerContextText");
   const headerPill = $("headerContextPill");
   if (headerText && headerPill) {
-    headerText.innerText = 'Cửa Hàng Mẫu · Bán lẻ & E-commerce';
+    headerText.innerText = 'Cửa Hàng Mẫu · Bán lẻ';
     headerPill.classList.remove('hidden');
   }
   
   loadSampleDataset('sample1');
+  executeDataCleaning();
   goToStep(3);
-  switchStudioTab('norm');
-  showToast("✨ Đã nạp dữ liệu bán lẻ mẫu! Bạn có thể xem trước bảng dữ liệu và thực hiện làm sạch ngay.");
+  switchStudioTab('rank');
+  showToast("📊 AI Agent đã nạp và lập bài báo cáo phân tích chiến lược từ dữ liệu mẫu!");
 }
 
 /* ==========================================================================
@@ -188,9 +189,9 @@ function selectScale(scaleKey) {
     const btn = $(`scaleBtn_${k}`);
     if (btn) {
       if (k === scaleKey) {
-        btn.className = "p-2.5 rounded-xl border border-[#ECA294] bg-white text-center text-xs font-bold text-[#D47B6B] shadow-xs ring-1 ring-[#ECA294]/30 transition-all";
+        btn.className = "p-2.5 rounded-xl border-2 border-[#588376] bg-white text-left text-xs font-bold text-[#588376] shadow-xs transition-all flex items-center gap-2.5";
       } else {
-        btn.className = "p-2.5 rounded-xl border border-[#EDE4DC] bg-[#FAF7F2] text-center text-xs font-bold text-[#2E2926] hover:border-[#ECA294] transition-all";
+        btn.className = "p-2.5 rounded-xl border border-[#EDE4DC] bg-[#FAF7F2] text-left text-xs font-bold text-[#2E2926] hover:border-[#588376] transition-all flex items-center gap-2.5";
       }
     }
   });
@@ -753,7 +754,8 @@ function proceedToCleaningStep() {
   }
   executeDataCleaning();
   goToStep(3);
-  switchStudioTab("norm");
+  switchStudioTab("rank");
+  showToast("📊 AI Agent đã hoàn tất làm sạch và lập bài báo cáo phân tích chiến lược!");
 }
 
 /* ==========================================================================
@@ -1001,12 +1003,40 @@ function approveStep2() {
   switchStudioTab("rank");
 }
 
-function approveStep3() {
+function approveExecutiveReport() {
   if (!AppState.cleanedResult) return;
   AppState.maxApprovedStep = 4;
+  AppState.reportApproved = true;
   updateStudioStepper();
-  showToast("🎉 Đã phê duyệt Bước 3! Đã mở khóa toàn bộ menu Xuất Báo Cáo.");
-  toggleExportMenu();
+  updateApprovalUI();
+  showToast("🎉 Đã phê duyệt bài báo cáo thành công! 2 tệp xuất đã sẵn sàng để tải xuống.");
+}
+
+function approveStep3() {
+  approveExecutiveReport();
+}
+
+function updateApprovalUI() {
+  const isApproved = AppState.reportApproved || AppState.maxApprovedStep >= 4;
+  const unapprovedBox = $("reportUnapprovedBox");
+  const approvedBox = $("reportApprovedBox");
+  const badge = $("studioApprovedBadge");
+
+  if (isApproved) {
+    if (unapprovedBox) unapprovedBox.classList.add("hidden");
+    if (approvedBox) approvedBox.classList.remove("hidden");
+    if (badge) {
+      badge.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-500"></i> Trạng thái: Đã Phê Duyệt';
+      badge.className = "px-3 py-1 rounded-full bg-[#EDF5F2] text-[#588376] text-xs font-black border border-[#A7C9BE]";
+    }
+  } else {
+    if (unapprovedBox) unapprovedBox.classList.remove("hidden");
+    if (approvedBox) approvedBox.classList.add("hidden");
+    if (badge) {
+      badge.innerHTML = '<i class="fa-solid fa-clock text-amber-500"></i> Trạng thái: Chờ Phê Duyệt';
+      badge.className = "px-3 py-1 rounded-full bg-[#FEF9C3] text-amber-800 text-xs font-bold border border-amber-300";
+    }
+  }
 }
 
 function openRefineModal() {
@@ -1606,7 +1636,7 @@ function renderDashboardStats(res) {
     initial_stats,
     final_stats,
     cleaned_data,
-    "CandyData AI"
+    "AI Agent"
   );
 
   if ($("executiveSummaryText")) {
@@ -1627,6 +1657,8 @@ function renderDashboardStats(res) {
       `;
     }).join('');
   }
+
+  updateApprovalUI();
 }
 
 function linkifyCitations(htmlText) {
@@ -1876,7 +1908,7 @@ function exportCleanedExcel() {
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Du_Lieu_Sach");
   
-  const filename = `${AppState.rawFileName.replace(/\.[^/.]+$/, "")}_Cleaned_by_LeKhanhLinh.xlsx`;
+  const filename = `${(AppState.rawFileName || "Du_Lieu").replace(/\.[^/.]+$/, "")}_Cleaned.xlsx`;
   XLSX.writeFile(wb, filename);
   showToast("📊 Đã xuất file Excel dữ liệu sạch (.xlsx) thành công!");
 }
@@ -1981,7 +2013,7 @@ function exportReportDocx() {
     <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
     <head>
       <meta charset='utf-8'>
-      <title>Báo Cáo Phân Tích Dữ Liệu & Giải Pháp Tối Ưu - CandyData AI</title>
+      <title>Báo Cáo Phân Tích Dữ Liệu & Giải Pháp Tối Ưu - AI Agent</title>
       <!--[if gte mso 9]>
       <xml>
         <w:WordDocument>
@@ -2220,7 +2252,7 @@ function exportReportDocx() {
         <!-- PHẦN II: THỰC TRẠNG CHẤT LƯỢNG TRƯỚC VÀ SAU LÀM SẠCH -->
         <h2 class="sec-heading">PHẦN II: HIỆN TRẠNG CHẤT LƯỢNG DỮ LIỆU TRƯỚC VÀ SAU LÀM SẠCH</h2>
         <p>
-          Hệ thống <strong>CandyData AI Engine</strong> đã thực hiện quét kiểm toán tự động qua hơn 10 tiêu chuẩn xác thực quốc tế (ISO/IEC 25012 về Chất lượng dữ liệu). Kết quả đối chiếu trước và sau khi chuẩn hóa được thể hiện trong bảng số liệu sau:
+          Hệ thống <strong>AI Agent Engine</strong> đã thực hiện quét kiểm toán tự động qua hơn 10 tiêu chuẩn xác thực quốc tế (ISO/IEC 25012 về Chất lượng dữ liệu). Kết quả đối chiếu trước và sau khi chuẩn hóa được thể hiện trong bảng số liệu sau:
         </p>
 
         <table class="data-table">
@@ -2329,7 +2361,7 @@ function exportReportDocx() {
 
         <h3 class="sub-heading">Phương án 2: Tự động hóa Pipeline Làm Sạch & Đối Soát Bằng AI Agent (Automated AI Cleaning Pipeline)</h3>
         <ul>
-          <li><strong>Mô tả:</strong> Ứng dụng trực tiếp Engine xử lý của <strong>CandyData AI Studio</strong> làm cổng trung gian (Middleware ETL): định kỳ tự động tiếp nhận dữ liệu đa kênh, khử trùng lặp, phục hồi dấu tiếng Việt từ điển, chuẩn hóa SĐT, tính toán bù khuyết thông minh và quét dị thường IQR trước khi nạp vào hệ thống chính thức.</li>
+          <li><strong>Mô tả:</strong> Ứng dụng trực tiếp Engine xử lý của <strong>Hệ Thống AI Agent</strong> làm cổng trung gian (Middleware ETL): định kỳ tự động tiếp nhận dữ liệu đa kênh, khử trùng lặp, phục hồi dấu tiếng Việt từ điển, chuẩn hóa SĐT, tính toán bù khuyết thông minh và quét dị thường IQR trước khi nạp vào hệ thống chính thức.</li>
           <li><strong>Ưu điểm:</strong> Xử lý toàn diện cả dữ liệu lịch sử lẫn dữ liệu phát sinh hàng ngày; độ chính xác cao (>99%); triển khai tức thì trong 1 - 2 tuần; vận hành tự động không phụ thuộc thao tác con người.</li>
           <li><strong>Hạn chế:</strong> Cần duy trì cấu hình máy chủ server định kỳ.</li>
         </ul>
@@ -2406,7 +2438,7 @@ function exportReportDocx() {
         <ul>
           <li>
             <strong>Giai đoạn 1: Quick-Win & Chuẩn hóa toàn diện dữ liệu lịch sử (Tuần 1 - Tuần 2)</strong>
-            <br/>Nạp toàn bộ dữ liệu đơn hàng và khách hàng cũ vào CandyData AI Engine để làm sạch, xuất bản file chuẩn hoàn chỉnh và ban hành quy chuẩn danh pháp kênh bán, tên khách hàng trong nội bộ.
+            <br/>Nạp toàn bộ dữ liệu đơn hàng và khách hàng cũ vào Hệ Thống AI Agent để làm sạch, xuất bản file chuẩn hoàn chỉnh và ban hành quy chuẩn danh pháp kênh bán, tên khách hàng trong nội bộ.
           </li>
           <li>
             <strong>Giai đoạn 2: Tự động hóa Pipeline & Đối soát thường nhật (Tuần 3 - Tuần 6)</strong>
@@ -2505,7 +2537,7 @@ function exportReportDocx() {
     </html>
   `;
 
-  const safeFilename = `${(AppState.rawFileName || "Bao_Cao").replace(/\.[^/.]+$/, "")}_Bao_Cao_Chien_Luoc_Le_Khanh_Linh.doc`;
+  const safeFilename = `${(AppState.rawFileName || "Bao_Cao").replace(/\.[^/.]+$/, "")}_Bao_Cao_Chien_Luoc.doc`;
   downloadBlob(docHtml, "application/msword;charset=utf-8;", safeFilename);
   showToast("📘 Đã xuất Báo Cáo Doanh Nghiệp Word (.doc/.docx) thành công!");
 }
