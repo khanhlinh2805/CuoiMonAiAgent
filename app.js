@@ -42,6 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupDragAndDrop();
   setupCandyCursorTrail();
   setupClickRipples();
+  setupAmbientBackground();
   initPersonalizedWelcomeGreeting();
   updateStudioStepper();
   console.log("🚀 CandyData AI Enterprise Studio v2.5 Online.");
@@ -332,15 +333,17 @@ function updateStudioStepper() {
   // 1. Sync Header Active Step Indicator Badge (Fits cleanly, never overflows)
   const headerStepNameEl = $("headerCurrentStepName");
   if (headerStepNameEl) {
-    if (AppState.currentStep === 1) headerStepNameEl.innerText = "1. Khởi động";
-    else if (AppState.currentStep === 'context') headerStepNameEl.innerText = "2. Bối cảnh DN";
-    else if (AppState.currentStep === 2) headerStepNameEl.innerText = "3. Nạp dữ liệu";
+    if (AppState.currentStep === 1) headerStepNameEl.innerText = "Trang Chủ";
+    else if (AppState.currentStep === 'context') headerStepNameEl.innerText = "1. Vấn đề doanh nghiệp";
+    else if (AppState.currentStep === 2) headerStepNameEl.innerText = "2. Nạp dữ liệu";
     else if (AppState.currentStep === 3 || (AppState.currentStep > 2 && AppState.activeStudioTab === 'norm')) {
-      headerStepNameEl.innerText = "4. Chuẩn hóa dữ liệu";
-    } else if (AppState.currentStep >= 4 || AppState.activeStudioTab === 'rank' || AppState.activeStudioTab === 'proposal') {
-      headerStepNameEl.innerText = "5. Báo cáo & BI";
+      headerStepNameEl.innerText = "3. Làm sạch & Duyệt";
+    } else if (AppState.activeStudioTab === 'rank') {
+      headerStepNameEl.innerText = "4. Phân tích & Đánh giá";
+    } else if (AppState.currentStep >= 4 || AppState.activeStudioTab === 'proposal') {
+      headerStepNameEl.innerText = "5. Dashboard & Xuất tệp";
     } else {
-      headerStepNameEl.innerText = "CandyData AI";
+      headerStepNameEl.innerText = "AI Agent";
     }
   }
 
@@ -507,11 +510,11 @@ function updatePermanentSidebar() {
   };
 
   setItem('home', isHome, !isHome, '>');
-  setItem('upload', isUpload, hasData, '•');
   setItem('context', isContext, !!AppState.businessContext.industry, '•');
+  setItem('upload', isUpload, hasData, '•');
   setItem('clean', isNorm, hasClean, '•');
-  setItem('analysis', isRank, hasClean, '•');
-  setItem('dashboard', isRank, isApproved, '•');
+  setItem('analysis', isStudio && AppState.activeStudioTab === 'rank', hasClean, '•');
+  setItem('dashboard', isStudio && AppState.activeStudioTab === 'proposal', isApproved, '•');
 
   // Human review badges
   const dBadge = $("sideReviewDataBadge");
@@ -2959,6 +2962,108 @@ function showToast(msg, isError = false) {
     toast.classList.add("translate-y-2", "opacity-0");
     setTimeout(() => toast.remove(), 300);
   }, 3500);
+}
+
+/* ==========================================================================
+   DYNAMIC AMBIENT BACKGROUND SYSTEM (Subtle Mouse Spotlight & Meteors)
+   ========================================================================== */
+function setupAmbientBackground() {
+  const spotlight = $("ambientMouseSpotlight");
+  if (spotlight) {
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let currentX = mouseX;
+    let currentY = mouseY;
+    let isMoving = false;
+    let rafId = null;
+
+    function renderSpotlight() {
+      currentX += (mouseX - currentX) * 0.12;
+      currentY += (mouseY - currentY) * 0.12;
+
+      spotlight.style.left = `${currentX}px`;
+      spotlight.style.top = `${currentY}px`;
+
+      if (Math.abs(mouseX - currentX) > 0.5 || Math.abs(mouseY - currentY) > 0.5) {
+        rafId = requestAnimationFrame(renderSpotlight);
+      } else {
+        isMoving = false;
+        rafId = null;
+      }
+    }
+
+    window.addEventListener("mousemove", (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      spotlight.style.opacity = "1";
+
+      if (!isMoving) {
+        isMoving = true;
+        rafId = requestAnimationFrame(renderSpotlight);
+      }
+    }, { passive: true });
+
+    window.addEventListener("mouseleave", () => {
+      spotlight.style.opacity = "0";
+    });
+  }
+
+  // Launch occasional shooting stars / Mưa sao băng
+  startDynamicMeteorShower();
+}
+
+function startDynamicMeteorShower() {
+  const container = $("ambientMeteorShower");
+  if (!container) return;
+
+  function spawnMeteor() {
+    const meteor = document.createElement("div");
+    meteor.className = "ambient-meteor";
+
+    // Random starting position in upper / right portion
+    const startX = Math.random() * 65 + 30; // 30% to 95%
+    const startY = Math.random() * 32 + 3;  // 3% to 35%
+    const angle = Math.random() * 12 - 40;  // -40deg to -28deg
+    const duration = Math.random() * 400 + 850; // 850ms to 1250ms
+    const distance = Math.random() * 300 + 620; // 620px to 920px
+
+    meteor.style.left = `${startX}%`;
+    meteor.style.top = `${startY}%`;
+    meteor.style.width = "200px";
+    meteor.style.height = "3.5px";
+    meteor.style.opacity = "0";
+
+    container.appendChild(meteor);
+
+    // Diagonal movement calculations
+    const rad = (angle * Math.PI) / 180;
+    const destX = Math.cos(rad) * distance;
+    const destY = -Math.sin(rad) * distance;
+
+    const keyframes = [
+      { opacity: 0, transform: `translate3d(0, 0, 0) rotate(${angle}deg) scaleX(0.2)` },
+      { opacity: 1, transform: `translate3d(-${destX * 0.12}px, ${destY * 0.12}px, 0) rotate(${angle}deg) scaleX(1)`, offset: 0.1 },
+      { opacity: 1, transform: `translate3d(-${destX * 0.75}px, ${destY * 0.75}px, 0) rotate(${angle}deg) scaleX(1.15)`, offset: 0.75 },
+      { opacity: 0, transform: `translate3d(-${destX}px, ${destY}px, 0) rotate(${angle}deg) scaleX(0.3)`, offset: 1 }
+    ];
+
+    if (typeof meteor.animate === "function") {
+      const anim = meteor.animate(keyframes, {
+        duration: duration,
+        easing: "cubic-bezier(0.22, 1, 0.36, 1)"
+      });
+      anim.onfinish = () => meteor.remove();
+    } else {
+      setTimeout(() => meteor.remove(), duration + 100);
+    }
+
+    // Schedule next occasional meteor in 4 to 8 seconds
+    const nextDelay = Math.random() * 4000 + 4000;
+    setTimeout(spawnMeteor, nextDelay);
+  }
+
+  // Initial trigger after 1.5s
+  setTimeout(spawnMeteor, 1500);
 }
 
 /* ==========================================================================

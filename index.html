@@ -49,6 +49,45 @@
 </head>
 
 <body class="text-pastel-text">
+
+  <!-- ========================================================================= -->
+  <!-- DYNAMIC AMBIENT BACKGROUND LAYER (Subtle, Lively Atmospheric Motion) -->
+  <!-- ========================================================================= -->
+  <div id="ambientBackgroundLayer" class="ambient-bg-layer" aria-hidden="true">
+    <!-- Living Animated Ombre Mesh Canvas (Slow Gradual Color Shift) -->
+    <div class="ambient-ombre-mesh"></div>
+
+    <!-- Micro-Dot Matrix Pattern with Vignette -->
+    <div class="ambient-grid-overlay"></div>
+
+    <!-- Morphing Fluid Aurora Orbs (Ombre Gradients) -->
+    <div class="ambient-orb ambient-orb-1"></div>
+    <div class="ambient-orb ambient-orb-2"></div>
+    <div class="ambient-orb ambient-orb-3"></div>
+    <div class="ambient-orb ambient-orb-4"></div>
+    <div class="ambient-orb ambient-orb-5"></div>
+
+    <!-- Shooting Stars / Mưa Sao Băng Container (Clear & Vivid Streaks) -->
+    <div id="ambientMeteorShower" class="ambient-meteor-shower">
+      <div class="ambient-meteor meteor-css-1"></div>
+      <div class="ambient-meteor meteor-css-2"></div>
+      <div class="ambient-meteor meteor-css-3"></div>
+      <div class="ambient-meteor meteor-css-4"></div>
+      <div class="ambient-meteor meteor-css-5"></div>
+      <div class="ambient-meteor meteor-css-6"></div>
+    </div>
+
+    <!-- Interactive Mouse Spotlight -->
+    <div id="ambientMouseSpotlight" class="ambient-mouse-spotlight"></div>
+
+    <!-- Subtle Floating Bokeh Particles -->
+    <div class="ambient-particle p-1"></div>
+    <div class="ambient-particle p-2"></div>
+    <div class="ambient-particle p-3"></div>
+    <div class="ambient-particle p-4"></div>
+    <div class="ambient-particle p-5"></div>
+    <div class="ambient-particle p-6"></div>
+  </div>
   
   <!-- ========================================================================= -->
   <!-- TOP DYNAMIC ISLAND & HEADER BAR (COMPACT & BALANCED) -->
@@ -275,24 +314,24 @@
                 <span class="side-nav-indicator" id="sideNavInd_home">&gt;</span>
               </div>
 
-              <!-- Item 1: Nhập dữ liệu -->
-              <div id="sideNav_upload" onclick="goToStep(2)" class="side-nav-card">
-                <div class="side-nav-node" id="sideNavNode_upload">1</div>
-                <div class="side-nav-text">
-                  <span class="side-nav-title">Nhập dữ liệu</span>
-                  <span class="side-nav-sub">Sheets, Excel & CSV</span>
-                </div>
-                <span class="side-nav-indicator" id="sideNavInd_upload">•</span>
-              </div>
-
-              <!-- Item 2: Vấn đề doanh nghiệp -->
+              <!-- Item 1: Vấn đề doanh nghiệp (Thiết lập bối cảnh trước) -->
               <div id="sideNav_context" onclick="goToStep('context')" class="side-nav-card">
-                <div class="side-nav-node" id="sideNavNode_context">2</div>
+                <div class="side-nav-node" id="sideNavNode_context">1</div>
                 <div class="side-nav-text">
                   <span class="side-nav-title">Vấn đề doanh nghiệp</span>
                   <span class="side-nav-sub">Mô hình & Mục tiêu BI</span>
                 </div>
                 <span class="side-nav-indicator" id="sideNavInd_context">•</span>
+              </div>
+
+              <!-- Item 2: Nạp dữ liệu (Đẩy xuống sau bối cảnh) -->
+              <div id="sideNav_upload" onclick="goToStep(2)" class="side-nav-card">
+                <div class="side-nav-node" id="sideNavNode_upload">2</div>
+                <div class="side-nav-text">
+                  <span class="side-nav-title">Nạp dữ liệu</span>
+                  <span class="side-nav-sub">Sheets, Excel & CSV</span>
+                </div>
+                <span class="side-nav-indicator" id="sideNavInd_upload">•</span>
               </div>
 
               <!-- Item 3: Làm sạch & Duyệt -->
@@ -640,7 +679,7 @@
           </div>
           <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EDF5F2] border border-[#A7C9BE]/60 text-[#588376] text-xs font-bold shadow-2xs">
             <i class="fa-solid fa-building-user text-[11px]"></i>
-            <span>BƯỚC BẮT BUỘC (2/5)</span>
+            <span>BƯỚC 1 / 5 • BỐI CẢNH DOANH NGHIỆP</span>
           </div>
         </div>
 
@@ -918,7 +957,7 @@
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div class="flex items-center gap-2">
-            <span class="text-xs font-black text-[#D47B6B] uppercase tracking-wider">Bước 3 / 5 • Kết Nối</span>
+            <span class="text-xs font-black text-[#D47B6B] uppercase tracking-wider">Bước 2 / 5 • Nạp Dữ Liệu</span>
             <span class="text-slate-300">•</span>
             <button type="button" onclick="goToStep('context')" class="text-xs font-bold text-[#588376] hover:text-[#D47B6B] flex items-center gap-1 transition-all">
               <i class="fa-solid fa-arrow-left text-[10px]"></i>
