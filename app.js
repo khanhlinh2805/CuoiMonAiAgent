@@ -467,12 +467,112 @@ function updateStudioStepper() {
 
   // Mobile indicator
   if ($("mobileStepIndicator")) {
-    if (AppState.currentStep === 1) $("mobileStepIndicator").innerText = "Bước 1: Khởi động hệ thống";
-    else if (AppState.currentStep === 'context') $("mobileStepIndicator").innerText = "Bước 2: Bối cảnh doanh nghiệp";
-    else if (AppState.currentStep === 2) $("mobileStepIndicator").innerText = "Bước 3: Nạp tệp dữ liệu";
-    else if (AppState.currentStep === 3) $("mobileStepIndicator").innerText = "Bước 4: Làm sạch & Thống kê";
-    else $("mobileStepIndicator").innerText = "Bước 5: Báo cáo & Đề xuất";
+    if (AppState.currentStep === 1) $("mobileStepIndicator").innerText = "Trang Chủ: Giới thiệu & Hướng dẫn";
+    else if (AppState.currentStep === 'context') $("mobileStepIndicator").innerText = "Bước 2: Vấn đề doanh nghiệp";
+    else if (AppState.currentStep === 2) $("mobileStepIndicator").innerText = "Bước 1: Nhập dữ liệu";
+    else if (AppState.currentStep === 3 && AppState.activeStudioTab === 'norm') $("mobileStepIndicator").innerText = "Bước 3: Làm sạch & Duyệt";
+    else $("mobileStepIndicator").innerText = "Bước 5: Dashboard & Xuất tệp";
   }
+
+  // 3. Sync Permanent Sidebar (Matching Reference Screenshot)
+  updatePermanentSidebar();
+}
+
+function updatePermanentSidebar() {
+  const isContext = AppState.currentStep === 'context';
+  const isHome = AppState.currentStep === 1;
+  const isUpload = AppState.currentStep === 2;
+  const isStudio = AppState.currentStep >= 3;
+  const isNorm = isStudio && AppState.activeStudioTab === 'norm';
+  const isRank = isStudio && (AppState.activeStudioTab === 'rank' || AppState.activeStudioTab === 'proposal');
+  const hasData = !!AppState.rawDataset;
+  const hasClean = !!AppState.cleanedResult;
+  const isApproved = AppState.reportApproved || AppState.maxApprovedStep >= 4;
+
+  const setItem = (key, isActive, isCompleted, activeInd = '•') => {
+    const card = $(`sideNav_${key}`);
+    const ind = $(`sideNavInd_${key}`);
+    if (!card) return;
+
+    if (isActive) {
+      card.className = "side-nav-card active";
+      if (ind) ind.innerText = activeInd;
+    } else if (isCompleted) {
+      card.className = "side-nav-card completed";
+      if (ind) ind.innerText = "✓";
+    } else {
+      card.className = "side-nav-card";
+      if (ind) ind.innerText = "•";
+    }
+  };
+
+  setItem('home', isHome, !isHome, '>');
+  setItem('upload', isUpload, hasData, '•');
+  setItem('context', isContext, !!AppState.businessContext.industry, '•');
+  setItem('clean', isNorm, hasClean, '•');
+  setItem('analysis', isRank, hasClean, '•');
+  setItem('dashboard', isRank, isApproved, '•');
+
+  // Human review badges
+  const dBadge = $("sideReviewDataBadge");
+  const rBadge = $("sideReviewResultBadge");
+  if (dBadge) {
+    if (hasClean) {
+      dBadge.className = "px-2 py-0.5 rounded-full bg-[#EDF5F2] text-[#588376] text-[10px] font-black border border-[#A7C9BE]/50";
+      dBadge.innerText = "Hợp lệ";
+    } else {
+      dBadge.className = "px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold border border-slate-200";
+      dBadge.innerText = "Chờ nạp";
+    }
+  }
+
+  if (rBadge) {
+    if (isApproved) {
+      rBadge.className = "px-2 py-0.5 rounded-full bg-[#EDF5F2] text-[#588376] text-[10px] font-black border border-[#A7C9BE]/50";
+      rBadge.innerText = "Đạt yêu cầu";
+    } else if (hasClean) {
+      rBadge.className = "px-2 py-0.5 rounded-full bg-[#FEF9C3] text-amber-800 text-[10px] font-black border border-amber-300";
+      rBadge.innerText = "Chờ duyệt";
+    } else {
+      rBadge.className = "px-2 py-0.5 rounded-full bg-slate-100 text-slate-400 text-[10px] font-bold border border-slate-200";
+      rBadge.innerText = "Chưa duyệt";
+    }
+  }
+}
+
+function navToCleaningStep() {
+  if (!AppState.rawDataset) {
+    showToast("Vui lòng nạp tệp dữ liệu trước!", true);
+    goToStep(2);
+    return;
+  }
+  goToStep(3);
+  switchStudioTab('norm');
+}
+
+function navToAnalysisStep() {
+  if (!AppState.cleanedResult) {
+    showToast("Vui lòng nạp và làm sạch dữ liệu trước!", true);
+    if (!AppState.rawDataset) goToStep(2);
+    else goToStep(3);
+    return;
+  }
+  goToStep(3);
+  switchStudioTab('rank');
+  setTimeout(() => {
+    $("productAreaChartContainer")?.scrollIntoView({ behavior: 'smooth' });
+  }, 100);
+}
+
+function navToDashboardStep() {
+  if (!AppState.cleanedResult) {
+    showToast("Vui lòng nạp và làm sạch dữ liệu trước!", true);
+    if (!AppState.rawDataset) goToStep(2);
+    else goToStep(3);
+    return;
+  }
+  goToStep(3);
+  switchStudioTab('rank');
 }
 
 function focusHoverSidebar() {
