@@ -2965,105 +2965,12 @@ function showToast(msg, isError = false) {
 }
 
 /* ==========================================================================
-   DYNAMIC AMBIENT BACKGROUND SYSTEM (Subtle Mouse Spotlight & Meteors)
+   HIGH-PERFORMANCE ZERO-HEAT AMBIENT BACKGROUND SYSTEM
+   Pure CSS hardware-composited ambient background runs at 0% CPU.
+   Shooting stars are keyframed in CSS (zero JS timers, zero garbage collection).
    ========================================================================== */
 function setupAmbientBackground() {
-  const spotlight = $("ambientMouseSpotlight");
-  if (spotlight) {
-    let mouseX = window.innerWidth / 2;
-    let mouseY = window.innerHeight / 2;
-    let currentX = mouseX;
-    let currentY = mouseY;
-    let isMoving = false;
-    let rafId = null;
-
-    function renderSpotlight() {
-      currentX += (mouseX - currentX) * 0.12;
-      currentY += (mouseY - currentY) * 0.12;
-
-      spotlight.style.left = `${currentX}px`;
-      spotlight.style.top = `${currentY}px`;
-
-      if (Math.abs(mouseX - currentX) > 0.5 || Math.abs(mouseY - currentY) > 0.5) {
-        rafId = requestAnimationFrame(renderSpotlight);
-      } else {
-        isMoving = false;
-        rafId = null;
-      }
-    }
-
-    window.addEventListener("mousemove", (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-      spotlight.style.opacity = "1";
-
-      if (!isMoving) {
-        isMoving = true;
-        rafId = requestAnimationFrame(renderSpotlight);
-      }
-    }, { passive: true });
-
-    window.addEventListener("mouseleave", () => {
-      spotlight.style.opacity = "0";
-    });
-  }
-
-  // Launch occasional shooting stars / Mưa sao băng
-  startDynamicMeteorShower();
-}
-
-function startDynamicMeteorShower() {
-  const container = $("ambientMeteorShower");
-  if (!container) return;
-
-  function spawnMeteor() {
-    const meteor = document.createElement("div");
-    meteor.className = "ambient-meteor";
-
-    // Random starting position in upper / right portion
-    const startX = Math.random() * 65 + 30; // 30% to 95%
-    const startY = Math.random() * 32 + 3;  // 3% to 35%
-    const angle = Math.random() * 12 - 40;  // -40deg to -28deg
-    const duration = Math.random() * 400 + 850; // 850ms to 1250ms
-    const distance = Math.random() * 300 + 620; // 620px to 920px
-
-    meteor.style.left = `${startX}%`;
-    meteor.style.top = `${startY}%`;
-    meteor.style.width = "200px";
-    meteor.style.height = "3.5px";
-    meteor.style.opacity = "0";
-
-    container.appendChild(meteor);
-
-    // Diagonal movement calculations
-    const rad = (angle * Math.PI) / 180;
-    const destX = Math.cos(rad) * distance;
-    const destY = -Math.sin(rad) * distance;
-
-    const keyframes = [
-      { opacity: 0, transform: `translate3d(0, 0, 0) rotate(${angle}deg) scaleX(0.2)` },
-      { opacity: 1, transform: `translate3d(-${destX * 0.12}px, ${destY * 0.12}px, 0) rotate(${angle}deg) scaleX(1)`, offset: 0.1 },
-      { opacity: 1, transform: `translate3d(-${destX * 0.75}px, ${destY * 0.75}px, 0) rotate(${angle}deg) scaleX(1.15)`, offset: 0.75 },
-      { opacity: 0, transform: `translate3d(-${destX}px, ${destY}px, 0) rotate(${angle}deg) scaleX(0.3)`, offset: 1 }
-    ];
-
-    if (typeof meteor.animate === "function") {
-      const anim = meteor.animate(keyframes, {
-        duration: duration,
-        easing: "cubic-bezier(0.22, 1, 0.36, 1)"
-      });
-      anim.onfinish = () => meteor.remove();
-    } else {
-      setTimeout(() => meteor.remove(), duration + 100);
-    }
-
-    // Schedule next occasional meteor in 4 to 8 seconds
-    const nextDelay = Math.random() * 4000 + 4000;
-    setTimeout(spawnMeteor, nextDelay);
-  }
-
-  // Initial trigger after 1.5s
-  setTimeout(spawnMeteor, 1500);
+  // Pure CSS GPU-composited system. No continuous JS loops needed.
 }
 
 /* ==========================================================================
@@ -3077,9 +2984,9 @@ function setupCandyCursorTrail() {
 
   document.addEventListener("mousemove", (e) => {
     const now = performance.now();
-    // Throttle: chỉ tạo icon khi chuột di chuyển cách điểm trước ít nhất 30px và cách 65ms
+    // Throttle: chỉ tạo icon khi chuột di chuyển cách điểm trước ít nhất 60px và cách 140ms
     const dist = Math.hypot(e.clientX - lastX, e.clientY - lastY);
-    if (now - lastTime < 65 || dist < 30) return;
+    if (now - lastTime < 140 || dist < 60) return;
 
     lastX = e.clientX;
     lastY = e.clientY;

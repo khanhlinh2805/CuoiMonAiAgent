@@ -28,7 +28,7 @@
             }
           },
           fontFamily: {
-            sans: ['"Plus Jakarta Sans"', '"Be Vietnam Pro"', 'sans-serif'],
+            sans: ['"Be Vietnam Pro"', '"Plus Jakarta Sans"', 'sans-serif'],
           }
         }
       }
@@ -51,42 +51,24 @@
 <body class="text-pastel-text">
 
   <!-- ========================================================================= -->
-  <!-- DYNAMIC AMBIENT BACKGROUND LAYER (Subtle, Lively Atmospheric Motion) -->
+  <!-- HIGH-PERFORMANCE ZERO-HEAT AMBIENT BACKGROUND LAYER -->
   <!-- ========================================================================= -->
   <div id="ambientBackgroundLayer" class="ambient-bg-layer" aria-hidden="true">
-    <!-- Living Animated Ombre Mesh Canvas (Slow Gradual Color Shift) -->
+    <!-- Zero-Heat Static Ombre Mesh (Silky Smooth, Zero GPU Overheat) -->
     <div class="ambient-ombre-mesh"></div>
 
-    <!-- Micro-Dot Matrix Pattern with Vignette -->
+    <!-- Micro-Dot Matrix Pattern -->
     <div class="ambient-grid-overlay"></div>
 
-    <!-- Morphing Fluid Aurora Orbs (Ombre Gradients) -->
+    <!-- Soft Ambient Accent Orbs (GPU Composited Only) -->
     <div class="ambient-orb ambient-orb-1"></div>
     <div class="ambient-orb ambient-orb-2"></div>
-    <div class="ambient-orb ambient-orb-3"></div>
-    <div class="ambient-orb ambient-orb-4"></div>
-    <div class="ambient-orb ambient-orb-5"></div>
 
-    <!-- Shooting Stars / Mưa Sao Băng Container (Clear & Vivid Streaks) -->
+    <!-- Pure White Shooting Stars (CSS-only, Zero Battery Drain) -->
     <div id="ambientMeteorShower" class="ambient-meteor-shower">
       <div class="ambient-meteor meteor-css-1"></div>
       <div class="ambient-meteor meteor-css-2"></div>
-      <div class="ambient-meteor meteor-css-3"></div>
-      <div class="ambient-meteor meteor-css-4"></div>
-      <div class="ambient-meteor meteor-css-5"></div>
-      <div class="ambient-meteor meteor-css-6"></div>
     </div>
-
-    <!-- Interactive Mouse Spotlight -->
-    <div id="ambientMouseSpotlight" class="ambient-mouse-spotlight"></div>
-
-    <!-- Subtle Floating Bokeh Particles -->
-    <div class="ambient-particle p-1"></div>
-    <div class="ambient-particle p-2"></div>
-    <div class="ambient-particle p-3"></div>
-    <div class="ambient-particle p-4"></div>
-    <div class="ambient-particle p-5"></div>
-    <div class="ambient-particle p-6"></div>
   </div>
   
   <!-- ========================================================================= -->
@@ -109,7 +91,7 @@
       <!-- Active Step Indicator Badge (Fits cleanly, never overflows top bar) -->
       <div id="headerActiveStepBadge" class="hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FAF7F2] border border-[#EDE4DC] text-xs font-bold text-[#588376] cursor-pointer hover:border-[#ECA294] transition-all shrink-0" onclick="focusHoverSidebar()" title="Xem các bước quy trình">
         <span class="w-2 h-2 rounded-full bg-[#ECA294] animate-pulse"></span>
-        <span id="headerCurrentStepName">1. Khởi động</span>
+        <span id="headerCurrentStepName">Trang Chủ</span>
       </div>
 
       <!-- Header Context Badge Pill (Strictly Truncated to prevent pushing buttons) -->
@@ -192,62 +174,62 @@
         </div>
       </div>
 
-      <!-- Step 1: Khởi động -->
+      <!-- Trang Chủ -->
       <div id="sideStep1" class="sidebar-step-item active" onclick="goToStep(1)">
         <div class="sidebar-step-node" id="sideStepNode1">
-          <i class="fa-solid fa-sparkles text-[10px]"></i>
+          <i class="fa-solid fa-house text-[10px]"></i>
         </div>
         <div class="sidebar-step-info">
-          <span class="sidebar-step-name">1. Khởi động</span>
-          <span class="sidebar-step-desc">Giới thiệu hệ thống</span>
+          <span class="sidebar-step-name">Trang Chủ</span>
+          <span class="sidebar-step-desc">Giới thiệu & Hướng dẫn</span>
         </div>
         <span class="sidebar-step-badge bg-[#ECA294] text-white" id="sideStepBadge1">Hiện tại</span>
       </div>
 
-      <!-- Step 2: Bối cảnh DN -->
+      <!-- Step 1: Vấn đề doanh nghiệp -->
       <div id="sideStepContext" class="sidebar-step-item" onclick="goToStep('context')">
         <div class="sidebar-step-node" id="sideStepNodeContext">
           <i class="fa-solid fa-briefcase text-[10px]"></i>
         </div>
         <div class="sidebar-step-info">
-          <span class="sidebar-step-name">2. Bối cảnh DN</span>
-          <span class="sidebar-step-desc">Mục tiêu ngành hàng</span>
+          <span class="sidebar-step-name">1. Vấn đề DN</span>
+          <span class="sidebar-step-desc">Bối cảnh & Mục tiêu BI</span>
         </div>
-        <span class="sidebar-step-badge bg-slate-100 text-slate-500" id="sideStepBadgeContext">Bước 2</span>
+        <span class="sidebar-step-badge bg-slate-100 text-slate-500" id="sideStepBadgeContext">Bước 1</span>
       </div>
 
-      <!-- Step 3: Nạp dữ liệu -->
+      <!-- Step 2: Nạp dữ liệu -->
       <div id="sideStep2" class="sidebar-step-item" onclick="goToStep(2)">
         <div class="sidebar-step-node" id="sideStepNode2">
           <i class="fa-solid fa-cloud-arrow-up text-[10px]"></i>
         </div>
         <div class="sidebar-step-info">
-          <span class="sidebar-step-name">3. Nạp dữ liệu</span>
+          <span class="sidebar-step-name">2. Nạp dữ liệu</span>
           <span class="sidebar-step-desc">Tải tệp Excel / CSV</span>
         </div>
-        <span class="sidebar-step-badge bg-slate-100 text-slate-500" id="sideStepBadge2">Bước 3</span>
+        <span class="sidebar-step-badge bg-slate-100 text-slate-500" id="sideStepBadge2">Bước 2</span>
       </div>
 
-      <!-- Step 4: Làm sạch & HITL -->
+      <!-- Step 3: Làm sạch & Duyệt -->
       <div id="sideStep3" class="sidebar-step-item locked" onclick="goToStep(3)">
         <div class="sidebar-step-node" id="sideStepNode3">
           <i class="fa-solid fa-lock text-[9px]"></i>
         </div>
         <div class="sidebar-step-info">
-          <span class="sidebar-step-name">4. Chuẩn hóa</span>
-          <span class="sidebar-step-desc">8 bước sạch Excel</span>
+          <span class="sidebar-step-name">3. Làm sạch & Duyệt</span>
+          <span class="sidebar-step-desc">Chuẩn hóa & Kiểm duyệt</span>
         </div>
         <span class="sidebar-step-badge bg-slate-100 text-slate-400" id="sideStepBadge3">Cần file</span>
       </div>
 
-      <!-- Step 5: Báo cáo & Dashboard -->
+      <!-- Step 4 & 5: Dashboard & Xuất tệp -->
       <div id="sideStep4" class="sidebar-step-item locked" onclick="switchStudioTab('rank')">
         <div class="sidebar-step-node" id="sideStepNode4">
           <i class="fa-solid fa-lock text-[9px]"></i>
         </div>
         <div class="sidebar-step-info">
-          <span class="sidebar-step-name">5. Báo cáo & BI</span>
-          <span class="sidebar-step-desc">Dashboard & Word</span>
+          <span class="sidebar-step-name">4. Dashboard & Xuất</span>
+          <span class="sidebar-step-desc">Bento BI, Excel & Word</span>
         </div>
         <span class="sidebar-step-badge bg-slate-100 text-slate-400" id="sideStepBadge4">Khóa</span>
       </div>
@@ -408,10 +390,12 @@
             <span class="px-2 py-0.5 rounded-full bg-[#588376] text-white text-[10px] font-black uppercase">Enterprise v2.5 Online</span>
           </div>
 
-          <!-- Main Catchy Title -->
-          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-[#2E2926] tracking-tight leading-tight max-w-3xl">
-            Biến Dữ Liệu Hỗn Loạn Thành <br class="hidden sm:inline" />
-            <span class="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-[#D47B6B] via-[#ECA294] to-[#588376]">
+          <!-- Main Catchy Title (Spacious, Elegant, Perfectly Accented Vietnamese Typography) -->
+          <h1 class="flex flex-col items-center justify-center gap-1 sm:gap-2 max-w-3xl mx-auto font-['Be_Vietnam_Pro',sans-serif]">
+            <span class="text-xl sm:text-2xl md:text-[1.85rem] lg:text-[2.15rem] font-bold text-[#2E2926] tracking-wide leading-normal">
+              Biến Dữ Liệu Hỗn Loạn Thành
+            </span>
+            <span class="text-xl sm:text-2xl md:text-[1.85rem] lg:text-[2.15rem] font-extrabold text-[#D47B6B] tracking-wide leading-normal">
               Quyết Định Kinh Doanh Chuẩn Xác
             </span>
           </h1>
