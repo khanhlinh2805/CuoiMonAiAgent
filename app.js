@@ -1,5 +1,5 @@
 /**
- * Lê Khánh Linh AI Data Agent - Frontend Studio Application
+ * CandyData AI - Enterprise Studio Application
  * Comprehensive Enterprise BI & Data Cleaning Studio.
  * Preserves 100% of user's custom pastel palette & visual components.
  */
@@ -40,10 +40,11 @@ const $ = (id) => document.getElementById(id);
 
 document.addEventListener("DOMContentLoaded", () => {
   setupDragAndDrop();
+  setupCandyCursorTrail();
   setupClickRipples();
   initPersonalizedWelcomeGreeting();
   updateStudioStepper();
-  console.log("🚀 Lê Khánh Linh AI Data Studio v2.5 Online.");
+  console.log("🚀 CandyData AI Enterprise Studio v2.5 Online.");
 });
 
 function initPersonalizedWelcomeGreeting() {
@@ -327,14 +328,159 @@ function updateStudioStepper() {
     }
   }
 
+  // 1. Sync Header Active Step Indicator Badge (Fits cleanly, never overflows)
+  const headerStepNameEl = $("headerCurrentStepName");
+  if (headerStepNameEl) {
+    if (AppState.currentStep === 1) headerStepNameEl.innerText = "1. Khởi động";
+    else if (AppState.currentStep === 'context') headerStepNameEl.innerText = "2. Bối cảnh DN";
+    else if (AppState.currentStep === 2) headerStepNameEl.innerText = "3. Nạp dữ liệu";
+    else if (AppState.currentStep === 3 || (AppState.currentStep > 2 && AppState.activeStudioTab === 'norm')) {
+      headerStepNameEl.innerText = "4. Chuẩn hóa dữ liệu";
+    } else if (AppState.currentStep >= 4 || AppState.activeStudioTab === 'rank' || AppState.activeStudioTab === 'proposal') {
+      headerStepNameEl.innerText = "5. Báo cáo & BI";
+    } else {
+      headerStepNameEl.innerText = "CandyData AI";
+    }
+  }
+
+  // 2. Sync Minimalist Retractable Sidebar (5 Steps)
+  // Step 1: Khởi động
+  const sideStep1 = $("sideStep1");
+  const sideStepNode1 = $("sideStepNode1");
+  const sideStepBadge1 = $("sideStepBadge1");
+  if (sideStep1 && sideStepNode1 && sideStepBadge1) {
+    if (AppState.currentStep === 1) {
+      sideStep1.className = "sidebar-step-item active";
+      sideStepNode1.innerHTML = '<i class="fa-solid fa-sparkles text-[10px]"></i>';
+      sideStepBadge1.innerText = "Hiện tại";
+      sideStepBadge1.className = "sidebar-step-badge bg-[#ECA294] text-white";
+    } else {
+      sideStep1.className = "sidebar-step-item completed";
+      sideStepNode1.innerHTML = '<i class="fa-solid fa-check text-[11px]"></i>';
+      sideStepBadge1.innerText = "Đã xong";
+      sideStepBadge1.className = "sidebar-step-badge bg-[#EDF5F2] text-[#588376]";
+    }
+  }
+
+  // Step 2: Bối cảnh DN
+  const sideStepCtx = $("sideStepContext");
+  const sideStepNodeCtx = $("sideStepNodeContext");
+  const sideStepBadgeCtx = $("sideStepBadgeContext");
+  if (sideStepCtx && sideStepNodeCtx && sideStepBadgeCtx) {
+    if (AppState.currentStep === 'context') {
+      sideStepCtx.className = "sidebar-step-item active";
+      sideStepNodeCtx.innerHTML = '<i class="fa-solid fa-briefcase text-[10px]"></i>';
+      sideStepBadgeCtx.innerText = "Hiện tại";
+      sideStepBadgeCtx.className = "sidebar-step-badge bg-[#ECA294] text-white";
+    } else if (AppState.rawDataset || AppState.currentStep === 2 || AppState.currentStep >= 3) {
+      sideStepCtx.className = "sidebar-step-item completed";
+      sideStepNodeCtx.innerHTML = '<i class="fa-solid fa-check text-[11px]"></i>';
+      sideStepBadgeCtx.innerText = "Đã xong";
+      sideStepBadgeCtx.className = "sidebar-step-badge bg-[#EDF5F2] text-[#588376]";
+    } else {
+      sideStepCtx.className = "sidebar-step-item";
+      sideStepNodeCtx.innerHTML = '<i class="fa-solid fa-briefcase text-[10px]"></i>';
+      sideStepBadgeCtx.innerText = "Sẵn sàng";
+      sideStepBadgeCtx.className = "sidebar-step-badge bg-slate-100 text-slate-500";
+    }
+  }
+
+  // Step 3: Nạp dữ liệu
+  const sideStep2 = $("sideStep2");
+  const sideStepNode2 = $("sideStepNode2");
+  const sideStepBadge2 = $("sideStepBadge2");
+  if (sideStep2 && sideStepNode2 && sideStepBadge2) {
+    if (AppState.currentStep === 2) {
+      sideStep2.className = "sidebar-step-item active";
+      sideStepNode2.innerHTML = '<i class="fa-solid fa-cloud-arrow-up text-[10px]"></i>';
+      sideStepBadge2.innerText = "Hiện tại";
+      sideStepBadge2.className = "sidebar-step-badge bg-[#ECA294] text-white";
+    } else if (AppState.rawDataset) {
+      sideStep2.className = "sidebar-step-item completed";
+      sideStepNode2.innerHTML = '<i class="fa-solid fa-check text-[11px]"></i>';
+      sideStepBadge2.innerText = "Đã nạp";
+      sideStepBadge2.className = "sidebar-step-badge bg-[#EDF5F2] text-[#588376]";
+    } else {
+      sideStep2.className = "sidebar-step-item";
+      sideStepNode2.innerHTML = '<i class="fa-solid fa-cloud-arrow-up text-[10px]"></i>';
+      sideStepBadge2.innerText = "Chờ file";
+      sideStepBadge2.className = "sidebar-step-badge bg-slate-100 text-slate-500";
+    }
+  }
+
+  // Step 4: Làm sạch dữ liệu & HITL
+  const sideStep3 = $("sideStep3");
+  const sideStepNode3 = $("sideStepNode3");
+  const sideStepBadge3 = $("sideStepBadge3");
+  if (sideStep3 && sideStepNode3 && sideStepBadge3) {
+    if (AppState.currentStep === 3 || (AppState.currentStep > 2 && AppState.activeStudioTab === 'norm')) {
+      sideStep3.className = "sidebar-step-item active";
+      sideStepNode3.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles text-[10px]"></i>';
+      sideStepBadge3.innerText = "Đang xử lý";
+      sideStepBadge3.className = "sidebar-step-badge bg-[#ECA294] text-white";
+    } else if (AppState.maxApprovedStep >= 3) {
+      sideStep3.className = "sidebar-step-item completed";
+      sideStepNode3.innerHTML = '<i class="fa-solid fa-check text-[11px]"></i>';
+      sideStepBadge3.innerText = "Đã duyệt";
+      sideStepBadge3.className = "sidebar-step-badge bg-[#EDF5F2] text-[#588376]";
+    } else if (AppState.rawDataset) {
+      sideStep3.className = "sidebar-step-item";
+      sideStepNode3.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles text-[10px]"></i>';
+      sideStepBadge3.innerText = "Sẵn sàng";
+      sideStepBadge3.className = "sidebar-step-badge bg-slate-100 text-slate-500";
+    } else {
+      sideStep3.className = "sidebar-step-item locked";
+      sideStepNode3.innerHTML = '<i class="fa-solid fa-lock text-[9px]"></i>';
+      sideStepBadge3.innerText = "Cần file";
+      sideStepBadge3.className = "sidebar-step-badge bg-slate-100 text-slate-400";
+    }
+  }
+
+  // Step 5: Báo cáo & Dashboard
+  const sideStep4 = $("sideStep4");
+  const sideStepNode4 = $("sideStepNode4");
+  const sideStepBadge4 = $("sideStepBadge4");
+  if (sideStep4 && sideStepNode4 && sideStepBadge4) {
+    if (AppState.currentStep > 2 && (AppState.activeStudioTab === 'rank' || AppState.activeStudioTab === 'proposal')) {
+      sideStep4.className = "sidebar-step-item active";
+      sideStepNode4.innerHTML = '<i class="fa-solid fa-chart-pie text-[10px]"></i>';
+      sideStepBadge4.innerText = "Đang xem";
+      sideStepBadge4.className = "sidebar-step-badge bg-[#88B2A6] text-white";
+    } else if (AppState.maxApprovedStep >= 4) {
+      sideStep4.className = "sidebar-step-item completed";
+      sideStepNode4.innerHTML = '<i class="fa-solid fa-check text-[11px]"></i>';
+      sideStepBadge4.innerText = "Đã duyệt";
+      sideStepBadge4.className = "sidebar-step-badge bg-[#EDF5F2] text-[#588376]";
+    } else if (AppState.cleanedResult) {
+      sideStep4.className = "sidebar-step-item";
+      sideStepNode4.innerHTML = '<i class="fa-solid fa-chart-pie text-[10px]"></i>';
+      sideStepBadge4.innerText = "Sẵn sàng";
+      sideStepBadge4.className = "sidebar-step-badge bg-slate-100 text-slate-500";
+    } else {
+      sideStep4.className = "sidebar-step-item locked";
+      sideStepNode4.innerHTML = '<i class="fa-solid fa-lock text-[9px]"></i>';
+      sideStepBadge4.innerText = "Khóa";
+      sideStepBadge4.className = "sidebar-step-badge bg-slate-100 text-slate-400";
+    }
+  }
+
   // Mobile indicator
   if ($("mobileStepIndicator")) {
-    if (AppState.currentStep === 1) $("mobileStepIndicator").innerText = "Bước 1: Chào mừng";
+    if (AppState.currentStep === 1) $("mobileStepIndicator").innerText = "Bước 1: Khởi động hệ thống";
     else if (AppState.currentStep === 'context') $("mobileStepIndicator").innerText = "Bước 2: Bối cảnh doanh nghiệp";
     else if (AppState.currentStep === 2) $("mobileStepIndicator").innerText = "Bước 3: Nạp tệp dữ liệu";
     else if (AppState.currentStep === 3) $("mobileStepIndicator").innerText = "Bước 4: Làm sạch & Thống kê";
     else $("mobileStepIndicator").innerText = "Bước 5: Báo cáo & Đề xuất";
   }
+}
+
+function focusHoverSidebar() {
+  const sidebar = $("hoverNavSidebar");
+  if (!sidebar) return;
+  sidebar.classList.add("force-open");
+  setTimeout(() => {
+    sidebar.classList.remove("force-open");
+  }, 2200);
 }
 
 /* ==========================================================================
@@ -371,6 +517,7 @@ function switchStudioTab(tabId) {
     renderConcreteBusinessDashboard(AppState.cleanedResult);
   }
 
+  updateStudioStepper();
   window.scrollTo({ top: 120, behavior: AppState.smoothMode ? "smooth" : "auto" });
 }
 
@@ -637,7 +784,7 @@ function executeDataCleaning(customPrompt = "") {
     renderDashboardStats(result);
 
     if (customPrompt) {
-      showToast(`✨ Agent Lê Khánh Linh đã áp dụng chỉnh sửa theo yêu cầu: "${customPrompt}"`);
+      showToast(`✨ Trợ Lý AI đã áp dụng chỉnh sửa theo yêu cầu: "${customPrompt}"`);
     } else {
       showToast("✨ Đã hoàn tất làm sạch & thống kê phân bố từng cột!");
     }
@@ -882,7 +1029,7 @@ function submitReProcessing() {
     return;
   }
   closeRefineModal();
-  showToast(`⚡ Agent Lê Khánh Linh đang xử lý lại theo yêu cầu: "${prompt}"...`);
+  showToast(`⚡ Trợ Lý AI đang xử lý lại theo yêu cầu: "${prompt}"...`);
   AppState.refinementHistory.push(prompt);
   executeDataCleaning(prompt);
 }
@@ -1459,7 +1606,7 @@ function renderDashboardStats(res) {
     initial_stats,
     final_stats,
     cleaned_data,
-    "Lê Khánh Linh"
+    "CandyData AI"
   );
 
   if ($("executiveSummaryText")) {
@@ -1834,7 +1981,7 @@ function exportReportDocx() {
     <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
     <head>
       <meta charset='utf-8'>
-      <title>Báo Cáo Phân Tích Dữ Liệu & Giải Pháp Tối Ưu - Lê Khánh Linh</title>
+      <title>Báo Cáo Phân Tích Dữ Liệu & Giải Pháp Tối Ưu - CandyData AI</title>
       <!--[if gte mso 9]>
       <xml>
         <w:WordDocument>
@@ -2034,11 +2181,11 @@ function exportReportDocx() {
             </tr>
             <tr>
               <td style="font-weight:bold; border:none; padding:3pt 0;">Đơn vị chủ trì:</td>
-              <td style="border:none; padding:3pt 0;">Trung Tâm Phân Tích Dữ Liệu & Tự Động Hóa AI (Số: 26/BC-ĐH/LKL)</td>
+              <td style="border:none; padding:3pt 0;">Trung Tâm Phân Tích Dữ Liệu Doanh Nghiệp (Số: 26/BC-ĐH/BI)</td>
             </tr>
             <tr>
-              <td style="font-weight:bold; border:none; padding:3pt 0;">Kỹ sư & Chuyên viên lập:</td>
-              <td style="border:none; padding:3pt 0;"><strong>Lê Khánh Linh</strong> (Data Analyst & AI Engineer)</td>
+              <td style="font-weight:bold; border:none; padding:3pt 0;">Đơn vị lập báo cáo:</td>
+              <td style="border:none; padding:3pt 0;"><strong>Ban Phân Tích Dữ Liệu & BI</strong> (Data Analytics Specialist Team)</td>
             </tr>
             <tr>
               <td style="font-weight:bold; border:none; padding:3pt 0;">Bối cảnh vận hành:</td>
@@ -2073,7 +2220,7 @@ function exportReportDocx() {
         <!-- PHẦN II: THỰC TRẠNG CHẤT LƯỢNG TRƯỚC VÀ SAU LÀM SẠCH -->
         <h2 class="sec-heading">PHẦN II: HIỆN TRẠNG CHẤT LƯỢNG DỮ LIỆU TRƯỚC VÀ SAU LÀM SẠCH</h2>
         <p>
-          Hệ thống AI Engine của <strong>Lê Khánh Linh</strong> đã thực hiện quét kiểm toán tự động qua hơn 10 tiêu chuẩn xác thực quốc tế (ISO/IEC 25012 về Chất lượng dữ liệu). Kết quả đối chiếu trước và sau khi chuẩn hóa được thể hiện trong bảng số liệu sau:
+          Hệ thống <strong>CandyData AI Engine</strong> đã thực hiện quét kiểm toán tự động qua hơn 10 tiêu chuẩn xác thực quốc tế (ISO/IEC 25012 về Chất lượng dữ liệu). Kết quả đối chiếu trước và sau khi chuẩn hóa được thể hiện trong bảng số liệu sau:
         </p>
 
         <table class="data-table">
@@ -2182,7 +2329,7 @@ function exportReportDocx() {
 
         <h3 class="sub-heading">Phương án 2: Tự động hóa Pipeline Làm Sạch & Đối Soát Bằng AI Agent (Automated AI Cleaning Pipeline)</h3>
         <ul>
-          <li><strong>Mô tả:</strong> Ứng dụng trực tiếp Engine xử lý của <strong>Lê Khánh Linh AI Data Agent</strong> làm cổng trung gian (Middleware ETL): định kỳ tự động tiếp nhận dữ liệu đa kênh, khử trùng lặp, phục hồi dấu tiếng Việt từ điển, chuẩn hóa SĐT, tính toán bù khuyết thông minh và quét dị thường IQR trước khi nạp vào hệ thống chính thức.</li>
+          <li><strong>Mô tả:</strong> Ứng dụng trực tiếp Engine xử lý của <strong>CandyData AI Studio</strong> làm cổng trung gian (Middleware ETL): định kỳ tự động tiếp nhận dữ liệu đa kênh, khử trùng lặp, phục hồi dấu tiếng Việt từ điển, chuẩn hóa SĐT, tính toán bù khuyết thông minh và quét dị thường IQR trước khi nạp vào hệ thống chính thức.</li>
           <li><strong>Ưu điểm:</strong> Xử lý toàn diện cả dữ liệu lịch sử lẫn dữ liệu phát sinh hàng ngày; độ chính xác cao (>99%); triển khai tức thì trong 1 - 2 tuần; vận hành tự động không phụ thuộc thao tác con người.</li>
           <li><strong>Hạn chế:</strong> Cần duy trì cấu hình máy chủ server định kỳ.</li>
         </ul>
@@ -2259,7 +2406,7 @@ function exportReportDocx() {
         <ul>
           <li>
             <strong>Giai đoạn 1: Quick-Win & Chuẩn hóa toàn diện dữ liệu lịch sử (Tuần 1 - Tuần 2)</strong>
-            <br/>Nạp toàn bộ dữ liệu đơn hàng và khách hàng cũ vào AI Engine của Lê Khánh Linh để làm sạch, xuất bản file chuẩn hoàn chỉnh và ban hành quy chuẩn danh pháp kênh bán, tên khách hàng trong nội bộ.
+            <br/>Nạp toàn bộ dữ liệu đơn hàng và khách hàng cũ vào CandyData AI Engine để làm sạch, xuất bản file chuẩn hoàn chỉnh và ban hành quy chuẩn danh pháp kênh bán, tên khách hàng trong nội bộ.
           </li>
           <li>
             <strong>Giai đoạn 2: Tự động hóa Pipeline & Đối soát thường nhật (Tuần 3 - Tuần 6)</strong>
@@ -2289,11 +2436,11 @@ function exportReportDocx() {
                   (Ký và ghi rõ họ tên)
                 </div>
                 <div style="height: 55pt;"></div>
-                <div style="font-weight: bold; font-size: 12.0pt; color: #2E2926;">
-                  Lê Khánh Linh
+                <div style="font-weight: bold; font-size: 11.5pt; color: #2E2926;">
+                  (Ký duyệt)
                 </div>
                 <div style="font-style: italic; font-size: 10.0pt; color: #555555; margin-top: 2pt;">
-                  Kỹ sư AI & Chuyên viên Phân tích Dữ liệu
+                  Chuyên viên Phân tích Dữ liệu & BI
                 </div>
               </td>
 
@@ -2368,14 +2515,14 @@ function exportMarkdown() {
   if (!AppState.cleanedResult) return;
   const title = $("customDashTitle")?.innerText || "Báo Cáo Phân Tích Dữ Liệu Doanh Nghiệp";
   let md = `# ${title}\n\n`;
-  md += `> Tự động tạo bởi Lê Khánh Linh AI Data Agent • ${new Date().toLocaleDateString('vi-VN')}\n\n`;
+  md += `> Tự động tạo bởi CandyData AI Studio • ${new Date().toLocaleDateString('vi-VN')}\n\n`;
   md += `## 1. Tóm lược điều hành\n${$("executiveSummaryText")?.innerText || ""}\n\n`;
   md += `## 2. Chỉ số chất lượng dữ liệu\n`;
   md += `- Điểm chất lượng: **${AppState.cleanedResult.final_stats.quality_score}%**\n`;
   md += `- Tổng số bản ghi hợp lệ: **${AppState.cleanedResult.cleaned_data.length}**\n`;
   md += `- Ô khuyết đã điền: **${AppState.cleanedResult.improvements.nulls_fixed}**\n\n`;
   md += `## 3. Khuyến nghị chiến lược\n${$("recommendationsList")?.innerText || ""}\n`;
-  downloadBlob(md, "text/markdown;charset=utf-8;", `Report_LeKhanhLinh.md`);
+  downloadBlob(md, "text/markdown;charset=utf-8;", `Report_CandyData_AI.md`);
   showToast("📝 Đã xuất Báo Cáo Markdown (.md)!");
 }
 
@@ -2383,7 +2530,7 @@ function exportAuditJSON() {
   closeExportMenu();
   if (!AppState.cleanedResult) return;
   const jsonStr = JSON.stringify({
-    agent: "Lê Khánh Linh AI Data Agent",
+    agent: "CandyData AI Studio",
     version: "2.5",
     exported_at: new Date().toISOString(),
     file_name: AppState.rawFileName,
@@ -2393,7 +2540,7 @@ function exportAuditJSON() {
     audit_trail: AppState.cleanedResult.audit_log,
     citations: AppState.cleanedResult.citations
   }, null, 2);
-  downloadBlob(jsonStr, "application/json;charset=utf-8;", `Audit_Log_LeKhanhLinh.json`);
+  downloadBlob(jsonStr, "application/json;charset=utf-8;", `Audit_Log_CandyData_AI.json`);
   showToast("🧾 Đã tải Audit Log JSON thành công!");
 }
 
@@ -2453,14 +2600,14 @@ function appendChatThinking() {
   item.id = thinkingId;
   item.className = "flex items-start gap-2";
   item.innerHTML = `
-    <div class="w-6 h-6 rounded-full bg-gradient-to-tr from-[#ECA294] to-[#88B2A6] text-white flex items-center justify-center text-[10px] shrink-0 mt-0.5 shadow-xs font-black">
-      KL
+    <div class="w-6 h-6 rounded-full bg-gradient-to-tr from-[#F6C4BA] via-[#FAD0C4] to-[#A7C9BE] text-white flex items-center justify-center text-[10px] shrink-0 mt-0.5 shadow-xs select-none">
+      🍬
     </div>
     <div class="p-3 rounded-2xl rounded-tl-sm bg-[#FAF7F2] border border-[#EDE4DC] text-pastel-subtext text-xs flex items-center gap-1.5">
       <span class="w-1.5 h-1.5 rounded-full bg-[#ECA294] animate-bounce"></span>
       <span class="w-1.5 h-1.5 rounded-full bg-[#88B2A6] animate-bounce [animation-delay:0.2s]"></span>
       <span class="w-1.5 h-1.5 rounded-full bg-[#D47B6B] animate-bounce [animation-delay:0.4s]"></span>
-      <span class="font-bold ml-1 text-[11px]">Lê Khánh Linh AI đang suy nghĩ...</span>
+      <span class="font-bold ml-1 text-[11px]">Trợ Lý Dữ Liệu AI đang phân tích...</span>
     </div>
   `;
   box.appendChild(item);
@@ -2522,7 +2669,7 @@ async function handleSendChatMessage(e) {
         const qScore = stats.quality_score || 99;
         const ind = AppState.businessContext?.industryName || "Doanh nghiệp";
 
-        const sysPrompt = `Bạn là Lê Khánh Linh AI Trợ Lý - Kỹ sư AI & Chuyên gia Phân tích Dữ liệu (Data Analyst). Hãy trả lời thông minh, chuyên nghiệp, súc tích bằng tiếng Việt. Bối cảnh: Ngành ${ind}, ${totalRows} dòng dữ liệu, độ tin cậy ${qScore}%.`;
+        const sysPrompt = `Bạn là Trợ Lý Phân Tích & Chuẩn Hóa Dữ Liệu AI (Data Analyst Specialist). Hãy trả lời thông minh, chuyên nghiệp, súc tích bằng tiếng Việt. Bối cảnh: Ngành ${ind}, ${totalRows} dòng dữ liệu, độ tin cậy ${qScore}%.`;
         const directUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent?key=${AppState.geminiApiKey}`;
 
         const gRes = await fetch(directUrl, {
@@ -2565,8 +2712,8 @@ function appendChatMessage(sender, text, isAiGemini = false) {
   const badgeHtml = isAiGemini ? `<span class="inline-block text-[9px] font-black text-emerald-600 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-md mb-1"><i class="fa-solid fa-sparkles text-[8px] mr-0.5"></i> Gemini AI</span><br/>` : '';
 
   item.innerHTML = `
-    <div class="w-6 h-6 rounded-full ${isUser ? 'bg-slate-700' : 'bg-gradient-to-tr from-[#ECA294] to-[#88B2A6]'} text-white flex items-center justify-center text-[10px] shrink-0 mt-0.5 shadow-xs font-black">
-      ${isUser ? 'Bạn' : 'KL'}
+    <div class="w-6 h-6 rounded-full ${isUser ? 'bg-slate-700' : 'bg-gradient-to-tr from-[#F6C4BA] via-[#FAD0C4] to-[#A7C9BE]'} text-white flex items-center justify-center text-[10px] shrink-0 mt-0.5 shadow-xs font-black select-none">
+      ${isUser ? 'Bạn' : '🍬'}
     </div>
     <div class="p-3 rounded-2xl ${isUser ? 'rounded-tr-sm bg-[#ECA294] text-white' : 'rounded-tl-sm bg-[#FAF7F2] border border-[#EDE4DC] text-[#2E2926]'} leading-relaxed max-w-[85%] text-xs shadow-2xs">
       ${badgeHtml}${formatChatMarkdown(text)}
@@ -2583,15 +2730,15 @@ function generateAgentChatReply(prompt) {
   const total = stats?.total_rows ?? 30;
 
   if (p.includes("chất lượng") || p.includes("điểm")) {
-    return `Agent Lê Khánh Linh đánh giá: Tập dữ liệu của bạn đạt chỉ số tin cậy ${qScore}/100. Các dị thường về định dạng số điện thoại, dấu tiếng Việt và giá trị trống đã được khắc phục hoàn toàn. [CIT-001]`;
+    return `Trợ Lý Dữ Liệu AI đánh giá: Tập dữ liệu của bạn đạt chỉ số tin cậy ${qScore}/100. Các dị thường về định dạng số điện thoại, dấu tiếng Việt và giá trị trống đã được khắc phục hoàn toàn. [CIT-001]`;
   }
   if (p.includes("rủi ro") || p.includes("phát hiện") || p.includes("dị thường")) {
     return `Cảnh báo dị thường: Đã xử lý ${AppState.cleanedResult?.improvements?.outliers_adjusted || 3} giá trị ngoại lai có độ lệch lớn và khử ${AppState.cleanedResult?.improvements?.duplicates_removed || 2} dòng trùng. Số liệu hiện tại đã nhất quán 100%. [CIT-002]`;
   }
   if (p.includes("chiến lược") || p.includes("doanh số") || p.includes("khuyến nghị")) {
-    return `Đề xuất từ Lê Khánh Linh AI Agent: 1) Triển khai dashboard thời gian thực theo dõi phân khúc chủ lực; 2) Ràng buộc regex SĐT/Email tại form nhập liệu; 3) Xem chi tiết lộ trình 3 giai đoạn tại tab Báo Cáo. [CIT-003]`;
+    return `Đề xuất từ Trợ Lý Dữ Liệu AI: 1) Triển khai dashboard thời gian thực theo dõi phân khúc chủ lực; 2) Ràng buộc regex SĐT/Email tại form nhập liệu; 3) Xem chi tiết lộ trình 3 giai đoạn tại tab Báo Cáo. [CIT-003]`;
   }
-  return `Agent Lê Khánh Linh đã tiếp nhận câu hỏi "${prompt}". Hiện tại ${total} bản ghi dữ liệu đã được làm sạch đạt chuẩn ${qScore}%. Bạn có thể xuất file Excel phân tích đa chiều hoặc báo cáo Word ngay từ menu góc trên.`;
+  return `Trợ Lý Dữ Liệu AI đã tiếp nhận câu hỏi "${prompt}". Hiện tại ${total} bản ghi dữ liệu đã được làm sạch đạt chuẩn ${qScore}%. Bạn có thể xuất file Excel phân tích đa chiều hoặc báo cáo Word ngay từ menu góc trên.`;
 }
 
 /* ==========================================================================
@@ -2682,8 +2829,43 @@ function showToast(msg, isError = false) {
   }, 3500);
 }
 
+/* ==========================================================================
+   CANDY MOUSE MOVE TRAIL (Icon kẹo bay nhẹ nhàng theo chuột)
+   ========================================================================== */
+function setupCandyCursorTrail() {
+  let lastX = 0;
+  let lastY = 0;
+  let lastTime = 0;
+  const candyEmojis = ["🍬", "🍭", "🍬", "🍬", "🍭"];
+
+  document.addEventListener("mousemove", (e) => {
+    const now = performance.now();
+    // Throttle: chỉ tạo icon khi chuột di chuyển cách điểm trước ít nhất 30px và cách 65ms
+    const dist = Math.hypot(e.clientX - lastX, e.clientY - lastY);
+    if (now - lastTime < 65 || dist < 30) return;
+
+    lastX = e.clientX;
+    lastY = e.clientY;
+    lastTime = now;
+
+    const candy = document.createElement("span");
+    candy.className = "candy-trail-icon";
+    candy.textContent = candyEmojis[Math.floor(Math.random() * candyEmojis.length)];
+    candy.style.left = `${e.clientX}px`;
+    candy.style.top = `${e.clientY}px`;
+    
+    // Góc xoay nhẹ ngẫu nhiên
+    const rot = (Math.random() * 36 - 18).toFixed(1) + "deg";
+    candy.style.setProperty("--candy-rot", rot);
+
+    document.body.appendChild(candy);
+    setTimeout(() => candy.remove(), 700);
+  }, { passive: true });
+}
+
 function setupClickRipples() {
   document.addEventListener("click", (e) => {
+    // Subtle button click ripple
     const btn = e.target.closest("button, .pastel-dot, .toggle-smooth-track, .stepper-pill, .studio-tab-btn, .cit-chip");
     if (!btn) return;
     const ripple = document.createElement("span");

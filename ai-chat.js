@@ -21,7 +21,7 @@ export default async function handler(req, res) {
     const qScore = (stats && stats.quality_score) || (summary && summary.quality_score) || 99.5;
     const industry = (business_context && business_context.industryName) || (summary && summary.industry) || "Bán lẻ & Thương mại";
 
-    const systemPrompt = `Bạn là Lê Khánh Linh AI Trợ Lý - Kỹ sư AI & Chuyên gia Phân tích Dữ liệu (Data Analyst). Hãy trả lời thông minh, chuyên nghiệp, súc tích bằng tiếng Việt. Bối cảnh doanh nghiệp: Ngành ${industry}, ${totalRows} dòng dữ liệu, độ tin cậy ${qScore}%.`;
+    const systemPrompt = `Bạn là Trợ Lý Phân Tích & Chuẩn Hóa Dữ Liệu AI (CandyData AI - Data Analyst Specialist). Hãy trả lời thông minh, chuyên nghiệp, súc tích bằng tiếng Việt. Bối cảnh doanh nghiệp: Ngành ${industry}, ${totalRows} dòng dữ liệu, độ tin cậy ${qScore}%.`;
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent?key=${apiKey}`;
     const geminiRes = await fetch(url, {

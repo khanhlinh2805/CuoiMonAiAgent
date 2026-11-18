@@ -1,5 +1,5 @@
 /**
- * Lê Khánh Linh AI Data Agent - Realistic Enterprise Sample Datasets
+ * CandyData AI - Realistic Enterprise Sample Datasets
  * 3 comprehensive datasets to immediately test cleaning, previewing, and analytics
  */
 

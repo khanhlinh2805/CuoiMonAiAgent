@@ -1,5 +1,5 @@
 /**
- * Lê Khánh Linh AI Data Agent - Client Data Processing Engine
+ * CandyData AI - Client Data Processing Engine
  * High-performance browser-side parsing, cleaning, audit logging,
  * Vietnamese diacritic restoration, uniform phone standardization,
  * in-depth column breakdown telemetry, evidence citations (CIT-xxx),
@@ -1270,7 +1270,7 @@ const DataProcessor = {
   /**
    * Executive Insights & Dynamic AI Recommendations
    */
-  generateExecutiveInsights(initialStats, finalStats, cleanedData, creator = "Lê Khánh Linh") {
+  generateExecutiveInsights(initialStats, finalStats, cleanedData, creator = "CandyData AI") {
     const totalRecords = cleanedData.length;
     const qScore = finalStats.quality_score;
     const cols = finalStats.columns;
