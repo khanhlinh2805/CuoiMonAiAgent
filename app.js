@@ -51,12 +51,24 @@ document.addEventListener("DOMContentLoaded", () => {
 function initPersonalizedWelcomeGreeting() {
   const greetingEl = $("personalizedGreetingText");
   if (!greetingEl) return;
-  const hour = new Date().getHours();
-  let greeting = "Xin chào!";
-  if (hour >= 5 && hour < 12) greeting = "Chào buổi sáng ☀️";
-  else if (hour >= 12 && hour < 18) greeting = "Chào buổi chiều 🌤️";
-  else greeting = "Chào buổi tối 🌙";
-  greetingEl.innerText = greeting;
+
+  function updateGreeting() {
+    const hour = new Date().getHours();
+    let greeting = "Xin chào bạn! ✨";
+    if (hour >= 4 && hour < 12) greeting = "Chào buổi sáng ☀️";
+    else if (hour >= 12 && hour < 18) greeting = "Chào buổi chiều 🌤️";
+    else greeting = "Chào buổi tối 🌙";
+    greetingEl.innerText = greeting;
+  }
+
+  updateGreeting();
+
+  // Auto-refresh when user wakes up laptop or switches back to tab, plus periodic check
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) updateGreeting();
+  });
+  window.addEventListener("focus", updateGreeting);
+  setInterval(updateGreeting, 30000);
 }
 
 function selectWelcomeIntent(intentKey, el) {
