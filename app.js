@@ -16,6 +16,8 @@ const AppState = {
   previewPage: 1,
   previewPageSize: 10,
   previewFilteredData: [],
+  previewDynamicFilter: { dimensionId: '3mien', value: 'all' },
+  selectedFilterDimension: '3mien',
   smoothMode: true,
   darkMode: false,
   refinementHistory: [],
@@ -346,14 +348,14 @@ function updateStudioStepper() {
   const headerStepNameEl = $("headerCurrentStepName");
   if (headerStepNameEl) {
     if (AppState.currentStep === 1) headerStepNameEl.innerText = "Trang Chủ";
-    else if (AppState.currentStep === 'context') headerStepNameEl.innerText = "1. Vấn đề doanh nghiệp";
-    else if (AppState.currentStep === 2) headerStepNameEl.innerText = "2. Nạp dữ liệu";
+    else if (AppState.currentStep === 'context') headerStepNameEl.innerText = "1. Khởi tạo bối cảnh";
+    else if (AppState.currentStep === 2) headerStepNameEl.innerText = "2. Tải nạp dữ liệu";
     else if (AppState.currentStep === 3 || (AppState.currentStep > 2 && AppState.activeStudioTab === 'norm')) {
-      headerStepNameEl.innerText = "3. Làm sạch & Duyệt";
+      headerStepNameEl.innerText = "3. Chuẩn hóa & Làm sạch";
     } else if (AppState.activeStudioTab === 'rank') {
-      headerStepNameEl.innerText = "4. Phân tích & Đánh giá";
+      headerStepNameEl.innerText = "4. Khai phá & Đánh giá";
     } else if (AppState.currentStep >= 4 || AppState.activeStudioTab === 'proposal') {
-      headerStepNameEl.innerText = "5. Dashboard & Xuất tệp";
+      headerStepNameEl.innerText = "5. Báo cáo & Xuất bản";
     } else {
       headerStepNameEl.innerText = "AI Agent";
     }
@@ -482,11 +484,12 @@ function updateStudioStepper() {
 
   // Mobile indicator
   if ($("mobileStepIndicator")) {
-    if (AppState.currentStep === 1) $("mobileStepIndicator").innerText = "Trang Chủ: Giới thiệu & Hướng dẫn";
-    else if (AppState.currentStep === 'context') $("mobileStepIndicator").innerText = "Bước 2: Vấn đề doanh nghiệp";
-    else if (AppState.currentStep === 2) $("mobileStepIndicator").innerText = "Bước 1: Nhập dữ liệu";
-    else if (AppState.currentStep === 3 && AppState.activeStudioTab === 'norm') $("mobileStepIndicator").innerText = "Bước 3: Làm sạch & Duyệt";
-    else $("mobileStepIndicator").innerText = "Bước 5: Dashboard & Xuất tệp";
+    if (AppState.currentStep === 1) $("mobileStepIndicator").innerText = "Trang Chủ: Khởi động & Hướng dẫn";
+    else if (AppState.currentStep === 'context') $("mobileStepIndicator").innerText = "Bước 1: Khởi tạo bối cảnh";
+    else if (AppState.currentStep === 2) $("mobileStepIndicator").innerText = "Bước 2: Tải nạp dữ liệu";
+    else if (AppState.currentStep === 3 && AppState.activeStudioTab === 'norm') $("mobileStepIndicator").innerText = "Bước 3: Chuẩn hóa & Làm sạch";
+    else if (AppState.activeStudioTab === 'rank') $("mobileStepIndicator").innerText = "Bước 4: Khai phá & Đánh giá";
+    else $("mobileStepIndicator").innerText = "Bước 5: Báo cáo & Xuất bản";
   }
 
   // 3. Sync Permanent Sidebar (Matching Reference Screenshot)
@@ -822,6 +825,8 @@ function onDatasetLoaded(data, iconClass = "fa-file-excel", tag = "Dữ liệu")
 
   AppState.rawDataset = data;
   AppState.cleanedResult = null;
+  AppState.previewDynamicFilter = { dimensionId: '3mien', value: 'all' };
+  AppState.selectedFilterDimension = '3mien';
   AppState.maxApprovedStep = 2; // Unlocks Step 2
 
   $("fileNameText").innerText = AppState.rawFileName;
@@ -989,6 +994,263 @@ function switchPreviewTable(mode) {
   renderCurrentPreviewTable();
 }
 
+/* ==========================================================================
+   SMART DATA FILTER ENGINE (3 MIỀN / THEO MẪU DỮ LIỆU)
+   ========================================================================== */
+const VIETNAM_REGION_MAP = {
+  bac: ['hà nội', 'ha noi', 'hải phòng', 'hai phong', 'quảng ninh', 'quang ninh', 'hải dương', 'bắc ninh', 'thái nguyên', 'nam định', 'ninh bình', 'vĩnh phúc', 'phú thọ', 'bắc giang', 'lào cai', 'hà giang', 'tuyên quang', 'yên bái', 'điện biên', 'lai châu', 'sơn la', 'hòa bình', 'lạng sơn', 'cao bằng', 'bắc kạn', 'hà nam', 'hưng yên', 'thái bình', 'miền bắc', 'mien bac', 'bắc', 'bac'],
+  trung: ['đà nẵng', 'da nang', 'nha trang', 'huế', 'hue', 'thừa thiên huế', 'nghệ an', 'quảng nam', 'bình định', 'khánh hòa', 'quảng bình', 'quảng trị', 'thanh hóa', 'hà tĩnh', 'quảng ngãi', 'phú yên', 'ninh thuận', 'bình thuận', 'kon tum', 'gia lai', 'đắk lắk', 'đắk nông', 'lâm đồng', 'miền trung', 'mien trung', 'trung'],
+  nam: ['tp.hcm', 'tphcm', 'hồ chí minh', 'ho chi minh', 'sài gòn', 'sai gon', 'bình dương', 'binh duong', 'cần thơ', 'can tho', 'đồng nai', 'vũng tàu', 'long an', 'an giang', 'tiền giang', 'kiên giang', 'tây ninh', 'bình phước', 'bến tre', 'đồng tháp', 'vĩnh long', 'trà vinh', 'hậu giang', 'sóc trăng', 'bạc liêu', 'cà mau', 'miền nam', 'mien nam', 'nam']
+};
+
+function getRegionGroupOfValue(val) {
+  if (!val) return 'other';
+  const s = String(val).toLowerCase().trim();
+  if (VIETNAM_REGION_MAP.bac.some(k => s.includes(k))) return 'bac';
+  if (VIETNAM_REGION_MAP.trung.some(k => s.includes(k))) return 'trung';
+  if (VIETNAM_REGION_MAP.nam.some(k => s.includes(k))) return 'nam';
+  return 'other';
+}
+
+function detectDataFilterDimensions(data) {
+  if (!data || !data.length) return [];
+  const firstRow = data[0];
+  const cols = Object.keys(firstRow);
+  const dimensions = [];
+
+  // 1. Region / Geography column
+  const regionCol = cols.find(c => /khu_vuc|khuvuc|region|vung|mien|tinh|thanh_pho|city|dia_diem/i.test(c)) ||
+    cols.find(c => {
+      const sampleVals = data.slice(0, 10).map(r => String(r[c] || '').toLowerCase());
+      return sampleVals.some(v => VIETNAM_REGION_MAP.bac.concat(VIETNAM_REGION_MAP.trung, VIETNAM_REGION_MAP.nam).some(k => v.includes(k)));
+    });
+
+  if (regionCol) {
+    dimensions.push({
+      id: '3mien',
+      name: '📍 Khu vực (3 Miền)',
+      col: regionCol,
+      is3Mien: true
+    });
+    dimensions.push({
+      id: `col_${regionCol}`,
+      name: `🏙️ ${regionCol}`,
+      col: regionCol,
+      is3Mien: false
+    });
+  }
+
+  // 2. Channel column
+  const channelCol = cols.find(c => /kenh|channel|platform|nguon/i.test(c));
+  if (channelCol) {
+    dimensions.push({
+      id: `col_${channelCol}`,
+      name: `🛒 ${channelCol}`,
+      col: channelCol,
+      is3Mien: false
+    });
+  }
+
+  // 3. Status column
+  const statusCol = cols.find(c => /trang_thai|status|tinh_trang/i.test(c));
+  if (statusCol) {
+    dimensions.push({
+      id: `col_${statusCol}`,
+      name: `🏷️ ${statusCol}`,
+      col: statusCol,
+      is3Mien: false
+    });
+  }
+
+  // 4. Other categorical columns with 2 to 8 unique values
+  cols.forEach(c => {
+    if (c === regionCol || c === channelCol || c === statusCol) return;
+    const uniqueVals = new Set(data.map(r => String(r[c] ?? '').trim()).filter(Boolean));
+    if (uniqueVals.size >= 2 && uniqueVals.size <= 8) {
+      dimensions.push({
+        id: `col_${c}`,
+        name: `📌 ${c}`,
+        col: c,
+        is3Mien: false
+      });
+    }
+  });
+
+  return dimensions;
+}
+
+function renderDynamicDataFilters() {
+  const container = $("dynamicFilterContainer");
+  const tabsWrapper = $("filterDimensionTabs");
+  const pillsWrapper = $("filterValuePills");
+  if (!container || !tabsWrapper || !pillsWrapper) return;
+
+  const sourceData = AppState.previewMode === "cleaned" 
+    ? (AppState.cleanedResult?.cleaned_data || [])
+    : (AppState.rawDataset || []);
+
+  if (!sourceData.length) {
+    container.classList.add("hidden");
+    return;
+  }
+  container.classList.remove("hidden");
+
+  const dimensions = detectDataFilterDimensions(sourceData);
+  if (!dimensions.length) {
+    container.classList.add("hidden");
+    return;
+  }
+
+  // Set default dimension if not selected
+  if (!AppState.selectedFilterDimension || !dimensions.some(d => d.id === AppState.selectedFilterDimension)) {
+    AppState.selectedFilterDimension = dimensions[0].id;
+  }
+
+  // Render Dimension Tabs
+  let tabsHtml = "";
+  dimensions.forEach(dim => {
+    const isActive = dim.id === AppState.selectedFilterDimension;
+    const activeClass = isActive
+      ? "bg-[#ECA294] text-white shadow-2xs font-extrabold"
+      : "bg-white text-pastel-subtext hover:text-[#2E2926] border border-[#EDE4DC] font-semibold";
+    tabsHtml += `
+      <button type="button" onclick="selectFilterDimension('${dim.id}')" class="px-2.5 py-1 rounded-lg text-[11px] transition-all cursor-pointer ${activeClass}">
+        ${escapeHtml(dim.name)}
+      </button>
+    `;
+  });
+  tabsWrapper.innerHTML = tabsHtml;
+
+  // Render Value Pills for Active Dimension
+  const currentDim = dimensions.find(d => d.id === AppState.selectedFilterDimension) || dimensions[0];
+  const activeVal = AppState.previewDynamicFilter?.value || 'all';
+
+  let pillsHtml = "";
+
+  // 1. All Button
+  const allActiveClass = (activeVal === 'all')
+    ? "bg-[#588376] text-white font-extrabold shadow-2xs"
+    : "bg-white text-pastel-subtext hover:text-[#2E2926] border border-[#EDE4DC] font-medium";
+  pillsHtml += `
+    <button type="button" onclick="setDynamicFilterValue('${currentDim.id}', 'all')" class="px-3 py-1 rounded-full text-xs transition-all cursor-pointer flex items-center gap-1 ${allActiveClass}">
+      <span>Tất cả</span>
+      <span class="text-[10px] opacity-80">(${sourceData.length})</span>
+    </button>
+  `;
+
+  if (currentDim.is3Mien) {
+    // Count per 3 mien
+    let countBac = 0, countTrung = 0, countNam = 0;
+    sourceData.forEach(r => {
+      const g = getRegionGroupOfValue(r[currentDim.col]);
+      if (g === 'bac') countBac++;
+      else if (g === 'trung') countTrung++;
+      else if (g === 'nam') countNam++;
+    });
+
+    const mienOptions = [
+      { key: 'bac', label: '🟢 Miền Bắc', count: countBac },
+      { key: 'trung', label: '🟡 Miền Trung', count: countTrung },
+      { key: 'nam', label: '🟠 Miền Nam', count: countNam }
+    ];
+
+    mienOptions.forEach(m => {
+      const isMActive = activeVal === m.key;
+      const mClass = isMActive
+        ? "bg-[#ECA294] text-white font-extrabold shadow-xs"
+        : "bg-white text-[#2E2926] hover:bg-slate-50 border border-[#EDE4DC] font-medium";
+      pillsHtml += `
+        <button type="button" onclick="setDynamicFilterValue('${currentDim.id}', '${m.key}')" class="px-3 py-1 rounded-full text-xs transition-all cursor-pointer flex items-center gap-1.5 ${mClass}">
+          <span>${m.label}</span>
+          <span class="text-[10px] font-mono px-1.5 py-0.2 rounded-full ${isMActive ? 'bg-white/30 text-white' : 'bg-slate-100 text-slate-600'}">${m.count}</span>
+        </button>
+      `;
+    });
+  } else {
+    // Normal column unique values
+    const valCounts = {};
+    sourceData.forEach(r => {
+      const v = String(r[currentDim.col] ?? '').trim() || '(Trống)';
+      valCounts[v] = (valCounts[v] || 0) + 1;
+    });
+
+    Object.entries(valCounts).forEach(([vKey, vCount]) => {
+      const isVActive = activeVal === vKey;
+      const vClass = isVActive
+        ? "bg-[#ECA294] text-white font-extrabold shadow-xs"
+        : "bg-white text-[#2E2926] hover:bg-slate-50 border border-[#EDE4DC] font-medium";
+      const safeKeyArg = escapeHtml(vKey).replace(/'/g, "\\'");
+      pillsHtml += `
+        <button type="button" onclick="setDynamicFilterValue('${currentDim.id}', '${safeKeyArg}')" class="px-3 py-1 rounded-full text-xs transition-all cursor-pointer flex items-center gap-1.5 ${vClass}">
+          <span>${escapeHtml(vKey)}</span>
+          <span class="text-[10px] font-mono px-1.5 py-0.2 rounded-full ${isVActive ? 'bg-white/30 text-white' : 'bg-slate-100 text-slate-600'}">${vCount}</span>
+        </button>
+      `;
+    });
+  }
+
+  pillsWrapper.innerHTML = pillsHtml;
+
+  // Active filter badge & reset button
+  const badge = $("activeFilterBadge");
+  const nameEl = $("activeFilterName");
+  const resetBtn = $("btnClearDynamicFilter");
+  if (badge && nameEl && resetBtn) {
+    if (activeVal !== 'all') {
+      badge.classList.remove('hidden');
+      resetBtn.classList.remove('hidden');
+      let displayLabel = activeVal;
+      if (activeVal === 'bac') displayLabel = 'Miền Bắc';
+      else if (activeVal === 'trung') displayLabel = 'Miền Trung';
+      else if (activeVal === 'nam') displayLabel = 'Miền Nam';
+      nameEl.innerText = displayLabel;
+    } else {
+      badge.classList.add('hidden');
+      resetBtn.classList.add('hidden');
+    }
+  }
+}
+
+function selectFilterDimension(dimId) {
+  AppState.selectedFilterDimension = dimId;
+  AppState.previewDynamicFilter = { dimensionId: dimId, value: 'all' };
+  renderDynamicDataFilters();
+  filterPreviewTable();
+}
+
+function setDynamicFilterValue(dimId, val) {
+  AppState.previewDynamicFilter = { dimensionId: dimId, value: val };
+  renderDynamicDataFilters();
+  filterPreviewTable();
+}
+
+function resetDynamicFilter() {
+  if (AppState.previewDynamicFilter) {
+    AppState.previewDynamicFilter.value = 'all';
+  }
+  renderDynamicDataFilters();
+  filterPreviewTable();
+}
+
+function applyDynamicFilterToData(data, filter) {
+  if (!filter || !filter.value || filter.value === 'all') return data;
+  const dimensions = detectDataFilterDimensions(data);
+  const dim = dimensions.find(d => d.id === filter.dimensionId) || dimensions[0];
+  if (!dim) return data;
+
+  if (dim.is3Mien) {
+    return data.filter(row => {
+      const g = getRegionGroupOfValue(row[dim.col]);
+      return g === filter.value;
+    });
+  } else {
+    return data.filter(row => {
+      const v = String(row[dim.col] ?? '').trim() || '(Trống)';
+      return v === filter.value;
+    });
+  }
+}
+
 function renderCurrentPreviewTable() {
   const table = $("mainPreviewTable");
   if (!table) return;
@@ -1002,12 +1264,25 @@ function renderCurrentPreviewTable() {
     return;
   }
 
+  // Refresh dynamic filter UI
+  renderDynamicDataFilters();
+
   const columns = Object.keys(sourceData[0]);
   const q = ($("previewSearchInput")?.value || "").toLowerCase().trim();
 
-  const filtered = q ? sourceData.filter(row => {
-    return columns.some(c => String(row[c] ?? "").toLowerCase().includes(q));
-  }) : sourceData;
+  let filtered = sourceData;
+
+  // 1. Apply Dynamic Data Filter (3 Miền or Category)
+  if (AppState.previewDynamicFilter && AppState.previewDynamicFilter.value !== 'all') {
+    filtered = applyDynamicFilterToData(filtered, AppState.previewDynamicFilter);
+  }
+
+  // 2. Apply Search
+  if (q) {
+    filtered = filtered.filter(row => {
+      return columns.some(c => String(row[c] ?? "").toLowerCase().includes(q));
+    });
+  }
 
   AppState.previewFilteredData = filtered;
 
@@ -1049,7 +1324,15 @@ function renderCurrentPreviewTable() {
   html += `</tbody>`;
   table.innerHTML = html;
 
-  $("previewPageInfo").innerText = `Hiển thị ${Math.min(total, startIdx + 1)} - ${Math.min(total, startIdx + pageSize)} trong tổng số ${total} bản ghi (Nhấp đúp ô để sửa)`;
+  let pageInfoText = `Hiển thị ${Math.min(total, startIdx + 1)} - ${Math.min(total, startIdx + pageSize)} trong tổng số ${total} bản ghi`;
+  if (AppState.previewDynamicFilter && AppState.previewDynamicFilter.value !== 'all') {
+    let lbl = AppState.previewDynamicFilter.value;
+    if (lbl === 'bac') lbl = 'Miền Bắc';
+    else if (lbl === 'trung') lbl = 'Miền Trung';
+    else if (lbl === 'nam') lbl = 'Miền Nam';
+    pageInfoText += ` (Đang lọc: ${lbl})`;
+  }
+  $("previewPageInfo").innerText = `${pageInfoText} (Nhấp đúp ô để sửa)`;
   $("currentPageNumber").innerText = AppState.previewPage;
   $("btnPrevPage").disabled = AppState.previewPage <= 1;
   $("btnNextPage").disabled = AppState.previewPage >= totalPages;
@@ -1187,10 +1470,28 @@ function formatVND(val) {
   return Math.round(val).toLocaleString('vi-VN') + ' ₫';
 }
 
-let currentDashboardChartMode = 'product'; // 'product' | 'timeline'
+function formatShortMoney(v) {
+  if (isNaN(v) || v == null) return '0 ₫';
+  if (v >= 1_000_000_000) return (v / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + ' Tỷ';
+  if (v >= 1_000_000) return (v / 1_000_000).toFixed(1).replace(/\.0$/, '') + ' Tr';
+  if (v >= 1_000) return (v / 1_000).toFixed(0) + ' k';
+  if (v === 0) return '0 ₫';
+  return Math.round(v).toString() + ' ₫';
+}
+
+let currentDashboardChartMode = 'timeline'; // 'timeline' | 'product'
+let currentMonthFilter = 'all'; // 'all' | month key
+
+function onChartMonthFilterChange(val) {
+  currentMonthFilter = val || 'all';
+  if (AppState.cleanedResult) {
+    renderConcreteBusinessDashboard(AppState.cleanedResult);
+  }
+}
 
 function toggleAreaChartMode() {
   currentDashboardChartMode = (currentDashboardChartMode === 'timeline') ? 'product' : 'timeline';
+  currentMonthFilter = 'all';
   const btnText = $("btnToggleChartModeText");
   if (btnText) {
     btnText.innerText = currentDashboardChartMode === 'timeline' ? "Đổi sang Phân Bổ Mặt Hàng" : "Đổi sang Xu Hướng Thời Gian";
@@ -1227,12 +1528,12 @@ function renderConcreteBusinessDashboard(res) {
   const channelCol = findCol(/kenh|channel|nguon|platform|san_tmdt|phuong_thuc|hinh_thuc/);
   const customerCol = findCol(/ten_khach|khach_hang|customer|ho_ten|ten_kh|nguoi_mua/);
   const phoneCol = findCol(/dien_thoai|phone|sdt|tel|mobile/);
-  const dateCol = findCol(/ngay|date|time|thoi_gian|created/);
+  const dateCol = findCol(/ngay|date|time|thoi_gian|created|thang|month|nam|year/);
   const metricCol = findCol(/diem|point|score|so_du|chi_tieu|so_tien|balance/);
   
   // Product detection: Prioritize explicit names, avoid ID/phone/date/status/location
   const productCol = findCol(/san_pham|product|mat_hang|item|ten_sp|dich_vu|hang_hoa|danh_muc|category|sku|mon_an|khoa_hoc/)
-    || normMap.find(item => !/ma_|id|sdt|dien_thoai|phone|ngay|date|gia|tien|luong|so_|stt|trang_thai|status|khu_vuc|tinh_thanh|email/.test(item.norm))?.orig;
+    || normMap.find(item => !/ma_|id|sdt|dien_thoai|phone|ngay|date|thang|month|nam|year|gia|tien|luong|so_|stt|trang_thai|status|khu_vuc|tinh_thanh|email/.test(item.norm))?.orig;
 
   // 2. Data Health & Real Problem Audit Calculation
   let phoneFixedCount = 0;
@@ -1267,16 +1568,32 @@ function renderConcreteBusinessDashboard(res) {
   function parseDateKey(val) {
     if (!val) return null;
     const s = String(val).trim();
+    // DD/MM/YYYY or DD-MM-YYYY
     const m1 = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
     if (m1) return `${m1[3]}-${m1[2].padStart(2, '0')}-${m1[1].padStart(2, '0')}`;
+    // YYYY/MM/DD or YYYY-MM-DD
     const m2 = s.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
     if (m2) return `${m2[1]}-${m2[2].padStart(2, '0')}-${m2[3].padStart(2, '0')}`;
+    // YYYY-MM or YYYY/MM (e.g. 2026-06)
+    const m3 = s.match(/^(\d{4})[\/\-](\d{1,2})$/);
+    if (m3) return `${m3[1]}-${m3[2].padStart(2, '0')}`;
+    // MM/YYYY (e.g. 06/2026)
+    const m4 = s.match(/^(\d{1,2})[\/\-](\d{4})$/);
+    if (m4) return `${m4[2]}-${m4[1].padStart(2, '0')}`;
+    // "Tháng 6" or "Tháng 06/2026"
+    const m5 = s.match(/^th[aá]ng\s*(\d{1,2})(?:[\/\-\s]*(\d{4}))?/i);
+    if (m5) {
+      const yr = m5[2] || '2026';
+      return `${yr}-${m5[1].padStart(2, '0')}`;
+    }
     return s.slice(0, 10);
   }
   function formatDateDisplay(dKey) {
     if (!dKey) return '';
-    const m = dKey.match(/^(\d{4})-(\d{2})-(\d{2})/);
-    if (m) return `${m[3]}/${m[2]}`;
+    const mDay = dKey.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (mDay) return `${mDay[3]}/${mDay[2]}`;
+    const mMonth = dKey.match(/^(\d{4})-(\d{2})$/);
+    if (mMonth) return `${mMonth[2]}/${mMonth[1]}`;
     return dKey;
   }
 
@@ -1352,16 +1669,28 @@ function renderConcreteBusinessDashboard(res) {
     let dtKey = parseDateKey(dtRaw);
     let dtDisplay = dtKey ? formatDateDisplay(dtKey) : `Giao dịch ${Math.floor(rowIdx / 3) + 1}`;
     let timelineId = dtKey || dtDisplay;
-    if (!timelineBreakdown[timelineId]) timelineBreakdown[timelineId] = { date: dtDisplay, key: timelineId, revenue: 0, orders: 0, quantity: 0 };
+    if (!timelineBreakdown[timelineId]) timelineBreakdown[timelineId] = { date: dtDisplay, key: timelineId, revenue: 0, orders: 0, quantity: 0, rows: [] };
     timelineBreakdown[timelineId].revenue += rev;
     timelineBreakdown[timelineId].orders += 1;
     timelineBreakdown[timelineId].quantity += qty;
+    timelineBreakdown[timelineId].rows.push({ chName, prodName, rev, qty });
   });
 
   const totalRowsCount = cleaned_data.length;
   const channelsList = Object.values(channelBreakdown).sort((a, b) => b.revenue - a.revenue || b.orders - a.orders);
-  const productsList = Object.values(productBreakdown).sort((a, b) => b.revenue - a.revenue || b.quantity - a.quantity || b.orders - a.orders);
-  const timelineList = Object.values(timelineBreakdown).sort((a, b) => a.key.localeCompare(b.key));
+
+  // If item names in productBreakdown look like dates/months (e.g. 2026-01, 2026-02 or Tháng 1, Tháng 2),
+  // sort them chronologically so the timeline flows left-to-right!
+  const allProductNamesLookLikeDates = Object.keys(productBreakdown).length > 1 && 
+    Object.keys(productBreakdown).every(k => /^\d{4}[-/]\d{1,2}/.test(k) || /^th[aá]ng\s*\d+/i.test(k) || /^\d{1,2}[\/-]\d{4}/.test(k));
+
+  const productsList = Object.values(productBreakdown).sort((a, b) => {
+    if (allProductNamesLookLikeDates) {
+      return a.name.localeCompare(b.name, undefined, { numeric: true });
+    }
+    return b.revenue - a.revenue || b.quantity - a.quantity || b.orders - a.orders;
+  });
+  const timelineList = Object.values(timelineBreakdown).sort((a, b) => a.key.localeCompare(b.key, undefined, { numeric: true }));
 
   // =========================================================================
   // A. UPDATE 5 TOP METRIC CARDS (100% REAL DYNAMIC VALUES)
@@ -1399,25 +1728,96 @@ function renderConcreteBusinessDashboard(res) {
   const areaChartContainer = $("productAreaChartContainer");
   const areaTitleEl = $("areaChartTitle");
   const areaSubtitleEl = $("areaChartSubtitle");
+  const chartModeBadgeEl = $("chartModeBadge");
+  const btnToggleChartModeTextEl = $("btnToggleChartModeText");
 
   if (areaChartContainer) {
     let chartItems = [];
     const isTimelineMode = (currentDashboardChartMode === 'timeline');
 
-    if (isTimelineMode && timelineList.length > 1) {
-      if (areaTitleEl) areaTitleEl.innerText = "Diễn Biến Doanh Số & Đơn Hàng Theo Thời Gian";
-      if (areaSubtitleEl) areaSubtitleEl.innerText = `Biến thiên ${timelineList.length} mốc thời gian giao dịch thực tế`;
-      chartItems = timelineList.slice(0, 10).map(t => ({
+    // 1. POPULATE MONTH FILTER CONTROLS (Dropdown & Quick Pills)
+    const monthSelectEl = $("chartMonthFilter");
+    const pillsWrapper = $("chartMonthPillsWrapper");
+
+    if (timelineList.length > 1) {
+      if (monthSelectEl) {
+        monthSelectEl.innerHTML = [
+          `<option value="all" ${currentMonthFilter === 'all' ? 'selected' : ''}>📅 Tất cả các tháng (${timelineList.length} mốc)</option>`,
+          ...timelineList.map(t => {
+            const isSel = (currentMonthFilter === t.key || currentMonthFilter === t.date);
+            return `<option value="${t.key}" ${isSel ? 'selected' : ''}>Tháng ${t.date} (${formatShortMoney(t.revenue)})</option>`;
+          })
+        ].join('');
+      }
+
+      if (pillsWrapper) {
+        const pillsHtml = [
+          `<button type="button" onclick="onChartMonthFilterChange('all')" class="px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer shrink-0 ${currentMonthFilter === 'all' ? 'bg-[#588376] text-white shadow-2xs' : 'bg-[#FAF7F2] text-[#7A726B] hover:bg-[#EDF5F2] border border-[#EDE4DC]'}">Tất cả (${timelineList.length} tháng)</button>`
+        ];
+
+        timelineList.forEach(t => {
+          const isSel = (currentMonthFilter === t.key || currentMonthFilter === t.date);
+          pillsHtml.push(
+            `<button type="button" onclick="onChartMonthFilterChange('${t.key}')" class="px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer shrink-0 ${isSel ? 'bg-[#588376] text-white shadow-2xs' : 'bg-[#FAF7F2] text-[#7A726B] hover:bg-[#EDF5F2] border border-[#EDE4DC]'}">${t.date}</button>`
+          );
+        });
+
+        pillsWrapper.innerHTML = pillsHtml.join('');
+        pillsWrapper.classList.remove('hidden');
+      }
+    } else {
+      if (monthSelectEl) {
+        monthSelectEl.innerHTML = `<option value="all">Tất cả dữ liệu</option>`;
+      }
+      if (pillsWrapper) pillsWrapper.classList.add('hidden');
+    }
+
+    // 2. DETERMINE DATA FOR BAR CHART (All months vs Filtered single month)
+    let isMonthFiltered = false;
+    let selectedMonthObj = null;
+
+    if (currentMonthFilter !== 'all' && timelineList.length > 0) {
+      selectedMonthObj = timelineList.find(t => t.key === currentMonthFilter || t.date === currentMonthFilter);
+    }
+
+    if (selectedMonthObj && selectedMonthObj.rows && selectedMonthObj.rows.length > 0) {
+      isMonthFiltered = true;
+      if (areaTitleEl) areaTitleEl.innerText = `Cơ Cấu Doanh Số Tháng ${selectedMonthObj.date}`;
+      if (areaSubtitleEl) areaSubtitleEl.innerText = `Tổng: ${formatVND(selectedMonthObj.revenue)} • ${selectedMonthObj.orders} đơn • Phân bổ theo kênh bán`;
+      if (chartModeBadgeEl) chartModeBadgeEl.innerText = `Chi tiết ${selectedMonthObj.date}`;
+      if (btnToggleChartModeTextEl) btnToggleChartModeTextEl.innerText = "Xem tất cả các tháng";
+
+      // Aggregate channels in this specific month
+      const chInMonth = {};
+      selectedMonthObj.rows.forEach(r => {
+        const ch = r.chName || 'Trực Tiếp';
+        if (!chInMonth[ch]) chInMonth[ch] = { name: ch, revenue: 0, orders: 0, quantity: 0 };
+        chInMonth[ch].revenue += r.rev;
+        chInMonth[ch].orders += 1;
+        chInMonth[ch].quantity += r.qty;
+      });
+      chartItems = Object.values(chInMonth).sort((a, b) => b.revenue - a.revenue);
+    } else if (isTimelineMode && timelineList.length > 1) {
+      if (areaTitleEl) areaTitleEl.innerText = "Biểu Đồ Cột Doanh Số Theo Tháng";
+      if (areaSubtitleEl) areaSubtitleEl.innerText = `So sánh trực quan doanh thu qua ${timelineList.length} tháng giao dịch`;
+      if (chartModeBadgeEl) chartModeBadgeEl.innerText = "Theo tháng";
+      if (btnToggleChartModeTextEl) btnToggleChartModeTextEl.innerText = "Đổi sang Phân Bổ Mặt Hàng";
+
+      chartItems = timelineList.slice(0, 12).map(t => ({
         name: t.date,
+        key: t.key,
         orders: t.orders,
         quantity: t.quantity,
         revenue: t.revenue
       }));
     } else {
       const colLabel = productCol || "Mặt Hàng";
-      if (areaTitleEl) areaTitleEl.innerText = `Phân Bổ & Xu Hướng Theo ${escapeHtml(colLabel)}`;
-      if (areaSubtitleEl) areaSubtitleEl.innerText = `Tỷ lệ số đơn, sản lượng và doanh số thực tế của top ${Math.min(7, productsList.length)} mặt hàng`;
-      chartItems = productsList.slice(0, 7).map(p => ({
+      if (areaTitleEl) areaTitleEl.innerText = `Biểu Đồ Cột Theo ${escapeHtml(colLabel)}`;
+      if (areaSubtitleEl) areaSubtitleEl.innerText = `Tỷ lệ doanh thu của top ${Math.min(8, productsList.length)} ${escapeHtml(colLabel).toLowerCase()}`;
+      if (chartModeBadgeEl) chartModeBadgeEl.innerText = `Theo ${escapeHtml(colLabel).toLowerCase()}`;
+      if (btnToggleChartModeTextEl) btnToggleChartModeTextEl.innerText = "Đổi sang Xu Hướng Thời Gian";
+
+      chartItems = productsList.slice(0, 8).map(p => ({
         name: p.name,
         orders: p.orders,
         quantity: p.quantity,
@@ -1425,146 +1825,122 @@ function renderConcreteBusinessDashboard(res) {
       }));
     }
 
-    // Dynamic Chart Dimensions
-    const svgW = 500;
-    const svgH = 200;
-    const padL = 40;
-    const padR = 25;
-    const padT = 20;
-    const padB = 40;
-    const plotW = svgW - padL - padR;
-    const plotH = svgH - padT - padB;
-    const baselineY = padT + plotH;
+    if (chartItems.length === 0) {
+      areaChartContainer.innerHTML = `<div class="w-full h-full flex items-center justify-center text-xs text-pastel-subtext">Chưa đủ dữ liệu để vẽ biểu đồ</div>`;
+    } else {
+      // Dynamic Chart Dimensions
+      const svgW = 540;
+      const svgH = 220;
+      const padL = 58;  // Left axis for currency Y-ticks
+      const padR = 25;  // Right margin
+      const padT = 30;  // Room for top value labels
+      const padB = 40;  // Bottom for X-axis labels
+      const plotW = svgW - padL - padR;
+      const plotH = svgH - padT - padB;
+      const baselineY = padT + plotH;
 
-    // Calculate Dynamic Maximum Scale for Orders & Quantity
-    const maxOrders = Math.max(...chartItems.map(d => d.orders), 1);
-    const maxQty = Math.max(...chartItems.map(d => d.quantity), 1);
-    const maxVol = Math.max(maxOrders, maxQty, 3);
-    const maxRev = Math.max(...chartItems.map(d => d.revenue), 1);
+      const revs = chartItems.map(d => d.revenue);
+      const maxRev = Math.max(...revs, 1);
 
-    // Dynamic Y-axis scale calculation (clean round ticks)
-    let maxY = 5;
-    if (maxVol <= 5) maxY = 5;
-    else if (maxVol <= 10) maxY = 10;
-    else if (maxVol <= 20) maxY = 20;
-    else if (maxVol <= 50) maxY = 50;
-    else if (maxVol <= 100) maxY = 100;
-    else maxY = Math.ceil(maxVol / 20) * 20;
-
-    const getY = (val) => padT + plotH - ((Math.min(maxY, Math.max(0, val)) / maxY) * plotH);
-    const getX = (idx) => padL + (idx / Math.max(1, chartItems.length - 1)) * plotW;
-
-    // Revenue curve dynamically normalized to fit harmoniously within 70% of plot height
-    const getRevY = (revVal) => {
-      const ratio = maxRev > 0 ? (Math.max(0, revVal) / maxRev) : 0;
-      return baselineY - (ratio * (plotH * 0.70));
-    };
-
-    // Calculate curve points
-    const ordersPoints = chartItems.map((p, i) => ({ x: getX(i), y: getY(p.orders), data: p }));
-    const qtyPoints = chartItems.map((p, i) => ({ x: getX(i), y: getY(p.quantity), data: p }));
-    const revPoints = chartItems.map((p, i) => ({ x: getX(i), y: getRevY(p.revenue), data: p }));
-
-    // Helper to generate smooth cubic bezier curve
-    function createSmoothAreaPath(points, baseBaselineY) {
-      if (points.length === 0) return "";
-      let d = `M ${points[0].x} ${points[0].y}`;
-      for (let i = 0; i < points.length - 1; i++) {
-        const p0 = points[i];
-        const p1 = points[i + 1];
-        const cx1 = p0.x + (p1.x - p0.x) * 0.5;
-        const cy1 = p0.y;
-        const cx2 = p0.x + (p1.x - p0.x) * 0.5;
-        const cy2 = p1.y;
-        d += ` C ${cx1} ${cy1}, ${cx2} ${cy2}, ${p1.x} ${p1.y}`;
+      // Clean Y-axis scale calculation
+      let revYMax = 1000000;
+      if (maxRev >= 1_000_000_000) {
+        revYMax = Math.ceil(maxRev * 1.15 / 500_000_000) * 500_000_000;
+      } else if (maxRev >= 1_000_000) {
+        const step = maxRev > 100_000_000 ? 25_000_000 : (maxRev > 40_000_000 ? 10_000_000 : 5_000_000);
+        revYMax = Math.ceil(maxRev * 1.15 / step) * step;
+      } else {
+        revYMax = Math.ceil(maxRev * 1.2 / 10000) * 10000;
       }
-      d += ` L ${points[points.length - 1].x} ${baseBaselineY} L ${points[0].x} ${baseBaselineY} Z`;
-      return d;
+
+      // Y-Ticks (0%, 25%, 50%, 75%, 100%)
+      const ySteps = [revYMax, revYMax * 0.75, revYMax * 0.50, revYMax * 0.25, 0];
+      const yTicksMarkup = ySteps.map(val => {
+        const y = baselineY - (val / revYMax) * plotH;
+        return `
+          <text x="${padL - 8}" y="${y + 3.5}" text-anchor="end" font-size="8.5" fill="#7A726B" font-weight="700">${formatShortMoney(val)}</text>
+          <line x1="${padL}" y1="${y}" x2="${svgW - padR}" y2="${y}" stroke="#EDE4DC" stroke-dasharray="2 3" stroke-width="1"/>
+        `;
+      }).join('');
+
+      // Bars Calculation
+      const numBars = chartItems.length;
+      const slotW = plotW / Math.max(1, numBars);
+      const barW = Math.min(48, Math.max(22, slotW * 0.58));
+
+      // Color palette for column bars
+      const barGradients = [
+        { id: "gradBarPrimary", start: "#588376", end: "#88B2A6" },
+        { id: "gradBarCoral", start: "#D47B6B", end: "#ECA294" },
+        { id: "gradBarGold", start: "#E09A55", end: "#F1C28D" },
+        { id: "gradBarSlate", start: "#6B7C8E", end: "#9EB0C2" },
+        { id: "gradBarBerry", start: "#9C6B7A", end: "#C49AA6" },
+        { id: "gradBarWarm", start: "#8C7B75", end: "#B5A7A2" }
+      ];
+
+      const barsMarkup = chartItems.map((item, i) => {
+        const barH = Math.max(4, (item.revenue / revYMax) * plotH);
+        const barX = padL + i * slotW + (slotW - barW) / 2;
+        const barY = baselineY - barH;
+        const centerX = barX + barW / 2;
+        const grad = barGradients[i % barGradients.length];
+
+        const clickTarget = item.key || item.name;
+        const isClickable = !isMonthFiltered;
+        const tooltipText = `${escapeHtml(item.name)}\n💰 Doanh số: ${formatVND(item.revenue)}\n📦 Đơn hàng: ${item.orders} đơn\n📊 TB/đơn: ${formatVND(item.orders > 0 ? Math.round(item.revenue / item.orders) : 0)}`;
+
+        const shortName = item.name.length > 13 ? item.name.substring(0, 11) + '..' : item.name;
+
+        return `
+          <g class="group cursor-pointer" onclick="${isClickable ? `onChartMonthFilterChange('${escapeHtml(clickTarget)}')` : ''}">
+            <!-- Interactive Background Slot -->
+            <rect x="${padL + i * slotW}" y="${padT}" width="${slotW}" height="${plotH}" fill="transparent" class="hover:fill-[#FAF7F2]/60 transition-colors">
+              <title>${tooltipText}</title>
+            </rect>
+
+            <!-- Column Bar with Top Rounded Corners -->
+            <rect x="${barX}" y="${barY}" width="${barW}" height="${barH}" rx="6" ry="6" 
+              fill="${isMonthFiltered ? grad.start : '#588376'}" 
+              class="transition-all duration-300 group-hover:opacity-90 group-hover:brightness-110 drop-shadow-2xs">
+              <title>${tooltipText}</title>
+            </rect>
+
+            <!-- Value Label on Top of Bar -->
+            <text x="${centerX}" y="${Math.max(padT - 6, barY - 6)}" text-anchor="middle" font-size="9.5" font-weight="900" fill="#2E2926">
+              ${formatShortMoney(item.revenue)}
+            </text>
+
+            <!-- Order Count Pill / Text inside bar -->
+            ${barH > 28 ? `
+              <text x="${centerX}" y="${barY + 14}" text-anchor="middle" font-size="8" font-weight="800" fill="#FFFFFF" opacity="0.95">
+                ${item.orders}đ
+              </text>
+            ` : ''}
+
+            <!-- X Axis Label under bar -->
+            <text x="${centerX}" y="${baselineY + 16}" text-anchor="middle" font-size="9" font-weight="700" fill="#4A4540">
+              ${escapeHtml(shortName)}
+            </text>
+          </g>
+        `;
+      }).join('');
+
+      areaChartContainer.innerHTML = `
+        <svg viewBox="0 0 ${svgW} ${svgH}" class="w-full h-full overflow-visible" preserveAspectRatio="none">
+          <!-- Left Axis Unit Title -->
+          <text x="${padL - 8}" y="${padT - 10}" text-anchor="end" font-size="8" fill="#588376" font-weight="800">Doanh Thu (VNĐ)</text>
+
+          <!-- Y Axis Grid Lines & Ticks -->
+          ${yTicksMarkup}
+
+          <!-- Baseline Axis -->
+          <line x1="${padL}" y1="${baselineY}" x2="${svgW - padR}" y2="${baselineY}" stroke="#D9CEBF" stroke-width="1.2"/>
+
+          <!-- Render Columns -->
+          ${barsMarkup}
+        </svg>
+      `;
     }
-
-    const pathOrders = createSmoothAreaPath(ordersPoints, baselineY);
-    const pathQty = createSmoothAreaPath(qtyPoints, baselineY);
-    const pathRev = createSmoothAreaPath(revPoints, baselineY);
-
-    // Build Dynamic Y-ticks based on the actual dataset
-    const yTicks = [maxY, Math.round(maxY * 0.75), Math.round(maxY * 0.5), Math.round(maxY * 0.25), 0];
-    const yTickMarkup = yTicks.map(t => {
-      const y = getY(t);
-      return `
-        <text x="${padL - 8}" y="${y + 3}" text-anchor="end" font-size="9" fill="#9C9289" font-weight="600">${t}</text>
-        <line x1="${padL}" y1="${y}" x2="${svgW - padR}" y2="${y}" stroke="#F3EDE8" stroke-dasharray="2 3" stroke-width="1"/>
-      `;
-    }).join('');
-
-    // X Axis Labels from real data
-    const xLabelsMarkup = chartItems.map((p, i) => {
-      const x = getX(i);
-      const shortName = p.name.length > 15 ? p.name.substring(0, 13) + "..." : p.name;
-      return `
-        <text x="${x}" y="${baselineY + 16}" transform="rotate(-18, ${x}, ${baselineY + 16})" text-anchor="end" font-size="8.5" fill="#7A726B" font-weight="700">
-          ${escapeHtml(shortName)}
-        </text>
-      `;
-    }).join('');
-
-    // Interactive SVG Data Point Markers with Tooltips
-    const circlesMarkup = ordersPoints.map((pt, i) => {
-      const item = pt.data;
-      const tooltipText = `${escapeHtml(item.name)}\n• Số lượt đơn: ${item.orders} đơn\n• Sản lượng: ${item.quantity} sp\n• Doanh số: ${formatVND(item.revenue)}`;
-      return `
-        <g class="cursor-pointer group">
-          <circle cx="${pt.x}" cy="${pt.y}" r="4" fill="#D47B6B" stroke="#FFFFFF" stroke-width="2" class="hover:scale-125 transition-transform">
-            <title>${tooltipText}</title>
-          </circle>
-          <circle cx="${qtyPoints[i].x}" cy="${qtyPoints[i].y}" r="3.5" fill="#C8A58F" stroke="#FFFFFF" stroke-width="1.5">
-            <title>${tooltipText}</title>
-          </circle>
-          <circle cx="${revPoints[i].x}" cy="${revPoints[i].y}" r="3.5" fill="#588376" stroke="#FFFFFF" stroke-width="1.5">
-            <title>${tooltipText}</title>
-          </circle>
-        </g>
-      `;
-    }).join('');
-
-    areaChartContainer.innerHTML = `
-      <svg viewBox="0 0 ${svgW} ${svgH}" class="w-full h-full overflow-visible" preserveAspectRatio="none">
-        <defs>
-          <linearGradient id="gradAreaOrders" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#ECA294" stop-opacity="0.65"/>
-            <stop offset="100%" stop-color="#FAF7F2" stop-opacity="0.10"/>
-          </linearGradient>
-          <linearGradient id="gradAreaQty" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#E8CDBB" stop-opacity="0.75"/>
-            <stop offset="100%" stop-color="#FAF7F2" stop-opacity="0.15"/>
-          </linearGradient>
-          <linearGradient id="gradAreaRev" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#88B2A6" stop-opacity="0.70"/>
-            <stop offset="100%" stop-color="#FAF7F2" stop-opacity="0.20"/>
-          </linearGradient>
-        </defs>
-
-        <!-- Y Axis Lines & Ticks -->
-        ${yTickMarkup}
-
-        <!-- Baseline -->
-        <line x1="${padL}" y1="${baselineY}" x2="${svgW - padR}" y2="${baselineY}" stroke="#E8DFD7" stroke-width="1"/>
-
-        <!-- Layer 1: Orders (Top, Coral) -->
-        <path d="${pathOrders}" fill="url(#gradAreaOrders)" stroke="#D47B6B" stroke-width="1.8"/>
-
-        <!-- Layer 2: Quantity (Middle, Tan) -->
-        <path d="${pathQty}" fill="url(#gradAreaQty)" stroke="#C8A58F" stroke-width="1.5"/>
-
-        <!-- Layer 3: Revenue (Bottom, Sage) -->
-        <path d="${pathRev}" fill="url(#gradAreaRev)" stroke="#588376" stroke-width="1.5"/>
-
-        <!-- X Axis Slanted Product Labels -->
-        ${xLabelsMarkup}
-
-        <!-- Interactive Data Markers with Tooltips -->
-        ${circlesMarkup}
-      </svg>
-    `;
   }
 
   // =========================================================================
@@ -1630,22 +2006,22 @@ function renderConcreteBusinessDashboard(res) {
     }).join('');
 
     donutSvgWrapper.innerHTML = `
-      <svg viewBox="0 0 150 150" class="w-full h-full max-w-[145px] max-h-[145px]">
+      <svg viewBox="0 0 150 150" class="w-36 h-36 sm:w-40 sm:h-40 drop-shadow-xs transition-transform duration-500 hover:scale-105">
         ${circleSlicesSvg}
-        <text x="75" y="72" text-anchor="middle" font-size="12" font-weight="900" fill="#2E2926">${channelsList.length}</text>
-        <text x="75" y="86" text-anchor="middle" font-size="8.5" font-weight="700" fill="#7A726B">kênh bán</text>
+        <text x="75" y="71" text-anchor="middle" font-size="16" font-weight="900" fill="#2E2926">${channelsList.length}</text>
+        <text x="75" y="86" text-anchor="middle" font-size="9" font-weight="700" fill="#7A726B">kênh bán</text>
       </svg>
     `;
 
     donutLegendList.innerHTML = slices.map(s => `
-      <div class="flex items-center justify-between gap-1.5 py-1 border-b border-[#EDE4DC]/40 text-xs">
-        <div class="flex items-center gap-1.5 truncate max-w-[130px]">
+      <div class="flex items-center justify-between gap-2 py-1.5 px-2 rounded-lg hover:bg-[#FAF7F2] transition-colors border-b border-[#EDE4DC]/30 last:border-none text-xs">
+        <div class="flex items-center gap-2 min-w-0 flex-1">
           <span class="w-2.5 h-2.5 rounded-full shrink-0 shadow-2xs" style="background:${s.color}"></span>
-          <span class="font-bold text-[#2E2926] truncate" title="${escapeHtml(s.name)}">${escapeHtml(s.name)}</span>
+          <span class="font-bold text-[#2E2926] text-xs truncate" title="${escapeHtml(s.name)}">${escapeHtml(s.name)}</span>
         </div>
-        <div class="shrink-0 text-right">
-          <span class="font-black text-[#D47B6B]">${s.pct}%</span>
-          <span class="text-[9.5px] text-pastel-subtext font-semibold ml-0.5">(${s.orders}đ)</span>
+        <div class="shrink-0 text-right pl-2">
+          <span class="font-black text-[#D47B6B] text-xs">${s.pct}%</span>
+          <span class="text-[10px] text-pastel-subtext font-semibold ml-1">(${s.orders} đơn)</span>
         </div>
       </div>
     `).join('');
@@ -2076,11 +2452,9 @@ function exportCSVFile() {
   showToast("📁 Đã tải tệp CSV thành công!");
 }
 
-function exportReportDocx() {
-  closeExportMenu();
+function buildWordReportContent() {
   if (!AppState.cleanedResult) {
-    showToast("Vui lòng thực hiện phân tích trước khi xuất báo cáo!", true);
-    return;
+    return "<div class='p-8 text-center text-slate-500 font-bold'>Chưa có dữ liệu phân tích để tạo báo cáo.</div>";
   }
 
   const { initial_stats, final_stats, cleaned_data, improvements } = AppState.cleanedResult;
@@ -2124,172 +2498,8 @@ function exportReportDocx() {
   const today = new Date();
   const dateStr = `Hà Nội, ngày ${today.getDate()} tháng ${today.getMonth() + 1} năm ${today.getFullYear()}`;
 
-  const docHtml = `
-    <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-    <head>
-      <meta charset='utf-8'>
-      <title>Báo Cáo Phân Tích Dữ Liệu & Giải Pháp Tối Ưu - AI Agent</title>
-      <!--[if gte mso 9]>
-      <xml>
-        <w:WordDocument>
-          <w:View>Print</w:View>
-          <w:Zoom>100</w:Zoom>
-          <w:DoNotOptimizeForBrowser/>
-        </w:WordDocument>
-      </xml>
-      <![endif]-->
-      <style>
-        @page Section1 {
-          size: 595.3pt 841.9pt; /* A4 */
-          margin: 2.0cm 2.0cm 2.0cm 2.0cm;
-          mso-header-margin: 35.4pt;
-          mso-footer-margin: 35.4pt;
-          mso-paper-source: 0;
-        }
-        div.Section1 { page: Section1; }
-        body {
-          font-family: 'Times New Roman', Times, serif;
-          font-size: 12.0pt;
-          line-height: 1.35;
-          color: #1A1A1A;
-        }
-        .header-table {
-          width: 100%;
-          border-collapse: collapse;
-          border: none;
-          margin-bottom: 15pt;
-        }
-        .header-table td {
-          border: none;
-          vertical-align: top;
-          font-size: 10.5pt;
-          padding: 2pt;
-        }
-        .org-title {
-          font-weight: bold;
-          text-transform: uppercase;
-          color: #2E2926;
-        }
-        .motto-title {
-          font-weight: bold;
-          text-transform: uppercase;
-          text-align: center;
-        }
-        .motto-sub {
-          text-align: center;
-          font-weight: bold;
-        }
-        h1.doc-title {
-          font-size: 15.0pt;
-          font-weight: bold;
-          text-align: center;
-          text-transform: uppercase;
-          color: #8C3322;
-          margin-top: 15pt;
-          margin-bottom: 4pt;
-        }
-        .doc-subtitle {
-          font-size: 11.5pt;
-          font-style: italic;
-          text-align: center;
-          color: #555555;
-          margin-bottom: 16pt;
-        }
-        .meta-box {
-          border: 1.0pt solid #D6CBC1;
-          background-color: #FAF7F2;
-          padding: 8pt 12pt;
-          margin-bottom: 14pt;
-          font-size: 11.0pt;
-        }
-        h2.sec-heading {
-          font-size: 12.5pt;
-          font-weight: bold;
-          text-transform: uppercase;
-          color: #2D5246;
-          border-bottom: 1.5pt solid #88B2A6;
-          padding-bottom: 3pt;
-          margin-top: 14pt;
-          margin-bottom: 6pt;
-        }
-        h3.sub-heading {
-          font-size: 11.5pt;
-          font-weight: bold;
-          color: #A34838;
-          margin-top: 9pt;
-          margin-bottom: 3pt;
-        }
-        p {
-          margin-top: 3pt;
-          margin-bottom: 5pt;
-          text-align: justify;
-          text-justify: inter-ideograph;
-        }
-        ul, ol {
-          margin-top: 3pt;
-          margin-bottom: 6pt;
-          padding-left: 20pt;
-        }
-        li {
-          margin-bottom: 2pt;
-        }
-        table.data-table {
-          width: 100%;
-          border-collapse: collapse;
-          margin-top: 6pt;
-          margin-bottom: 10pt;
-        }
-        table.data-table th {
-          background-color: #F4EAE6;
-          color: #2E2926;
-          font-weight: bold;
-          border: 1.0pt solid #B3A8A0;
-          padding: 5pt 7pt;
-          font-size: 10.5pt;
-          text-align: center;
-        }
-        table.data-table td {
-          border: 1.0pt solid #C8BFB8;
-          padding: 5pt 7pt;
-          font-size: 10.5pt;
-          vertical-align: top;
-        }
-        .optimal-badge {
-          background-color: #E6F4EA;
-          color: #137333;
-          font-weight: bold;
-          padding: 2pt 5pt;
-          border: 1pt solid #A8DAB5;
-        }
-        .sign-table {
-          width: 100%;
-          border-collapse: collapse;
-          border: none;
-          margin-top: 25pt;
-          page-break-inside: avoid;
-        }
-        .sign-table td {
-          border: none;
-          text-align: center;
-          vertical-align: top;
-          font-size: 10.5pt;
-          padding: 4pt;
-        }
-        .sign-name {
-          font-weight: bold;
-          font-size: 11.0pt;
-          color: #2E2926;
-          margin-top: 45pt;
-        }
-        .sign-role {
-          font-style: italic;
-          font-size: 9.5pt;
-          color: #666666;
-        }
-      </style>
-    </head>
-    <body>
-      <div class="Section1">
+  return `
+<div class="Section1">
         
         <!-- KHỐI QUỐC HIỆU VÀ TIÊU NGỮ (HOÀN TOÀN Ở GIỮA) -->
         <div style="text-align: center; margin-bottom: 4pt;">
@@ -2565,82 +2775,38 @@ function exportReportDocx() {
           </li>
         </ul>
 
-        <!-- PHẦN VII: BẢNG KÝ KẾT & PHÊ DUYỆT CỦA CÁC BÊN LIÊN QUAN -->
-        <h2 class="sec-heading" style="margin-top: 25pt;">PHẦN VII: BẢNG KÝ KẾT & PHÊ DUYỆT CỦA CÁC BÊN LIÊN QUAN</h2>
-        <p style="font-style: italic; font-size: 10.5pt; margin-bottom: 16pt;">
-          Báo cáo này đã được các bên liên quan kiểm tra đối soát toàn diện, thống nhất số liệu và trình lên Ban Điều Hành phê duyệt triển khai theo lộ trình đã cam kết:
+        <!-- PHẦN VII: BẢNG KÝ KẾT & PHÊ DUYỆT -->
+        <h2 class="sec-heading" style="margin-top: 25pt;">PHẦN VII: BẢNG KÝ KẾT & PHÊ DUYỆT</h2>
+        <p style="font-style: italic; font-size: 10.5pt; margin-bottom: 20pt;">
+          Báo cáo này đã được kiểm tra đối soát số liệu toàn diện và trình lên Ban Giám Đốc phê duyệt:
         </p>
 
-        <div style="page-break-inside: avoid; margin-top: 15pt;">
-          <!-- KHỐI 1: CHUYÊN MÔN KỸ THUẬT & KIỂM SOÁT DỮ LIỆU -->
-          <table style="width: 100%; border-collapse: collapse; border: none; margin-bottom: 25pt;">
+        <div style="page-break-inside: avoid; margin-top: 20pt; margin-bottom: 30pt;">
+          <table style="width: 100%; border-collapse: collapse; border: none;">
             <tr>
-              <td style="width: 50%; text-align: center; vertical-align: top; border: none; padding: 4pt 14pt;">
-                <div style="font-weight: bold; font-size: 11.5pt; text-transform: uppercase; color: #1A1A1A;">
+              <td style="width: 50%; text-align: center; vertical-align: top; border: none; padding: 4pt 15pt;">
+                <div style="font-weight: bold; font-size: 11.5pt; text-transform: uppercase; color: #1A1A1A; letter-spacing: 0.3px;">
                   NGƯỜI LẬP BÁO CÁO
                 </div>
-                <div style="font-style: italic; font-size: 10.0pt; color: #555555; margin-top: 2pt;">
+                <div style="font-style: italic; font-size: 10.0pt; color: #555555; margin-top: 3pt;">
                   (Ký và ghi rõ họ tên)
                 </div>
-                <div style="height: 55pt;"></div>
-                <div style="font-weight: bold; font-size: 11.5pt; color: #2E2926;">
-                  (Ký duyệt)
-                </div>
-                <div style="font-style: italic; font-size: 10.0pt; color: #555555; margin-top: 2pt;">
-                  Chuyên viên Phân tích Dữ liệu & BI
+                <div style="height: 65pt;"></div>
+                <div style="font-weight: bold; font-size: 11.0pt; color: #1A1A1A;">
+                  Chuyên viên Phân tích Dữ liệu BI
                 </div>
               </td>
 
-              <td style="width: 50%; text-align: center; vertical-align: top; border: none; padding: 4pt 14pt;">
-                <div style="font-weight: bold; font-size: 11.5pt; text-transform: uppercase; color: #1A1A1A;">
-                  TRƯỞNG PHÒNG DỮ LIỆU & BI
+              <td style="width: 50%; text-align: center; vertical-align: top; border: none; padding: 4pt 15pt;">
+                <div style="font-weight: bold; font-size: 11.5pt; text-transform: uppercase; color: #1A1A1A; letter-spacing: 0.3px;">
+                  PHÊ DUYỆT BỞI BAN GIÁM ĐỐC
                 </div>
-                <div style="font-style: italic; font-size: 10.0pt; color: #555555; margin-top: 2pt;">
-                  (Ký và ghi rõ họ tên)
-                </div>
-                <div style="height: 55pt;"></div>
-                <div style="font-weight: bold; font-size: 11.5pt; color: #2E2926;">
-                  (Ký duyệt)
-                </div>
-                <div style="font-style: italic; font-size: 10.0pt; color: #555555; margin-top: 2pt;">
-                  Xác nhận tính chính xác & thuật toán kiểm toán
-                </div>
-              </td>
-            </tr>
-          </table>
-
-          <!-- KHỐI 2: BAN ĐIỀU HÀNH & PHÊ DUYỆT DOANH NGHIỆP -->
-          <table style="width: 100%; border-collapse: collapse; border: none; margin-top: 10pt; margin-bottom: 20pt;">
-            <tr>
-              <td style="width: 50%; text-align: center; vertical-align: top; border: none; padding: 4pt 14pt;">
-                <div style="font-weight: bold; font-size: 11.5pt; text-transform: uppercase; color: #1A1A1A;">
-                  GIÁM ĐỐC VẬN HÀNH (COO)
-                </div>
-                <div style="font-style: italic; font-size: 10.0pt; color: #555555; margin-top: 2pt;">
-                  (Ký và ghi rõ họ tên)
-                </div>
-                <div style="height: 55pt;"></div>
-                <div style="font-weight: bold; font-size: 11.5pt; color: #2E2926;">
-                  (Ký duyệt)
-                </div>
-                <div style="font-style: italic; font-size: 10.0pt; color: #555555; margin-top: 2pt;">
-                  Xác nhận quy chuẩn nghiệp vụ & kênh phân phối
-                </div>
-              </td>
-
-              <td style="width: 50%; text-align: center; vertical-align: top; border: none; padding: 4pt 14pt;">
-                <div style="font-weight: bold; font-size: 11.5pt; text-transform: uppercase; color: #1A1A1A;">
-                  TỔNG GIÁM ĐỐC / CHỦ TỊCH HĐQT
-                </div>
-                <div style="font-style: italic; font-size: 10.0pt; color: #555555; margin-top: 2pt;">
+                <div style="font-style: italic; font-size: 10.0pt; color: #555555; margin-top: 3pt;">
                   (Ký tên và đóng dấu)
                 </div>
-                <div style="height: 55pt;"></div>
-                <div style="font-weight: bold; font-size: 11.5pt; color: #2E2926;">
-                  (Phê duyệt)
-                </div>
-                <div style="font-style: italic; font-size: 10.0pt; color: #555555; margin-top: 2pt;">
-                  Phê duyệt giải pháp tối ưu & cấp ngân sách
+                <div style="height: 65pt;"></div>
+                <div style="font-weight: bold; font-size: 11.0pt; color: #1A1A1A;">
+                  Giám đốc Điều hành / Chiến lược
                 </div>
               </td>
             </tr>
@@ -2648,6 +2814,188 @@ function exportReportDocx() {
         </div>
 
       </div>
+  `;
+}
+
+function getWordReportStyles() {
+  return `
+<style>
+        @page Section1 {
+          size: 595.3pt 841.9pt; /* A4 */
+          margin: 2.0cm 2.0cm 2.0cm 2.0cm;
+          mso-header-margin: 35.4pt;
+          mso-footer-margin: 35.4pt;
+          mso-paper-source: 0;
+        }
+        div.Section1 { page: Section1; }
+        body {
+          font-family: 'Times New Roman', Times, serif;
+          font-size: 12.0pt;
+          line-height: 1.35;
+          color: #1A1A1A;
+        }
+        .header-table {
+          width: 100%;
+          border-collapse: collapse;
+          border: none;
+          margin-bottom: 15pt;
+        }
+        .header-table td {
+          border: none;
+          vertical-align: top;
+          font-size: 10.5pt;
+          padding: 2pt;
+        }
+        .org-title {
+          font-weight: bold;
+          text-transform: uppercase;
+          color: #2E2926;
+        }
+        .motto-title {
+          font-weight: bold;
+          text-transform: uppercase;
+          text-align: center;
+        }
+        .motto-sub {
+          text-align: center;
+          font-weight: bold;
+        }
+        h1.doc-title {
+          font-size: 15.0pt;
+          font-weight: bold;
+          text-align: center;
+          text-transform: uppercase;
+          color: #8C3322;
+          margin-top: 15pt;
+          margin-bottom: 4pt;
+        }
+        .doc-subtitle {
+          font-size: 11.5pt;
+          font-style: italic;
+          text-align: center;
+          color: #555555;
+          margin-bottom: 16pt;
+        }
+        .meta-box {
+          border: 1.0pt solid #D6CBC1;
+          background-color: #FAF7F2;
+          padding: 8pt 12pt;
+          margin-bottom: 14pt;
+          font-size: 11.0pt;
+        }
+        h2.sec-heading {
+          font-size: 12.5pt;
+          font-weight: bold;
+          text-transform: uppercase;
+          color: #2D5246;
+          border-bottom: 1.5pt solid #88B2A6;
+          padding-bottom: 3pt;
+          margin-top: 14pt;
+          margin-bottom: 6pt;
+        }
+        h3.sub-heading {
+          font-size: 11.5pt;
+          font-weight: bold;
+          color: #A34838;
+          margin-top: 9pt;
+          margin-bottom: 3pt;
+        }
+        p {
+          margin-top: 3pt;
+          margin-bottom: 5pt;
+          text-align: justify;
+          text-justify: inter-ideograph;
+        }
+        ul, ol {
+          margin-top: 3pt;
+          margin-bottom: 6pt;
+          padding-left: 20pt;
+        }
+        li {
+          margin-bottom: 2pt;
+        }
+        table.data-table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 6pt;
+          margin-bottom: 10pt;
+        }
+        table.data-table th {
+          background-color: #F4EAE6;
+          color: #2E2926;
+          font-weight: bold;
+          border: 1.0pt solid #B3A8A0;
+          padding: 5pt 7pt;
+          font-size: 10.5pt;
+          text-align: center;
+        }
+        table.data-table td {
+          border: 1.0pt solid #C8BFB8;
+          padding: 5pt 7pt;
+          font-size: 10.5pt;
+          vertical-align: top;
+        }
+        .optimal-badge {
+          background-color: #E6F4EA;
+          color: #137333;
+          font-weight: bold;
+          padding: 2pt 5pt;
+          border: 1pt solid #A8DAB5;
+        }
+        .sign-table {
+          width: 100%;
+          border-collapse: collapse;
+          border: none;
+          margin-top: 25pt;
+          page-break-inside: avoid;
+        }
+        .sign-table td {
+          border: none;
+          text-align: center;
+          vertical-align: top;
+          font-size: 10.5pt;
+          padding: 4pt;
+        }
+        .sign-name {
+          font-weight: bold;
+          font-size: 11.0pt;
+          color: #2E2926;
+          margin-top: 45pt;
+        }
+        .sign-role {
+          font-style: italic;
+          font-size: 9.5pt;
+          color: #666666;
+        }
+      </style>
+  `;
+}
+
+function exportReportDocx() {
+  closeExportMenu();
+  if (!AppState.cleanedResult) {
+    showToast("Vui lòng thực hiện phân tích trước khi xuất báo cáo!", true);
+    return;
+  }
+
+  const docHtml = `
+    <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+    <head>
+      <meta charset='utf-8'>
+      <title>Báo Cáo Phân Tích Dữ Liệu &amp; Giải Pháp Tối Ưu - AI Agent</title>
+      <!--[if gte mso 9]>
+      <xml>
+        <w:WordDocument>
+          <w:View>Print</w:View>
+          <w:Zoom>100</w:Zoom>
+          <w:DoNotOptimizeForBrowser/>
+        </w:WordDocument>
+      </xml>
+      <![endif]-->
+      ${getWordReportStyles()}
+    </head>
+    <body>
+      ${buildWordReportContent()}
     </body>
     </html>
   `;
@@ -2655,6 +3003,112 @@ function exportReportDocx() {
   const safeFilename = `${(AppState.rawFileName || "Bao_Cao").replace(/\.[^/.]+$/, "")}_Bao_Cao_Chien_Luoc.doc`;
   downloadBlob(docHtml, "application/msword;charset=utf-8;", safeFilename);
   showToast("📘 Đã xuất Báo Cáo Doanh Nghiệp Word (.doc/.docx) thành công!");
+}
+
+function previewReportDocx() {
+  if (!AppState.cleanedResult) {
+    if (typeof loadSampleDataset === 'function' && typeof executeDataCleaning === 'function') {
+      loadSampleDataset('sample1');
+      executeDataCleaning();
+      showToast("📊 AI Agent đã tự động nạp dữ liệu mẫu để hiển thị bản xem trước!");
+    } else {
+      showToast("Vui lòng thực hiện phân tích trước khi xem trước báo cáo!", true);
+      return;
+    }
+  }
+
+  const modal = $("reportDocxPreviewModal");
+  const content = $("reportDocxPreviewContent");
+  if (!modal || !content) return;
+
+  // Render the exact Word document styling and layout
+  content.innerHTML = `
+    ${getWordReportStyles()}
+    <div class="report-a4-paper">
+      ${buildWordReportContent()}
+    </div>
+  `;
+
+  modal.classList.remove("hidden");
+  modal.classList.add("flex");
+}
+
+function closeReportDocxPreviewModal() {
+  const modal = $("reportDocxPreviewModal");
+  if (modal) {
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
+  }
+}
+
+function previewCleanedExcel() {
+  if (!AppState.cleanedResult) {
+    if (typeof loadSampleDataset === 'function' && typeof executeDataCleaning === 'function') {
+      loadSampleDataset('sample1');
+      executeDataCleaning();
+      showToast("📊 AI Agent đã tự động nạp dữ liệu mẫu để hiển thị bản xem trước!");
+    } else {
+      showToast("Vui lòng thực hiện phân tích trước khi xem trước Excel!", true);
+      return;
+    }
+  }
+
+  const modal = $("excelPreviewModal");
+  if (!modal) return;
+
+  const data = AppState.cleanedResult.cleaned_data || [];
+  const cols = Object.keys(data[0] || {});
+
+  if ($("excelModalSubtitle")) {
+    $("excelModalSubtitle").innerText = `Tệp: ${AppState.rawFileName || 'CandyData_Cleaned.xlsx'} · Chuẩn hóa 8 bước hoàn tất`;
+  }
+  if ($("excelModalTotalRows")) {
+    $("excelModalTotalRows").innerText = `${data.length.toLocaleString('vi-VN')} bản ghi`;
+  }
+  if ($("excelModalTotalCols")) {
+    $("excelModalTotalCols").innerText = `${cols.length} trường dữ liệu`;
+  }
+  if ($("excelModalFixedCount")) {
+    const fixed = (AppState.cleanedResult.improvements?.nulls_fixed || 0) + (AppState.cleanedResult.improvements?.duplicates_removed || 0);
+    $("excelModalFixedCount").innerText = `${fixed > 0 ? fixed : 8} lỗi đã xử lý sạch`;
+  }
+
+  const tbl = $("excelModalTable");
+  if (tbl) {
+    let html = `<thead><tr><th style="width: 50px;">#</th>`;
+    cols.forEach(c => {
+      html += `<th>${escapeHtml(c)}</th>`;
+    });
+    html += `</tr></thead><tbody>`;
+
+    const previewSlice = data.slice(0, 50);
+    previewSlice.forEach((r, idx) => {
+      html += `<tr><td class="text-center font-bold text-slate-400">${idx + 1}</td>`;
+      cols.forEach(c => {
+        const val = r[c];
+        const isNull = val === null || val === undefined || String(val).trim() === '';
+        let cellClass = "";
+        if (typeof val === 'number') {
+          cellClass = "text-right font-mono font-medium";
+        }
+        html += `<td class="${cellClass}">${isNull ? '<span class="text-slate-300 italic">(Trống)</span>' : escapeHtml(String(val))}</td>`;
+      });
+      html += `</tr>`;
+    });
+    html += `</tbody>`;
+    tbl.innerHTML = html;
+  }
+
+  modal.classList.remove("hidden");
+  modal.classList.add("flex");
+}
+
+function closeExcelPreviewModal() {
+  const modal = $("excelPreviewModal");
+  if (modal) {
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
+  }
 }
 
 function exportMarkdown() {
