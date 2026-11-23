@@ -347,17 +347,20 @@ function updateStudioStepper() {
   // 1. Sync Header Active Step Indicator Badge (Fits cleanly, never overflows)
   const headerStepNameEl = $("headerCurrentStepName");
   if (headerStepNameEl) {
-    if (AppState.currentStep === 1) headerStepNameEl.innerText = "Trang Chủ";
-    else if (AppState.currentStep === 'context') headerStepNameEl.innerText = "1. Khởi tạo bối cảnh";
-    else if (AppState.currentStep === 2) headerStepNameEl.innerText = "2. Tải nạp dữ liệu";
-    else if (AppState.currentStep === 3 || (AppState.currentStep > 2 && AppState.activeStudioTab === 'norm')) {
-      headerStepNameEl.innerText = "3. Chuẩn hóa & Làm sạch";
-    } else if (AppState.activeStudioTab === 'rank') {
-      headerStepNameEl.innerText = "4. Khai phá & Đánh giá";
-    } else if (AppState.currentStep >= 4 || AppState.activeStudioTab === 'proposal') {
+    if (AppState.currentStep === 1) {
+      headerStepNameEl.innerText = "Trang Chủ";
+    } else if (AppState.currentStep === 'context') {
+      headerStepNameEl.innerText = "1. Khởi tạo bối cảnh";
+    } else if (AppState.currentStep === 2) {
+      headerStepNameEl.innerText = "2. Tải nạp dữ liệu";
+    } else if (AppState.currentStep === 5 || AppState.activeStudioTab === 'proposal') {
       headerStepNameEl.innerText = "5. Báo cáo & Xuất bản";
+    } else if (AppState.currentStep === 3 || (AppState.currentStep > 2 && AppState.activeStudioTab === 'norm')) {
+      headerStepNameEl.innerText = "3. Chuẩn hóa & Làm sạch";
+    } else if (AppState.activeStudioTab === 'rank' || AppState.currentStep === 4) {
+      headerStepNameEl.innerText = "4. Khai phá & Đánh giá";
     } else {
-      headerStepNameEl.innerText = "AI Agent";
+      headerStepNameEl.innerText = "5. Báo cáo & Xuất bản";
     }
   }
 
@@ -459,10 +462,15 @@ function updateStudioStepper() {
   const sideStepNode4 = $("sideStepNode4");
   const sideStepBadge4 = $("sideStepBadge4");
   if (sideStep4 && sideStepNode4 && sideStepBadge4) {
-    if (AppState.currentStep > 2 && (AppState.activeStudioTab === 'rank' || AppState.activeStudioTab === 'proposal')) {
+    if (AppState.currentStep === 5 || AppState.activeStudioTab === 'proposal') {
       sideStep4.className = "sidebar-step-item active";
+      sideStepNode4.innerHTML = '<i class="fa-solid fa-file-export text-[10px]"></i>';
+      sideStepBadge4.innerText = "Hiện tại";
+      sideStepBadge4.className = "sidebar-step-badge bg-[#ECA294] text-white";
+    } else if (AppState.currentStep > 2 && AppState.activeStudioTab === 'rank') {
+      sideStep4.className = "sidebar-step-item";
       sideStepNode4.innerHTML = '<i class="fa-solid fa-chart-pie text-[10px]"></i>';
-      sideStepBadge4.innerText = "Đang xem";
+      sideStepBadge4.innerText = "Sẵn sàng";
       sideStepBadge4.className = "sidebar-step-badge bg-[#88B2A6] text-white";
     } else if (AppState.maxApprovedStep >= 4) {
       sideStep4.className = "sidebar-step-item completed";
@@ -487,8 +495,9 @@ function updateStudioStepper() {
     if (AppState.currentStep === 1) $("mobileStepIndicator").innerText = "Trang Chủ: Khởi động & Hướng dẫn";
     else if (AppState.currentStep === 'context') $("mobileStepIndicator").innerText = "Bước 1: Khởi tạo bối cảnh";
     else if (AppState.currentStep === 2) $("mobileStepIndicator").innerText = "Bước 2: Tải nạp dữ liệu";
+    else if (AppState.currentStep === 5 || AppState.activeStudioTab === 'proposal') $("mobileStepIndicator").innerText = "Bước 5: Báo cáo & Xuất bản";
     else if (AppState.currentStep === 3 && AppState.activeStudioTab === 'norm') $("mobileStepIndicator").innerText = "Bước 3: Chuẩn hóa & Làm sạch";
-    else if (AppState.activeStudioTab === 'rank') $("mobileStepIndicator").innerText = "Bước 4: Khai phá & Đánh giá";
+    else if (AppState.activeStudioTab === 'rank' || AppState.currentStep === 4) $("mobileStepIndicator").innerText = "Bước 4: Khai phá & Đánh giá";
     else $("mobileStepIndicator").innerText = "Bước 5: Báo cáo & Xuất bản";
   }
 
@@ -501,8 +510,9 @@ function updatePermanentSidebar() {
   const isHome = AppState.currentStep === 1;
   const isUpload = AppState.currentStep === 2;
   const isStudio = AppState.currentStep >= 3;
-  const isNorm = isStudio && AppState.activeStudioTab === 'norm';
-  const isRank = isStudio && (AppState.activeStudioTab === 'rank' || AppState.activeStudioTab === 'proposal');
+  const isNorm = isStudio && AppState.activeStudioTab === 'norm' && AppState.currentStep !== 5;
+  const isRank = isStudio && AppState.activeStudioTab === 'rank' && AppState.currentStep !== 5 && AppState.currentStep !== 3;
+  const isDashboard = isStudio && (AppState.activeStudioTab === 'proposal' || AppState.currentStep === 5);
   const hasData = !!AppState.rawDataset;
   const hasClean = !!AppState.cleanedResult;
   const isApproved = AppState.reportApproved || AppState.maxApprovedStep >= 4;
@@ -528,8 +538,8 @@ function updatePermanentSidebar() {
   setItem('context', isContext, !!AppState.businessContext.industry, '•');
   setItem('upload', isUpload, hasData, '•');
   setItem('clean', isNorm, hasClean, '•');
-  setItem('analysis', isStudio && AppState.activeStudioTab === 'rank', hasClean, '•');
-  setItem('dashboard', isStudio && AppState.activeStudioTab === 'proposal', isApproved, '•');
+  setItem('analysis', isRank, hasClean, '•');
+  setItem('dashboard', isDashboard, isApproved, '•');
 
   // Human review badges
   const dBadge = $("sideReviewDataBadge");
@@ -564,8 +574,13 @@ function navToCleaningStep() {
     goToStep(2);
     return;
   }
+  AppState.currentStep = 3;
   goToStep(3);
+  AppState.currentStep = 3;
   switchStudioTab('norm');
+  AppState.currentStep = 3;
+  updateStudioStepper();
+  updatePermanentSidebar();
 }
 
 function navToAnalysisStep() {
@@ -575,8 +590,13 @@ function navToAnalysisStep() {
     else goToStep(3);
     return;
   }
+  AppState.currentStep = 4;
   goToStep(3);
+  AppState.currentStep = 4;
   switchStudioTab('rank');
+  AppState.currentStep = 4;
+  updateStudioStepper();
+  updatePermanentSidebar();
   setTimeout(() => {
     $("productAreaChartContainer")?.scrollIntoView({ behavior: 'smooth' });
   }, 100);
@@ -589,8 +609,22 @@ function navToDashboardStep() {
     else goToStep(3);
     return;
   }
+  AppState.currentStep = 5;
   goToStep(3);
+  AppState.currentStep = 5;
   switchStudioTab('rank');
+  AppState.currentStep = 5;
+  updateStudioStepper();
+  updatePermanentSidebar();
+  setTimeout(() => {
+    const approvedBox = $("reportApprovedBox");
+    if (approvedBox && !approvedBox.classList.contains("hidden")) {
+      approvedBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else {
+      const exportCards = document.querySelector(".export-cards") || $("reportApprovedBox");
+      exportCards?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, 150);
 }
 
 function focusHoverSidebar() {
@@ -3007,9 +3041,19 @@ function exportReportDocx() {
 
 function previewReportDocx() {
   if (!AppState.cleanedResult) {
-    if (typeof loadSampleDataset === 'function' && typeof executeDataCleaning === 'function') {
-      loadSampleDataset('sample1');
-      executeDataCleaning();
+    if (typeof SAMPLE_DATASETS !== 'undefined' && SAMPLE_DATASETS['sample1'] && typeof DataProcessor !== 'undefined') {
+      const sample = SAMPLE_DATASETS['sample1'];
+      AppState.rawFileName = `${sample.id}_${sample.name.replace(/\s+/g, '_')}.xlsx`;
+      AppState.rawFileSize = "14.8 KB";
+      AppState.rawDataset = JSON.parse(JSON.stringify(sample.data));
+      AppState.cleanedResult = DataProcessor.cleanData(AppState.rawDataset, {
+        handle_null: 'impute_smart',
+        remove_duplicates: true,
+        standardize_names: true,
+        standardize_phones: true,
+        phone_format: 'spaced',
+        handle_outliers: 'clip'
+      }, "", AppState.businessContext);
       showToast("📊 AI Agent đã tự động nạp dữ liệu mẫu để hiển thị bản xem trước!");
     } else {
       showToast("Vui lòng thực hiện phân tích trước khi xem trước báo cáo!", true);
@@ -3029,23 +3073,37 @@ function previewReportDocx() {
     </div>
   `;
 
+  modal.classList.add("active");
   modal.classList.remove("hidden");
   modal.classList.add("flex");
+  document.body.style.overflow = "hidden";
 }
 
 function closeReportDocxPreviewModal() {
   const modal = $("reportDocxPreviewModal");
   if (modal) {
+    modal.classList.remove("active");
     modal.classList.add("hidden");
     modal.classList.remove("flex");
+    document.body.style.overflow = "";
   }
 }
 
 function previewCleanedExcel() {
   if (!AppState.cleanedResult) {
-    if (typeof loadSampleDataset === 'function' && typeof executeDataCleaning === 'function') {
-      loadSampleDataset('sample1');
-      executeDataCleaning();
+    if (typeof SAMPLE_DATASETS !== 'undefined' && SAMPLE_DATASETS['sample1'] && typeof DataProcessor !== 'undefined') {
+      const sample = SAMPLE_DATASETS['sample1'];
+      AppState.rawFileName = `${sample.id}_${sample.name.replace(/\s+/g, '_')}.xlsx`;
+      AppState.rawFileSize = "14.8 KB";
+      AppState.rawDataset = JSON.parse(JSON.stringify(sample.data));
+      AppState.cleanedResult = DataProcessor.cleanData(AppState.rawDataset, {
+        handle_null: 'impute_smart',
+        remove_duplicates: true,
+        standardize_names: true,
+        standardize_phones: true,
+        phone_format: 'spaced',
+        handle_outliers: 'clip'
+      }, "", AppState.businessContext);
       showToast("📊 AI Agent đã tự động nạp dữ liệu mẫu để hiển thị bản xem trước!");
     } else {
       showToast("Vui lòng thực hiện phân tích trước khi xem trước Excel!", true);
@@ -3099,15 +3157,19 @@ function previewCleanedExcel() {
     tbl.innerHTML = html;
   }
 
+  modal.classList.add("active");
   modal.classList.remove("hidden");
   modal.classList.add("flex");
+  document.body.style.overflow = "hidden";
 }
 
 function closeExcelPreviewModal() {
   const modal = $("excelPreviewModal");
   if (modal) {
+    modal.classList.remove("active");
     modal.classList.add("hidden");
     modal.classList.remove("flex");
+    document.body.style.overflow = "";
   }
 }
 
@@ -3355,7 +3417,13 @@ function closeGuideModal() {
 
 function closeModalOnBackdrop(e, modalId) {
   if (e.target.id === modalId) {
-    $(modalId)?.classList.remove("active");
+    const modal = $(modalId);
+    if (modal) {
+      modal.classList.remove("active");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+      document.body.style.overflow = "";
+    }
   }
 }
 

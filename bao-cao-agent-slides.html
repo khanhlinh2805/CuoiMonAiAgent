@@ -1,0 +1,1587 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Báo Cáo Nghiên Cứu & Phát Triển · LeKhanhLinh AI Agent 🍬</title>
+  
+  <!-- Google Fonts & Font Awesome 6 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <style>
+    /* ==========================================================================
+       THEME VARIABLES:
+       LIGHT: Signature Agent Pastel (Warm Ivory, Rich Ombre Canvas, Coral & Sage)
+       DARK: Executive Midnight (Deep Dark Palette)
+       ========================================================================== */
+    :root, [data-theme="light"] {
+      --bg-page: #F4ECE3;
+      --bg-surface: rgba(255, 255, 255, 0.94);
+      --surface-slide: #FFFFFF;
+      --border-slide: rgba(220, 205, 195, 0.95);
+      --surface-card: #FAF7F2;
+      --surface-card-hover: #FFFFFF;
+      --border-subtle: #EDE4DC;
+      --border-focus: #ECA294;
+      
+      --text-main: #2E2926;
+      --text-sub: #57626E;
+      --text-muted: #7A726B;
+      
+      --accent-coral: #D47B6B;
+      --accent-coral-soft: #FDF1EE;
+      --accent-sage: #588376;
+      --accent-sage-soft: #EDF5F2;
+      --accent-amber: #D97706;
+      --accent-amber-soft: #FEF3C7;
+      --accent-blue: #3B82F6;
+      --accent-blue-soft: #EFF6FF;
+      
+      --shadow-card: 0 4px 14px -2px rgba(210, 195, 185, 0.45);
+      --shadow-slide: 0 24px 64px -12px rgba(180, 140, 125, 0.38), 0 8px 24px -4px rgba(0, 0, 0, 0.04);
+    }
+
+    [data-theme="dark"] {
+      --bg-page: #0C0F14;
+      --bg-surface: #141A23;
+      --surface-slide: #141A23;
+      --border-slide: #242E3F;
+      --surface-card: #19202D;
+      --surface-card-hover: #1E2737;
+      --border-subtle: #242E3F;
+      --border-focus: #3B82F6;
+      
+      --text-main: #F1F5F9;
+      --text-sub: #94A3B8;
+      --text-muted: #64748B;
+      
+      --accent-coral: #F87171;
+      --accent-coral-soft: rgba(248, 113, 113, 0.15);
+      --accent-sage: #34D399;
+      --accent-sage-soft: rgba(52, 211, 153, 0.15);
+      --accent-amber: #FBBF24;
+      --accent-amber-soft: rgba(251, 191, 36, 0.15);
+      --accent-blue: #60A5FA;
+      --accent-blue-soft: rgba(96, 165, 250, 0.15);
+      
+      --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.35);
+      --shadow-slide: 0 20px 48px -8px rgba(0, 0, 0, 0.6);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      font-family: 'Be Vietnam Pro', 'Plus Jakarta Sans', sans-serif;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* Top Control Bar */
+    .top-bar {
+      height: 52px;
+      padding: 0 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+      z-index: 50;
+      flex-shrink: 0;
+    }
+
+    .brand-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .brand-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #F87171, #34D399);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+    }
+
+    .brand-badge {
+      background: var(--accent-sage-soft);
+      color: var(--accent-sage);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      padding: 2.5px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-nav {
+      background: var(--surface-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 6px 13px;
+      border-radius: 9px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.18s ease;
+      outline: none;
+    }
+
+    .btn-nav:hover {
+      background: var(--surface-card-hover);
+      border-color: var(--text-muted);
+      transform: translateY(-1px);
+    }
+
+    .btn-nav.primary {
+      background: var(--accent-sage);
+      color: #0C0F14;
+      border-color: var(--accent-sage);
+      font-weight: 800;
+    }
+
+    .btn-nav.primary:hover {
+      opacity: 0.92;
+    }
+
+    .shortcut-legend {
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .kbd-key {
+      padding: 2px 5px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 10px;
+      color: var(--text-sub);
+    }
+
+    /* Slide Viewport */
+    .slide-viewport {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 28px;
+      z-index: 10;
+    }
+
+    .slide {
+      position: absolute;
+      width: min(1140px, 94vw);
+      height: min(620px, 86vh);
+      background: var(--surface-slide);
+      border: 1px solid var(--border-slide);
+      border-radius: 24px;
+      box-shadow: var(--shadow-slide);
+      padding: 34px 44px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px) scale(0.99);
+      transition: opacity 0.32s cubic-bezier(0.16, 1, 0.3, 1), transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow: hidden;
+      z-index: 10;
+    }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+      z-index: 10;
+    }
+
+    /* Slide Header */
+    .slide-header {
+      margin-bottom: 18px;
+      flex-shrink: 0;
+    }
+
+    .slide-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--accent-sage);
+      margin-bottom: 4px;
+    }
+
+    .slide-title {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      color: var(--text-main);
+      line-height: 1.25;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .slide-subtitle {
+      font-size: 13px;
+      color: var(--text-sub);
+      font-weight: 500;
+      margin-top: 3px;
+      line-height: 1.45;
+    }
+
+    /* Slide Body - STRICTLY FITTED WITHOUT SCROLLBARS */
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      width: 100%;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      width: 100%;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      width: 100%;
+    }
+
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 10px;
+      transition: all 0.18s ease;
+    }
+
+    .card:hover {
+      border-color: var(--text-muted);
+      transform: translateY(-1.5px);
+    }
+
+    .card-icon-box {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: var(--surface-card);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: var(--accent-coral);
+      flex-shrink: 0;
+    }
+
+    .card.sage .card-icon-box {
+      color: var(--accent-sage);
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.35;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .card-desc {
+      font-size: 12px;
+      color: var(--text-sub);
+      line-height: 1.55;
+      font-weight: 500;
+    }
+
+    /* Metric Counters */
+    .metric-big {
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: -0.8px;
+      color: var(--accent-coral);
+      line-height: 1.1;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .metric-big.sage {
+      color: var(--accent-sage);
+    }
+
+    .metric-label {
+      font-size: 10.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+    }
+
+    /* Pipeline Step Sequence */
+    .pipeline-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .pipeline-step {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 16px;
+      border-radius: 13px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      transition: all 0.16s ease;
+    }
+
+    .pipeline-step:hover {
+      border-color: var(--accent-sage);
+      background: var(--surface-card);
+    }
+
+    .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--accent-coral-soft);
+      color: var(--accent-coral);
+      border: 1px solid rgba(248, 113, 113, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    .pipeline-step.green .step-num {
+      background: var(--accent-sage-soft);
+      color: var(--accent-sage);
+      border-color: rgba(52, 211, 153, 0.3);
+    }
+
+    .step-info h4 {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .step-info p {
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-top: 1px;
+      line-height: 1.4;
+    }
+
+    .pill-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 11px;
+      border-radius: 999px;
+      background: var(--surface-card);
+      border: 1px solid var(--border-subtle);
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--text-sub);
+    }
+
+    .pill-chip.accent {
+      background: var(--accent-coral-soft);
+      border-color: rgba(248, 113, 113, 0.3);
+      color: var(--accent-coral);
+    }
+
+    .pill-chip.sage {
+      background: var(--accent-sage-soft);
+      border-color: rgba(52, 211, 153, 0.3);
+      color: var(--accent-sage);
+    }
+
+    /* Comparison Table in Slide */
+    .table-spec {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11.5px;
+    }
+
+    .table-spec th {
+      text-align: left;
+      padding: 8px 12px;
+      background: var(--bg-surface);
+      font-weight: 800;
+      color: var(--text-main);
+      border-bottom: 1.5px solid var(--border-subtle);
+    }
+
+    .table-spec td {
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-sub);
+      vertical-align: middle;
+    }
+
+    .table-spec td strong {
+      color: var(--text-main);
+    }
+
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2.5px 7px;
+      border-radius: 5px;
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .badge-status.success {
+      background: var(--accent-sage-soft);
+      color: var(--accent-sage);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+    }
+
+    .badge-status.alert {
+      background: var(--accent-coral-soft);
+      color: var(--accent-coral);
+      border: 1px solid rgba(248, 113, 113, 0.3);
+    }
+
+    /* Bottom Navigation Bar */
+    .bottom-bar {
+      height: 48px;
+      padding: 0 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+      flex-shrink: 0;
+      z-index: 50;
+    }
+
+    .slide-counter {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--text-sub);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .progress-track {
+      width: 220px;
+      height: 4px;
+      background: var(--border-subtle);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-coral), var(--accent-sage));
+      width: 11%;
+      transition: width 0.3s ease;
+    }
+
+    .dots-container {
+      display: flex;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--border-subtle);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .dot.active {
+      width: 20px;
+      border-radius: 999px;
+      background: var(--accent-sage);
+    }
+
+    @media print {
+      body {
+        overflow: visible;
+        height: auto;
+        background: white !important;
+        color: black !important;
+      }
+      .top-bar, .bottom-bar {
+        display: none !important;
+      }
+      .slide-viewport {
+        padding: 0;
+        display: block;
+      }
+      .slide {
+        position: relative;
+        opacity: 1 !important;
+        transform: none !important;
+        page-break-after: always;
+        width: 100%;
+        height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
+        margin-bottom: 0;
+        background: white !important;
+        border: none !important;
+        color: black !important;
+      }
+      .ambient-bg-layer {
+        display: none !important;
+      }
+    }
+
+    /* ==========================================================================
+       ZERO-HEAT AMBIENT BACKGROUND SYSTEM (Matches Agent Aesthetic)
+       ========================================================================== */
+    .ambient-bg-layer {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+      user-select: none;
+      contain: strict;
+    }
+
+    .ambient-ombre-mesh {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background:
+        radial-gradient(circle at 12% 14%, rgba(242, 138, 118, 0.54) 0%, rgba(242, 138, 118, 0.25) 38%, transparent 70%),
+        radial-gradient(circle at 88% 16%, rgba(252, 196, 70, 0.48) 0%, rgba(252, 196, 70, 0.22) 35%, transparent 68%),
+        radial-gradient(circle at 84% 84%, rgba(106, 178, 160, 0.52) 0%, rgba(106, 178, 160, 0.24) 38%, transparent 70%),
+        radial-gradient(circle at 16% 86%, rgba(246, 146, 178, 0.46) 0%, rgba(246, 146, 178, 0.20) 35%, transparent 68%),
+        linear-gradient(135deg, #F4ECE3 0%, #FDEEE4 35%, #E8F4EE 70%, #FAF0E3 100%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    [data-theme="dark"] .ambient-ombre-mesh {
+      background:
+        radial-gradient(circle at 15% 15%, rgba(220, 90, 65, 0.38) 0%, rgba(220, 90, 65, 0.16) 40%, transparent 65%),
+        radial-gradient(circle at 85% 18%, rgba(220, 160, 50, 0.30) 0%, rgba(220, 160, 50, 0.12) 35%, transparent 60%),
+        radial-gradient(circle at 82% 82%, rgba(65, 140, 120, 0.36) 0%, rgba(65, 140, 120, 0.15) 40%, transparent 65%),
+        radial-gradient(circle at 18% 84%, rgba(180, 80, 70, 0.30) 0%, rgba(180, 80, 70, 0.12) 35%, transparent 60%),
+        linear-gradient(135deg, #151210 0%, #1b1613 45%, #121e1a 100%);
+    }
+
+    .ambient-grid-overlay {
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(90, 80, 70, 0.10) 1px, transparent 1px);
+      background-size: 28px 28px;
+      opacity: 0.75;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    [data-theme="dark"] .ambient-grid-overlay {
+      background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+      opacity: 0.50;
+    }
+
+    .ambient-orb {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1;
+      will-change: transform;
+    }
+
+    .ambient-orb-1 {
+      width: 580px;
+      height: 580px;
+      left: -80px;
+      top: -60px;
+      background: radial-gradient(circle, rgba(238, 132, 112, 0.64) 0%, rgba(238, 132, 112, 0.32) 42%, transparent 75%);
+      animation: gentleDriftOrb1 32s ease-in-out infinite alternate;
+    }
+
+    .ambient-orb-2 {
+      width: 620px;
+      height: 620px;
+      right: -90px;
+      bottom: -70px;
+      background: radial-gradient(circle, rgba(100, 172, 155, 0.60) 0%, rgba(100, 172, 155, 0.28) 42%, transparent 75%);
+      animation: gentleDriftOrb2 38s ease-in-out infinite alternate;
+    }
+
+    [data-theme="dark"] .ambient-orb-1 {
+      background: radial-gradient(circle, rgba(220, 90, 65, 0.42) 0%, rgba(220, 90, 65, 0.18) 42%, transparent 72%);
+    }
+
+    [data-theme="dark"] .ambient-orb-2 {
+      background: radial-gradient(circle, rgba(65, 140, 120, 0.38) 0%, rgba(65, 140, 120, 0.16) 42%, transparent 72%);
+    }
+
+    @keyframes gentleDriftOrb1 {
+      0% { transform: translate3d(0, 0, 0); }
+      100% { transform: translate3d(60px, 45px, 0); }
+    }
+
+    @keyframes gentleDriftOrb2 {
+      0% { transform: translate3d(0, 0, 0); }
+      100% { transform: translate3d(-50px, -40px, 0); }
+    }
+
+    .ambient-meteor-shower {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .ambient-meteor {
+      position: absolute;
+      width: 170px;
+      height: 2.5px;
+      background: linear-gradient(to right, #FFFFFF 0%, rgba(255, 255, 255, 0.95) 20%, rgba(255, 255, 255, 0.35) 60%, transparent 100%);
+      border-radius: 9999px;
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.85);
+      transform-origin: left center;
+      opacity: 0;
+      pointer-events: none;
+      will-change: transform, opacity;
+    }
+
+    .ambient-meteor::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #FFFFFF;
+      box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.9);
+    }
+
+    .meteor-css-1 {
+      top: 9%;
+      right: 16%;
+      animation: meteorFlight1 14s ease-in infinite;
+      animation-delay: 2s;
+    }
+
+    .meteor-css-2 {
+      top: 24%;
+      right: 32%;
+      animation: meteorFlight2 19s ease-in infinite;
+      animation-delay: 9s;
+    }
+
+    @keyframes meteorFlight1 {
+      0% { opacity: 0; transform: translate3d(0, 0, 0) rotate(-35deg) scaleX(0.2); }
+      2% { opacity: 1; transform: translate3d(-40px, 28px, 0) rotate(-35deg) scaleX(1); }
+      8% { opacity: 1; transform: translate3d(-340px, 238px, 0) rotate(-35deg) scaleX(1.05); }
+      12% { opacity: 0; transform: translate3d(-520px, 364px, 0) rotate(-35deg) scaleX(0.3); }
+      100% { opacity: 0; transform: translate3d(-520px, 364px, 0) rotate(-35deg) scaleX(0.3); }
+    }
+
+    @keyframes meteorFlight2 {
+      0% { opacity: 0; transform: translate3d(0, 0, 0) rotate(-38deg) scaleX(0.2); }
+      2% { opacity: 1; transform: translate3d(-45px, 35px, 0) rotate(-38deg) scaleX(1); }
+      7% { opacity: 1; transform: translate3d(-360px, 281px, 0) rotate(-38deg) scaleX(1.1); }
+      11% { opacity: 0; transform: translate3d(-540px, 421px, 0) rotate(-38deg) scaleX(0.3); }
+      100% { opacity: 0; transform: translate3d(-540px, 421px, 0) rotate(-38deg) scaleX(0.3); }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ========================================================================= -->
+  <!-- HIGH-PERFORMANCE AMBIENT BACKGROUND LAYER (Matches Agent Palette) -->
+  <!-- ========================================================================= -->
+  <div id="ambientBackgroundLayer" class="ambient-bg-layer" aria-hidden="true">
+    <div class="ambient-ombre-mesh"></div>
+    <div class="ambient-grid-overlay"></div>
+    <div class="ambient-orb ambient-orb-1"></div>
+    <div class="ambient-orb ambient-orb-2"></div>
+    <div class="ambient-meteor-shower">
+      <div class="ambient-meteor meteor-css-1"></div>
+      <div class="ambient-meteor meteor-css-2"></div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- TOP CONTROL & NAVIGATION BAR -->
+  <!-- ========================================================================= -->
+  <header class="top-bar">
+    <div class="brand-pill">
+      <div class="brand-avatar" title="CandyData AI">🍬</div>
+      <span style="font-family: 'Plus Jakarta Sans', sans-serif;">LeKhanhLinh</span>
+      <span class="brand-badge">AI Data Agent · Slide Báo Cáo</span>
+    </div>
+
+    <div class="nav-actions">
+      <div class="shortcut-legend hidden md:flex">
+        <span><span class="kbd-key">←</span> <span class="kbd-key">→</span> Chuyển trang</span>
+        <span><span class="kbd-key">F</span> Toàn màn hình</span>
+      </div>
+
+      <!-- Theme Switcher (Nền Agent / Tối Dịu) -->
+      <button type="button" class="btn-nav" onclick="toggleTheme()" id="themeBtn" title="Chuyển chế độ màu Sáng / Tối">
+        <i class="fa-solid fa-moon" id="themeBtnIcon"></i>
+        <span id="themeBtnText">Chế độ tối</span>
+      </button>
+
+      <button type="button" class="btn-nav" onclick="prevSlide()" title="Trang trước (Phím ←)">
+        <i class="fa-solid fa-chevron-left text-[11px]"></i>
+        <span>Trước</span>
+      </button>
+
+      <button type="button" class="btn-nav" onclick="nextSlide()" title="Trang sau (Phím → hoặc Space)">
+        <span>Sau</span>
+        <i class="fa-solid fa-chevron-right text-[11px]"></i>
+      </button>
+
+      <button type="button" class="btn-nav" onclick="toggleFullScreen()" title="Phím tắt: F">
+        <i class="fa-solid fa-expand"></i>
+        <span id="fsIcon">Trình chiếu</span>
+      </button>
+
+      <button type="button" class="btn-nav primary" onclick="window.print()" title="In ra PDF slide deck">
+        <i class="fa-solid fa-file-pdf"></i>
+        <span>Xuất PDF</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ========================================================================= -->
+  <!-- MAIN SLIDES CONTAINER (9 SLIDES COMPACT & FITTED) -->
+  <!-- ========================================================================= -->
+  <main class="slide-viewport">
+
+    <!-- SLIDE 1: COVER -->
+    <section class="slide active" id="slide-1">
+      <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; max-width: 960px;">
+        <span class="slide-tag">
+          <i class="fa-solid fa-book-bookmark"></i> Báo Cáo Bài Tập Lớn · Môn Học AI301
+        </span>
+        <h1 style="font-size: 32px; font-weight: 900; line-height: 1.25; letter-spacing: -0.6px; color: var(--text-main); margin-top: 8px; font-family: 'Plus Jakarta Sans', sans-serif;">
+          Hệ Thống AI Agent Tự Động Hóa<br/>Làm Sạch & Phân Tích Dữ Liệu Doanh Nghiệp
+        </h1>
+        <p style="font-size: 16px; font-weight: 700; color: var(--accent-coral); margin-top: 8px;">
+          LeKhanhLinh AI Agent 🍬 · Trợ Lý Xử Lý Dữ Liệu Đa Kênh Chuẩn BI Quốc Tế
+        </p>
+        <p style="font-size: 13px; color: var(--text-sub); line-height: 1.65; margin-top: 12px; max-width: 820px;">
+          Xây dựng giải pháp AI Agent khép kín: Tự động phát hiện và xử lý lỗi bảng tính thô (họ tên tiếng Việt, SĐT 10 số, đơn trùng, lỗi công thức, giá trị ngoại lai), tích hợp cơ chế <strong>Kiểm duyệt dữ liệu trực quan</strong>, phân tích <strong>Bento BI Dashboard</strong> và xuất <strong>Bộ tài liệu chuẩn mực (Excel sạch & Báo cáo Word)</strong>.
+        </p>
+
+        <div class="hero-badge-row" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px;">
+          <div class="pill-chip sage">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>Kiểm duyệt dữ liệu minh bạch</span>
+          </div>
+          <div class="pill-chip accent">
+            <i class="fa-solid fa-bolt"></i>
+            <span>Tốc độ xử lý: 0.3 giây</span>
+          </div>
+          <div class="pill-chip">
+            <i class="fa-solid fa-brain"></i>
+            <span>Tích hợp Google Gemini AI</span>
+          </div>
+          <div class="pill-chip sage">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>Độ sạch dữ liệu: 99.8% ISO/IEC</span>
+          </div>
+        </div>
+
+        <div style="margin-top: 26px; padding-top: 16px; border-top: 1px solid var(--border-subtle); display: flex; align-items: center; gap: 36px; width: 100%;">
+          <div>
+            <div style="font-size: 10px; text-transform: uppercase; color: var(--text-muted); font-weight: 800; letter-spacing: 0.5px;">Sinh viên thực hiện</div>
+            <div style="font-size: 14px; font-weight: 800; color: var(--text-main);">Lê Khánh Linh</div>
+          </div>
+          <div style="width: 1px; height: 24px; background: var(--border-subtle);"></div>
+          <div>
+            <div style="font-size: 10px; text-transform: uppercase; color: var(--text-muted); font-weight: 800; letter-spacing: 0.5px;">Học phần</div>
+            <div style="font-size: 14px; font-weight: 800; color: var(--text-main);">Môn học AI301 · Trí Tuệ Nhân Tạo & Ứng Dụng</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: THE BUSINESS PROBLEM -->
+    <section class="slide" id="slide-2">
+      <div class="slide-header">
+        <span class="slide-tag">
+          <i class="fa-solid fa-triangle-exclamation"></i> Vấn Đề Thực Tế
+        </span>
+        <h2 class="slide-title">4 "Nỗi Đau" Dữ Liệu Chí Mạng Trong Quản Trị Vận Hành</h2>
+        <p class="slide-subtitle">Khi doanh nghiệp mở rộng bán hàng đa kênh (Shopee, TikTok Shop, POS, CRM), dữ liệu thu về thường ở trạng thái hỗn loạn, làm sai lệch quyết định kinh doanh.</p>
+      </div>
+
+      <div class="slide-body">
+        <div class="grid-2">
+          
+          <div class="card">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div class="card-icon-box">
+                <i class="fa-solid fa-font"></i>
+              </div>
+              <div class="card-title">1. Họ Tên Mất Dấu & Viết Thường Tùy Tiện</div>
+            </div>
+            <div class="card-desc">
+              Khách hàng nhập không dấu (<em>nguyen van an</em>) hoặc viết hoa lộn xộn khiến CRM không phân loại được khách VIP, giảm uy tín thương hiệu khi gửi tin nhắn SMS Brandname / Email chăm sóc.
+            </div>
+            <div class="pill-chip accent" style="width: fit-content; font-size: 10px;">
+              <i class="fa-solid fa-circle-exclamation"></i> Ảnh hưởng: Thất thoát trải nghiệm khách hàng
+            </div>
+          </div>
+
+          <div class="card">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div class="card-icon-box">
+                <i class="fa-solid fa-phone-slash"></i>
+              </div>
+              <div class="card-title">2. Số Điện Thoại Lộn Xộn, Thiếu Chuẩn Hóa</div>
+            </div>
+            <div class="card-desc">
+              Các dạng đầu số <em>+84, 84, thiếu số 0 đầu, lẫn khoảng trắng, dấu gạch</em> làm đứt gãy 30-40% cuộc gọi telesale, đồng thời gây lỗi khi đồng bộ sang đơn vị vận chuyển (GHTK, Viettel Post).
+            </div>
+            <div class="pill-chip accent" style="width: fit-content; font-size: 10px;">
+              <i class="fa-solid fa-circle-exclamation"></i> Ảnh hưởng: Tỷ lệ hoàn đơn & thất thoát đơn hàng
+            </div>
+          </div>
+
+          <div class="card">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div class="card-icon-box">
+                <i class="fa-solid fa-clone"></i>
+              </div>
+              <div class="card-title">3. Đơn Hàng Trùng Lặp & Ô Trống Rác (Blanks)</div>
+            </div>
+            <div class="card-desc">
+              Lỗi gián đoạn mạng hoặc import file lặp lại sinh ra nhiều đơn hàng trùng lặp hoàn toàn, các ô Doanh thu hay Trạng thái bị bỏ trống (Null) làm sai lệch bảng cân đối kế toán và dòng tiền.
+            </div>
+            <div class="pill-chip" style="width: fit-content; font-size: 10px;">
+              <i class="fa-solid fa-circle-exclamation"></i> Ảnh hưởng: Sai lệch báo cáo tài chính
+            </div>
+          </div>
+
+          <div class="card">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div class="card-icon-box">
+                <i class="fa-solid fa-chart-line-down"></i>
+              </div>
+              <div class="card-title">4. Dị Thường Ngoại Lai & Lỗi Text-to-Number</div>
+            </div>
+            <div class="card-desc">
+              Các con số bị lệch trái (dạng Text dính đ, $, phẩy) khiến hàm <code>=SUM()</code> trả về 0. Giá trị đột biến (nhập nhầm thêm số 0) làm méo mó chỉ số Giá trị đơn bình quân (AOV).
+            </div>
+            <div class="pill-chip" style="width: fit-content; font-size: 10px;">
+              <i class="fa-solid fa-circle-exclamation"></i> Ảnh hưởng: Rủi ro kiểm toán & quản trị kho
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: SYSTEM ARCHITECTURE & 5-STEP PIPELINE -->
+    <section class="slide" id="slide-3">
+      <div class="slide-header">
+        <span class="slide-tag">
+          <i class="fa-solid fa-sitemap"></i> Kiến Trúc Hệ Thống
+        </span>
+        <h2 class="slide-title">Quy Trình Xử Lý Dữ Liệu 5 Bước Chuẩn Doanh Nghiệp</h2>
+        <p class="slide-subtitle">Đường ống xử lý dữ liệu khép kín, thiết kế tối giản giúp người dùng không chuyên kỹ thuật vẫn làm chủ 100% dữ liệu.</p>
+      </div>
+
+      <div class="slide-body">
+        <div class="pipeline-wrapper">
+          
+          <div class="pipeline-step">
+            <div class="step-num">1</div>
+            <div class="step-info" style="flex: 1;">
+              <h4>Bước 1: Tiếp Nhận Bối Cảnh Doanh Nghiệp (Mô Hình & Mục Tiêu BI)</h4>
+              <p>Lựa chọn ngành nghề (Bán lẻ, F&B, Phân phối...), mục tiêu trọng điểm (CRM, đối soát, kiểm toán) để AI kích hoạt từ điển và bộ quy tắc riêng.</p>
+            </div>
+            <div class="pill-chip sage">Ngữ cảnh hóa</div>
+          </div>
+
+          <div class="pipeline-step">
+            <div class="step-num">2</div>
+            <div class="step-info" style="flex: 1;">
+              <h4>Bước 2: Nạp Dữ Liệu Đa Nguồn (Sheets, Excel & CSV)</h4>
+              <p>Hỗ trợ kéo thả file Excel, CSV hoặc nạp nhanh tệp mẫu thực tế. Hệ thống tự động phân tích cấu trúc bảng và nhận diện kiểu dữ liệu từng cột.</p>
+            </div>
+            <div class="pill-chip">Đầu vào đa dạng</div>
+          </div>
+
+          <div class="pipeline-step green">
+            <div class="step-num">3</div>
+            <div class="step-info" style="flex: 1;">
+              <h4>Bước 3: Động Cơ Làm Sạch Tự Động & Cổng Kiểm Duyệt Dữ Liệu</h4>
+              <p>Thực thi chuẩn hóa tự động: viết hoa tên tiếng Việt, quy chuẩn SĐT 10 số, khử ô trống/trùng lặp. Bảng đối chiếu Before/After cho con người duyệt.</p>
+            </div>
+            <div class="pill-chip accent">Human-in-the-Loop</div>
+          </div>
+
+          <div class="pipeline-step green">
+            <div class="step-num">4</div>
+            <div class="step-info" style="flex: 1;">
+              <h4>Bước 4: Phân Tích Chuyên Sâu & Cổng Đánh Giá Kết Quả</h4>
+              <p>Tính toán 5 con số cốt lõi (Doanh thu, Giá vốn, Lợi nhuận gộp, Số đơn, Độ sạch). Gemini AI tư vấn chiến lược 3 giai đoạn và thẩm định rủi ro.</p>
+            </div>
+            <div class="pill-chip sage">Insight & Audit</div>
+          </div>
+
+          <div class="pipeline-step green">
+            <div class="step-num">5</div>
+            <div class="step-info" style="flex: 1;">
+              <h4>Bước 5: Bento BI Dashboard & Xuất Bộ Tệp Chuẩn Mực</h4>
+              <p>Trực quan hóa biểu đồ doanh thu vs kế hoạch, cơ cấu kênh và xuất trọn gói <strong>1 File Excel sạch (.xlsx)</strong> & <strong>1 File Báo cáo Word (.docx)</strong>.</p>
+            </div>
+            <div class="pill-chip accent">Executive Suite</div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: HUMAN-IN-THE-LOOP & GOVERNANCE -->
+    <section class="slide" id="slide-4">
+      <div class="slide-header">
+        <span class="slide-tag">
+          <i class="fa-solid fa-user-check"></i> Trí Tuệ Nhân Tạo Có Trách Nhiệm
+        </span>
+        <h2 class="slide-title">Minh Bạch 100% & Cơ Chế Kiểm Duyệt Từ Người Dùng</h2>
+        <p class="slide-subtitle">Không phải "hộp đen" tự quyết định: AI Agent đặt con người vào vị trí trung tâm kiểm duyệt trước khi đưa dữ liệu vào báo cáo.</p>
+      </div>
+
+      <div class="slide-body">
+        <div class="grid-3" style="margin-bottom: 14px;">
+          
+          <div class="card">
+            <div class="card-icon-box">
+              <i class="fa-solid fa-table-columns"></i>
+            </div>
+            <div class="card-title">Cổng 1: Kiểm Duyệt Dữ Liệu (Data Gate)</div>
+            <div class="card-desc">
+              Bảng đối chiếu Before/After minh bạch từng dòng. Người dùng có thể tìm kiếm, lọc nhanh và kiểm tra từng ô trước khi bấm "Phê duyệt làm sạch".
+            </div>
+            <div class="pill-chip sage" style="width: fit-content; font-size: 10px;">
+              <i class="fa-solid fa-check"></i> Kiểm duyệt: Hợp lệ 100%
+            </div>
+          </div>
+
+          <div class="card sage">
+            <div class="card-icon-box">
+              <i class="fa-solid fa-clipboard-check"></i>
+            </div>
+            <div class="card-title">Cổng 2: Đánh Giá Kết Quả (Result Gate)</div>
+            <div class="card-desc">
+              Kiểm tra tính hợp lý của các chỉ số tài chính, biên lợi nhuận, mức độ hoàn thành KPI. Con người toàn quyền bấm duyệt để mở khóa quyền xuất tài liệu.
+            </div>
+            <div class="pill-chip accent" style="width: fit-content; font-size: 10px;">
+              <i class="fa-solid fa-thumbs-up"></i> Đánh giá: Đạt yêu cầu
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-icon-box">
+              <i class="fa-solid fa-file-shield"></i>
+            </div>
+            <div class="card-title">Nhật Ký Kiểm Toán (Audit Trail)</div>
+            <div class="card-desc">
+              Ghi nhận chi tiết từng can thiệp: Mã lỗi gì, dòng mấy, cột nào, giá trị gốc và giá trị sau sửa. Hỗ trợ ra lệnh bổ sung bằng tiếng Việt để tinh chỉnh.
+            </div>
+            <div class="pill-chip" style="width: fit-content; font-size: 10px;">
+              <i class="fa-solid fa-code"></i> JSON Audit Trail Sẵn Sàng
+            </div>
+          </div>
+
+        </div>
+
+        <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <i class="fa-solid fa-lightbulb text-amber-500 text-lg"></i>
+            <div style="font-size: 12px; color: var(--text-main); font-weight: 600;">
+              <strong>Nguyên tắc cốt lõi:</strong> Dữ liệu chỉ được đưa vào báo cáo và cấp quyền xuất tệp khi đã có sự phê duyệt chính thức từ cả 2 Cổng Kiểm Duyệt của người dùng.
+            </div>
+          </div>
+          <div class="pill-chip sage" style="flex-shrink: 0;">Kiểm Duyệt Minh Bạch</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: EXECUTIVE BENTO BI DASHBOARD -->
+    <section class="slide" id="slide-5">
+      <div class="slide-header">
+        <span class="slide-tag">
+          <i class="fa-solid fa-chart-pie"></i> Trực Quan Hóa Quản Trị
+        </span>
+        <h2 class="slide-title">Executive Bento BI Dashboard: Năng Lực Trực Quan Hóa & Phân Tích</h2>
+        <p class="slide-subtitle">Hệ thống tự động mô hình hóa tập tin sau làm sạch thành hệ sinh thái biểu đồ và báo cáo quản trị chuyên sâu:</p>
+      </div>
+
+      <div class="slide-body">
+        
+        <div class="grid-2" style="margin-bottom: 12px;">
+          
+          <div class="card">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div class="card-icon-box" style="color: var(--accent-coral);">
+                <i class="fa-solid fa-calculator"></i>
+              </div>
+              <div class="card-title">1. Tổng Hợp Chỉ Số Tài Chính & KPI Tự Động</div>
+            </div>
+            <div class="card-desc">
+              Tự động tính toán Doanh thu, Chi phí giá vốn, Lợi nhuận gộp và Tỷ suất sinh lời (%) theo từng ngành hàng; đo lường mức độ hoàn thành chỉ tiêu kế hoạch kinh doanh theo thời gian thực mà không cần viết hàm Excel phức tạp.
+            </div>
+            <div class="pill-chip accent" style="width: fit-content; font-size: 10px;">
+              <i class="fa-solid fa-bolt"></i> Tự động hóa tính toán KPI
+            </div>
+          </div>
+
+          <div class="card">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div class="card-icon-box" style="color: var(--accent-sage);">
+                <i class="fa-solid fa-chart-column"></i>
+              </div>
+              <div class="card-title">2. Đối Soát Kế Hoạch vs Thực Tế (Plan vs Actual)</div>
+            </div>
+            <div class="card-desc">
+              Trực quan hóa biểu đồ cột kép đối chiếu Doanh thu thực tế với Mục tiêu kế hoạch theo từng chi nhánh/nhóm hàng, giúp nhà quản lý nhận diện ngay lập tức đơn vị nào vượt hoặc hụt chỉ tiêu để kịp thời điều phối nguồn lực.
+            </div>
+            <div class="pill-chip sage" style="width: fit-content; font-size: 10px;">
+              <i class="fa-solid fa-check"></i> Trực quan hóa tiến độ mục tiêu
+            </div>
+          </div>
+
+          <div class="card">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div class="card-icon-box" style="color: var(--accent-coral);">
+                <i class="fa-solid fa-arrows-split-up-and-left"></i>
+              </div>
+              <div class="card-title">3. Bóc Tách Cơ Cấu Bán Hàng Đa Kênh</div>
+            </div>
+            <div class="card-desc">
+              Phân tích tỷ trọng đóng góp doanh thu và lợi nhuận từ các kênh bán (Shopee, TikTok Shop, POS tại quầy và Hotline), giúp tối ưu hóa ngân sách tiếp thị và phát hiện kênh bán mang lại hiệu quả sinh lời cao nhất.
+            </div>
+            <div class="pill-chip accent" style="width: fit-content; font-size: 10px;">
+              <i class="fa-solid fa-store"></i> Tối ưu cơ cấu phân phối
+            </div>
+          </div>
+
+          <div class="card">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div class="card-icon-box" style="color: var(--accent-amber);">
+                <i class="fa-solid fa-crown"></i>
+              </div>
+              <div class="card-title">4. Phân Khúc & Xếp Hạng Khách Hàng VIP</div>
+            </div>
+            <div class="card-desc">
+              Tự động gom nhóm giá trị đơn hàng, xếp hạng Top khách hàng có đóng góp doanh thu lớn nhất và kiểm soát tỷ lệ đơn hợp lệ, hỗ trợ phòng kinh doanh xây dựng chính sách tri ân và giữ chân khách hàng trung thành.
+            </div>
+            <div class="pill-chip sage" style="width: fit-content; font-size: 10px;">
+              <i class="fa-solid fa-user-check"></i> Định vị khách hàng trọng tâm
+            </div>
+          </div>
+
+        </div>
+
+        <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 10px 18px; display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <i class="fa-solid fa-sliders text-emerald-600 text-base"></i>
+            <div style="font-size: 11.5px; color: var(--text-main); font-weight: 600;">
+              <strong>Bộ lọc tương tác linh hoạt:</strong> Cho phép lọc số liệu tức thì theo từng đơn vị, nhóm sản phẩm hoặc theo kỳ dữ liệu ngay trên Dashboard.
+            </div>
+          </div>
+          <div class="pill-chip sage" style="flex-shrink: 0; font-size: 10px;">Interactive BI Filters</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SLIDE 6: GEMINI GENERATIVE AI & ROBUST ARCHITECTURE -->
+    <section class="slide" id="slide-6">
+      <div class="slide-header">
+        <span class="slide-tag">
+          <i class="fa-solid fa-brain"></i> Trí Tuệ Nhân Tạo Sinh Thành
+        </span>
+        <h2 class="slide-title">Tích Hợp Google Gemini: Trợ Lý Đàm Thoại & Tư Vấn</h2>
+        <p class="slide-subtitle">Không dừng lại ở việc xử lý dữ liệu tĩnh, Agent đóng vai trò như một chuyên gia tư vấn chiến lược hoạt động 24/7 theo ngữ cảnh doanh nghiệp.</p>
+      </div>
+
+      <div class="slide-body">
+        <div class="grid-2">
+          
+          <div class="card" style="justify-content: space-between;">
+            <div>
+              <div class="card-icon-box" style="color: var(--accent-sage);">
+                <i class="fa-solid fa-comments"></i>
+              </div>
+              <div class="card-title" style="margin-top: 8px; font-size: 15px;">
+                Đàm Thoại Trực Tiếp Trên Ngữ Cảnh Dữ Liệu
+              </div>
+              <div class="card-desc" style="margin-top: 6px;">
+                Nhà quản trị có thể đặt câu hỏi tự nhiên bằng tiếng Việt:
+                <ul style="margin-top: 6px; padding-left: 16px; line-height: 1.6;">
+                  <li><em>"Kênh bán nào đang có biên lợi nhuận cao nhất?"</em></li>
+                  <li><em>"Gợi ý 3 hành động khắc phục tình trạng đơn hoàn trên TikTok?"</em></li>
+                  <li><em>"Tóm tắt 5 chỉ số then chốt cần báo cáo lên Ban Giám Đốc?"</em></li>
+                </ul>
+              </div>
+            </div>
+
+            <div style="padding: 9px 12px; background: var(--surface-card); border-radius: 10px; border: 1px solid var(--border-subtle); font-size: 11px; color: var(--text-main);">
+              <i class="fa-solid fa-sparkles text-amber-500"></i> <strong>Phân tích tức thì:</strong> Trích xuất số liệu trực tiếp từ file đã xử lý, không phỏng đoán mơ hồ.
+            </div>
+          </div>
+
+          <div class="card" style="justify-content: space-between;">
+            <div>
+              <div class="card-icon-box" style="color: var(--accent-coral);">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+              </div>
+              <div class="card-title" style="margin-top: 8px; font-size: 15px;">
+                Cơ Chế Kết Nối Trực Tuyến & Bảo Mật Dữ Liệu
+              </div>
+              <div class="card-desc" style="margin-top: 6px;">
+                Hệ thống kết nối trực tuyến qua đường truyền mã hóa an toàn:
+                <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 6px;">
+                  <div style="padding: 7px 10px; background: var(--surface-card); border-radius: 8px; border: 1px solid var(--border-subtle); font-size: 11px;">
+                    <strong>Mô hình Gemini 1.5 Flash:</strong> Tốc độ phản hồi cực nhanh (&lt; 1s), hiểu sâu câu hỏi tiếng Việt và ngữ cảnh thương mại.
+                  </div>
+                  <div style="padding: 7px 10px; background: var(--surface-card); border-radius: 8px; border: 1px solid var(--border-subtle); font-size: 11px;">
+                    <strong>Đa nền tảng linh hoạt:</strong> Tích hợp trơn tru trên cả máy chủ cục bộ (Python) và môi trường Cloud trực tuyến (Vercel API).
+                  </div>
+                  <div style="padding: 7px 10px; background: var(--surface-card); border-radius: 8px; border: 1px solid var(--border-subtle); font-size: 11px;">
+                    <strong>Ràng buộc số liệu thực tế (Data Grounding):</strong> AI chỉ phân tích đúng trên tập dữ liệu đã làm sạch, ngăn ngừa hoàn toàn hiện tượng bịa số liệu.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pill-chip sage" style="width: fit-content; font-size: 10.5px;">
+              <i class="fa-solid fa-shield-halved"></i> Kết Nối API Trực Tuyến An Toàn
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: ENTERPRISE EXPORT SUITE -->
+    <section class="slide" id="slide-7">
+      <div class="slide-header">
+        <span class="slide-tag">
+          <i class="fa-solid fa-box-archive"></i> Sản Phẩm Đầu Ra Tinh Gọn
+        </span>
+        <h2 class="slide-title">Bộ Xuất Kết Quả Chuẩn Mực: 1 File Excel & 1 File Word</h2>
+        <p class="slide-subtitle">Tối ưu hóa tuyệt đối theo yêu cầu thực tế của nhà quản lý: Không rườm rà, chỉ cung cấp đúng 2 tài liệu chuẩn mực sẵn sàng ký duyệt.</p>
+      </div>
+
+      <div class="slide-body">
+        <div class="grid-2">
+          
+          <!-- Excel Export Card -->
+          <div class="card">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <div class="card-icon-box" style="color: #34D399;">
+                <i class="fa-solid fa-file-excel"></i>
+              </div>
+              <span class="badge-status success">
+                <i class="fa-solid fa-check"></i> XLSX Sạch 100%
+              </span>
+            </div>
+            <div class="card-title">1. File Excel Đã Làm Sạch Hoàn Chỉnh (.xlsx)</div>
+            <div class="card-desc">
+              Tệp bảng tính đã qua toàn bộ chu trình chuẩn hóa:
+              <ul style="margin-top: 6px; padding-left: 16px; line-height: 1.6;">
+                <li><strong>Toàn bộ số là kiểu Number:</strong> Không bị lệch trái hay dính Text, các hàm <code>=SUM()</code>, <code>=AVERAGE()</code> tính toán chính xác 100%.</li>
+                <li><strong>Tự động căn chỉnh độ rộng cột:</strong> Không bị tràn hay cắt cụt văn bản.</li>
+                <li><strong>Chuẩn hóa họ tên & SĐT:</strong> Viết hoa tiếng Việt, SĐT 10 số đồng nhất.</li>
+              </ul>
+            </div>
+            <div class="pill-chip" style="width: fit-content; font-size: 10px;">
+              Chuẩn hóa 8 bước • Tương thích mọi phiên bản Excel & Sheets
+            </div>
+          </div>
+
+          <!-- Word Docx Export Card -->
+          <div class="card">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <div class="card-icon-box" style="color: #60A5FA;">
+                <i class="fa-solid fa-file-word"></i>
+              </div>
+              <span class="badge-status alert">
+                <i class="fa-solid fa-stamp"></i> Báo Cáo Ký Duyệt
+              </span>
+            </div>
+            <div class="card-title">2. Báo Cáo Chiến Lược & Ký Duyệt Quản Trị (.docx)</div>
+            <div class="card-desc">
+              Tài liệu Word soạn thảo theo quy chuẩn thể thức văn bản hành chính cao cấp:
+              <ul style="margin-top: 6px; padding-left: 16px; line-height: 1.6;">
+                <li><strong>Tiêu ngữ & Tiêu đề căn giữa độc lập:</strong> Không bị dồn chung dòng, trang trọng và tôn trọng quy chuẩn văn thư.</li>
+                <li>Phân tích <strong>5 nhóm căn nguyên</strong> & <strong>Ma trận giải pháp 3 giai đoạn</strong>.</li>
+                <li><strong>Khối ký kết 2x2 cân xứng trang trọng:</strong> Cân xứng tuyệt đối (50% độ rộng A4), có khoảng trống ký tên 55pt thanh lịch, không bị vỡ dòng.</li>
+                <li>Đầy đủ 4 bên xác nhận: Người lập, Trưởng phòng BI, COO và CEO.</li>
+              </ul>
+            </div>
+            <div class="pill-chip accent" style="width: fit-content; font-size: 10px;">
+              Thể thức chuẩn mực • Khối ký 2x2 thanh lịch sẵn sàng trình ký
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 8: BUSINESS IMPACT & ROI -->
+    <section class="slide" id="slide-8">
+      <div class="slide-header">
+        <span class="slide-tag">
+          <i class="fa-solid fa-gauge-high"></i> Đo Lường Định Lượng
+        </span>
+        <h2 class="slide-title">So Sánh Hiệu Quả Trước & Sau Khi Ứng Dụng Agent</h2>
+        <p class="slide-subtitle">Minh chứng bằng những con số định lượng cụ thể về tốc độ xử lý, chi phí vận hành và độ chính xác dữ liệu.</p>
+      </div>
+
+      <div class="slide-body">
+        
+        <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 14px; overflow: hidden; margin-bottom: 12px;">
+          <table class="table-spec">
+            <thead>
+              <tr>
+                <th style="width: 26%;">Tiêu Chí Đo Lường</th>
+                <th style="width: 36%; color: var(--accent-coral);">Quy Trình Thủ Công Truyền Thống</th>
+                <th style="width: 38%; color: var(--accent-sage);">Ứng Dụng LeKhanhLinh AI Agent 🍬</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Thời gian xử lý dữ liệu</strong></td>
+                <td>Mất <strong>4 - 6 giờ</strong> gõ tay, lọc trùng và sửa dấu</td>
+                <td><span class="badge-status success"><i class="fa-solid fa-check"></i> Chỉ mất 0.3 giây</span> (Hoàn tất tức thì)</td>
+              </tr>
+              <tr>
+                <td><strong>Độ chính xác chuẩn hóa</strong></td>
+                <td>Chỉ đạt <strong>65% - 75%</strong> do lỗi chủ quan con người</td>
+                <td><span class="badge-status success"><i class="fa-solid fa-check"></i> Đạt 99.8%</span> chuẩn ISO/IEC quốc tế</td>
+              </tr>
+              <tr>
+                <td><strong>Đồng nhất định dạng SĐT</strong></td>
+                <td>SĐT lẫn lộn (+84, 84, thiếu 0), thất thoát 30% khách</td>
+                <td><span class="badge-status success"><i class="fa-solid fa-check"></i> 100% SĐT dạng 10 số</span> sẵn sàng telesale</td>
+              </tr>
+              <tr>
+                <td><strong>Đối soát doanh thu & kênh</strong></td>
+                <td>Dễ nhầm lẫn số liệu giữa Shopee, TikTok và POS</td>
+                <td><span class="badge-status success"><i class="fa-solid fa-check"></i> Khớp chính xác 100%</span> có biểu đồ đối chiếu</td>
+              </tr>
+              <tr>
+                <td><strong>Soạn thảo văn bản báo cáo</strong></td>
+                <td>Lập slide và gõ văn bản Word mất <strong>1 - 2 ngày</strong></td>
+                <td><span class="badge-status success"><i class="fa-solid fa-check"></i> 1 cú click</span> xuất Word & Excel chuẩn mực</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="grid-3">
+          <div class="card" style="padding: 12px 16px; text-align: center; align-items: center; gap: 4px;">
+            <div class="metric-big sage">95%</div>
+            <div class="metric-label">Tiết kiệm thời gian vận hành</div>
+          </div>
+          <div class="card" style="padding: 12px 16px; text-align: center; align-items: center; gap: 4px;">
+            <div class="metric-big" style="color: var(--accent-amber);">0 ₫</div>
+            <div class="metric-label">Chi phí bản quyền phần mềm đắt đỏ</div>
+          </div>
+          <div class="card" style="padding: 12px 16px; text-align: center; align-items: center; gap: 4px;">
+            <div class="metric-big sage">100%</div>
+            <div class="metric-label">Minh bạch & Quyền kiểm soát con người</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SLIDE 9: CONCLUSION & FUTURE VISION -->
+    <section class="slide" id="slide-9">
+      <div class="slide-header">
+        <span class="slide-tag">
+          <i class="fa-solid fa-flag-checkered"></i> Tổng Kết & Định Hướng
+        </span>
+        <h2 class="slide-title">Giá Trị Đóng Góp & Hướng Phát Triển Tiếp Theo</h2>
+        <p class="slide-subtitle">Tổng kết những kết quả đã đạt được trong quá trình nghiên cứu và lộ trình nâng cấp hệ thống trong tương lai.</p>
+      </div>
+
+      <div class="slide-body">
+        
+        <div class="grid-2" style="margin-bottom: 16px;">
+          <div class="card">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div class="card-icon-box" style="color: var(--accent-amber);">
+                <i class="fa-solid fa-star"></i>
+              </div>
+              <div class="card-title">3 Điểm Nổi Bật Đã Đạt Được</div>
+            </div>
+            <div class="card-desc" style="line-height: 1.65;">
+              • <strong>Minh Bạch & Tối Giản:</strong> Loại bỏ toàn bộ sự phức tạp kỹ thuật, xây dựng giao diện thân thiện, dễ dùng cho mọi cấp độ nhân sự.
+              <br/>• <strong>Độ Chính Xác Tuyệt Đối:</strong> Mọi biểu đồ, KPI và văn bản báo cáo đều bám sát 100% số liệu thực tế đã kiểm duyệt.
+              <br/>• <strong>Quyền Kiểm Soát Của Người Dùng:</strong> Người dùng luôn trực tiếp kiểm tra và phê duyệt kết quả trước khi hệ thống tạo file báo cáo Word và Excel.
+            </div>
+          </div>
+
+          <div class="card">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div class="card-icon-box" style="color: var(--accent-sage);">
+                <i class="fa-solid fa-rocket"></i>
+              </div>
+              <div class="card-title">Định Hướng Mở Rộng Tiếp Theo</div>
+            </div>
+            <div class="card-desc" style="line-height: 1.65;">
+              • <strong>Tích hợp Real-time Webhook:</strong> Tự động hứng đơn hàng phát sinh tức thì từ sàn Shopee, TikTok Shop và phần mềm bán hàng.
+              <br/>• <strong>Hệ Thống Cảnh Báo Tự Động:</strong> Tự động gửi cảnh báo dị thường IQR qua Telegram/Email cho Kế toán trưởng hàng ngày.
+              <br/>• <strong>Mô Hình Dự Báo Doanh Thu (AI Forecasting):</strong> Áp dụng Machine Learning dự đoán nhu cầu nhập hàng tuần tới.
+            </div>
+          </div>
+        </div>
+
+        <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <div style="font-size: 11px; text-transform: uppercase; color: var(--accent-sage); font-weight: 800; letter-spacing: 0.5px;">
+              Chân thành cảm ơn Thầy đã lắng nghe bài báo cáo!
+            </div>
+            <div style="font-size: 17px; font-weight: 900; color: var(--text-main); margin-top: 3px; font-family: 'Plus Jakarta Sans', sans-serif;">
+              Lê Khánh Linh · Sinh viên thực hiện môn học AI301
+            </div>
+            <div style="font-size: 11.5px; color: var(--text-sub); margin-top: 2px;">
+              Em rất mong nhận được những nhận xét và góp ý quý báu từ Thầy để hoàn thiện sản phẩm tốt hơn nữa.
+            </div>
+          </div>
+          <button type="button" class="btn-nav primary" onclick="goToSlide(1)" style="padding: 8px 18px; font-size: 12px;">
+            <i class="fa-solid fa-rotate-left"></i>
+            <span>Về trang đầu</span>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- BOTTOM NAVIGATION & SLIDE PROGRESS BAR -->
+  <!-- ========================================================================= -->
+  <footer class="bottom-bar">
+    <div class="slide-counter">
+      Trang <span id="currentSlideNum">1</span> / <span id="totalSlidesNum">9</span>
+    </div>
+
+    <!-- Interactive Navigation Dots -->
+    <div class="dots-container" id="dotsWrapper"></div>
+
+    <!-- Progress Track -->
+    <div class="progress-track">
+      <div class="progress-fill" id="progressBar"></div>
+    </div>
+  </footer>
+
+  <!-- ========================================================================= -->
+  <!-- INTERACTIVE SLIDE CONTROLLER JAVASCRIPT -->
+  <!-- ========================================================================= -->
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 9;
+
+    const slides = document.querySelectorAll('.slide');
+    const dotsWrapper = document.getElementById('dotsWrapper');
+    const currentSlideNum = document.getElementById('currentSlideNum');
+    const totalSlidesNum = document.getElementById('totalSlidesNum');
+    const progressBar = document.getElementById('progressBar');
+    const themeBtnText = document.getElementById('themeBtnText');
+
+    // Build Dots
+    function initDots() {
+      dotsWrapper.innerHTML = '';
+      for (let i = 1; i <= totalSlides; i++) {
+        const dot = document.createElement('div');
+        dot.className = `dot ${i === 1 ? 'active' : ''}`;
+        dot.title = `Chuyển sang trang ${i}`;
+        dot.onclick = () => goToSlide(i);
+        dotsWrapper.appendChild(dot);
+      }
+      totalSlidesNum.innerText = totalSlides;
+    }
+
+    function updateSlideUI() {
+      slides.forEach((s, idx) => {
+        if (idx + 1 === currentSlide) {
+          s.classList.add('active');
+        } else {
+          s.classList.remove('active');
+        }
+      });
+
+      document.querySelectorAll('.dot').forEach((d, idx) => {
+        if (idx + 1 === currentSlide) {
+          d.classList.add('active');
+        } else {
+          d.classList.remove('active');
+        }
+      });
+
+      currentSlideNum.innerText = currentSlide;
+      const progressPercent = (currentSlide / totalSlides) * 100;
+      progressBar.style.width = `${progressPercent}%`;
+    }
+
+    function goToSlide(n) {
+      if (n < 1) n = 1;
+      if (n > totalSlides) n = totalSlides;
+      currentSlide = n;
+      updateSlideUI();
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        goToSlide(currentSlide + 1);
+      } else {
+        goToSlide(1);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        goToSlide(currentSlide - 1);
+      }
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          console.warn("Fullscreen error:", err);
+        });
+        document.getElementById('fsIcon').innerText = "Thoát toàn màn hình";
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+        document.getElementById('fsIcon').innerText = "Trình chiếu";
+      }
+    }
+
+    // Theme Switcher: Agent Signature Pastel (Default) vs Executive Midnight (Dark)
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme');
+      const icon = document.getElementById('themeBtnIcon');
+      if (current === 'light') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        themeBtnText.innerText = "Nền Agent";
+        if (icon) icon.className = "fa-solid fa-sun";
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+        themeBtnText.innerText = "Chế độ tối";
+        if (icon) icon.className = "fa-solid fa-moon";
+      }
+    }
+
+    // Keyboard Shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        goToSlide(1);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        goToSlide(totalSlides);
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullScreen();
+      } else if (e.key === 'p' || e.key === 'P') {
+        window.print();
+      }
+    });
+
+    // Touch Swipe for mobile/tablet presentation
+    let touchStartX = 0;
+    let touchEndX = 0;
+    document.addEventListener('touchstart', e => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    document.addEventListener('touchend', e => {
+      touchEndX = e.changedTouches[0].screenX;
+      if (touchStartX - touchEndX > 50) nextSlide();
+      if (touchEndX - touchStartX > 50) prevSlide();
+    }, { passive: true });
+
+    // Initialize
+    initDots();
+    updateSlideUI();
+  </script>
+</body>
+</html>
